@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Codifya E-Ticaret Uygulaması
 
-## Getting Started
+Bu proje, Next.js 14 kullanılarak geliştirilmiş modern bir e-ticaret uygulamasıdır.
 
-First, run the development server:
+## Proje Özellikleri
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js 14**: Server-side rendering (SSR) ile optimize edilmiş performans
+- **TypeScript**: Tip güvenliği ve daha iyi kod kalitesi
+- **Prisma ORM**: Veritabanı işlemleri için
+- **NextAuth.js**: Kimlik doğrulama ve oturum yönetimi
+- **Tailwind CSS**: Responsive ve modern UI tasarımı
+- **Zod**: Form doğrulama ve veri validasyonu
+
+## Proje Yapısı
+
+```
+codifya-ecommerce-v5/
+├── src/
+│   ├── app/                    # Next.js 14 App Router yapısı
+│   │   ├── api/                # API rotaları
+│   │   ├── admin/              # Admin paneli sayfaları
+│   │   ├── shop/               # Mağaza sayfaları
+│   │   ├── auth/               # Kimlik doğrulama sayfaları
+│   │   └── (site)/             # Ana site sayfaları
+│   ├── components/             # Yeniden kullanılabilir bileşenler
+│   │   ├── ui/                 # Temel UI bileşenleri
+│   │   ├── forms/              # Form bileşenleri
+│   │   ├── layout/             # Layout bileşenleri
+│   │   └── shared/             # Paylaşılan bileşenler
+│   ├── lib/                    # Yardımcı fonksiyonlar ve kütüphaneler
+│   └── types/                  # TypeScript tip tanımlamaları
+├── prisma/                     # Veritabanı şeması ve migrasyonlar
+└── public/                     # Statik dosyalar
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Kullanıcı Tipleri
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Müşteri**: Normal alışveriş yapan kullanıcılar
+- **Müşteri Temsilcisi**: Müşteri hizmetleri ve sipariş yönetimi
+- **Yönetici**: Tam yetkili sistem yöneticisi
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Özellikler
 
-## Learn More
+- **SSR Sayfaları**: Tüm sayfalar Server-Side Rendering ile çalışır
+- **Mega Menü**: Kategoriler ve alt kategoriler için gelişmiş mega menü
+- **Sepet Yönetimi**: Kullanıcı girişi olmadan sepete ürün ekleme
+- **Tek Giriş Sistemi**: Tüm kullanıcı tipleri için tek bir login/register sistemi
+- **Yetkilendirme**: Rol tabanlı erişim kontrolü
+- **Responsive Tasarım**: Tüm cihazlarda uyumlu çalışan arayüz
 
-To learn more about Next.js, take a look at the following resources:
+## Kurulum
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Bağımlılıkları yükleyin
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Veritabanını hazırlayın
+npx prisma generate
+npx prisma db push
 
-## Deploy on Vercel
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Katkıda Bulunma
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Projeye katkıda bulunmak için lütfen bir issue açın veya pull request gönderin.
+
+## Lisans
+
+MIT
