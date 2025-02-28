@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
@@ -36,4 +36,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build
-        run: npm run build 
+        run: npm run build

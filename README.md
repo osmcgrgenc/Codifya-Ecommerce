@@ -33,18 +33,21 @@ Modern ve kullanıcı dostu bir e-ticaret platformu.
 ### Kurulum
 
 1. Repoyu klonlayın:
+
    ```bash
    git clone https://github.com/kullaniciadi/codifya-ecommerce-v5.git
    cd codifya-ecommerce-v5
    ```
 
 2. Bağımlılıkları yükleyin:
+
    ```bash
    npm install
    ```
 
 3. Ortam değişkenlerini ayarlayın:
    `.env.local` dosyası oluşturun ve gerekli değişkenleri ekleyin:
+
    ```
    DATABASE_URL="postgresql://user:password@localhost:5432/codifya"
    NEXTAUTH_SECRET="your-secret-key"
@@ -54,11 +57,13 @@ Modern ve kullanıcı dostu bir e-ticaret platformu.
    ```
 
 4. Veritabanını oluşturun:
+
    ```bash
    npx prisma migrate dev
    ```
 
 5. Geliştirme sunucusunu başlatın:
+
    ```bash
    npm run dev
    ```

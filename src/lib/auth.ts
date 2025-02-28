@@ -1,27 +1,27 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
-import { db } from "@/lib/db";
-import { UserRole } from "@prisma/client";
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { compare } from 'bcrypt';
+import { db } from '@/lib/db';
+import { UserRole } from '@prisma/client';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   pages: {
-    signIn: "/auth/login",
-    signOut: "/auth/logout",
-    error: "/auth/error",
+    signIn: '/auth/login',
+    signOut: '/auth/logout',
+    error: '/auth/error',
   },
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -38,10 +38,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        );
+        const isPasswordValid = await compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
           return null;
@@ -76,4 +73,4 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-}; 
+};

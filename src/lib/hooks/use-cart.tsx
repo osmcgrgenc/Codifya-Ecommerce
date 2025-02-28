@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { CartItem } from "@/types";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { CartItem } from '@/types';
 
 interface CartContextType {
   items: CartItem[];
@@ -22,12 +22,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Sayfa yüklendiğinde local storage'dan sepeti al
   useEffect(() => {
     setMounted(true);
-    const storedCart = localStorage.getItem("cart");
+    const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       try {
         setItems(JSON.parse(storedCart));
       } catch (error) {
-        console.error("Sepet verisi çözümlenemedi:", error);
+        console.error('Sepet verisi çözümlenemedi:', error);
         setItems([]);
       }
     }
@@ -36,20 +36,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Sepet değiştiğinde local storage'a kaydet
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem("cart", JSON.stringify(items));
+      localStorage.setItem('cart', JSON.stringify(items));
     }
   }, [items, mounted]);
 
   // Sepete ürün ekle
   const addItem = (item: CartItem) => {
-    setItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === item.id);
+    setItems(prevItems => {
+      const existingItem = prevItems.find(i => i.id === item.id);
       if (existingItem) {
         // Ürün zaten sepette varsa miktarını artır
-        return prevItems.map((i) =>
-          i.id === item.id
-            ? { ...i, quantity: i.quantity + (item.quantity || 1) }
-            : i
+        return prevItems.map(i =>
+          i.id === item.id ? { ...i, quantity: i.quantity + (item.quantity || 1) } : i
         );
       } else {
         // Ürün sepette yoksa ekle
@@ -60,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Sepetten ürün çıkar
   const removeItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
   // Ürün miktarını güncelle
@@ -70,11 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+    setItems(prevItems => prevItems.map(item => (item.id === id ? { ...item, quantity } : item)));
   };
 
   // Sepeti temizle
@@ -86,10 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
   // Toplam fiyat
-  const totalPrice = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -111,7 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
-} 
+}

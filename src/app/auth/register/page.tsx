@@ -1,21 +1,21 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
-import { authOptions } from "@/lib/auth";
-import RegisterForm from "./register-form";
+import { authOptions } from '@/lib/auth';
+import RegisterForm from './register-form';
 
 export const metadata: Metadata = {
-  title: "Kayıt Ol | Codifya E-Ticaret",
-  description: "Yeni bir hesap oluşturun",
+  title: 'Kayıt Ol | Codifya E-Ticaret',
+  description: 'Yeni bir hesap oluşturun',
 };
 
 export default async function RegisterPage() {
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect("/");
+    redirect('/');
   }
 
   return (
@@ -26,11 +26,8 @@ export default async function RegisterPage() {
             Yeni bir hesap oluşturun
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Veya{" "}
-            <Link
-              href="/auth/login"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
+            Veya{' '}
+            <Link href="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500">
               mevcut hesabınıza giriş yapın
             </Link>
           </p>
@@ -39,4 +36,4 @@ export default async function RegisterPage() {
       </div>
     </div>
   );
-} 
+}

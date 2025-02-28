@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { User } from "next-auth";
+import { useState } from 'react';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
+import { User } from 'next-auth';
 
 interface UserNavProps {
   user: User & {
@@ -24,9 +24,7 @@ export function UserNav({ user }: UserNavProps) {
         <span>{user.name || user.email}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`h-5 w-5 transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -40,12 +38,7 @@ export function UserNav({ user }: UserNavProps) {
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-          <div
-            className="py-1"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="user-menu"
-          >
+          <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
             <Link
               href="/profile"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -62,7 +55,7 @@ export function UserNav({ user }: UserNavProps) {
             >
               Siparişlerim
             </Link>
-            {(user.role === "ADMIN" || user.role === "CUSTOMER_SERVICE") && (
+            {(user.role === 'ADMIN' || user.role === 'CUSTOMER_SERVICE') && (
               <Link
                 href="/admin"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -77,7 +70,7 @@ export function UserNav({ user }: UserNavProps) {
               role="menuitem"
               onClick={() => {
                 setIsOpen(false);
-                signOut({ callbackUrl: "/" });
+                signOut({ callbackUrl: '/' });
               }}
             >
               Çıkış Yap
@@ -87,4 +80,4 @@ export function UserNav({ user }: UserNavProps) {
       )}
     </div>
   );
-} 
+}

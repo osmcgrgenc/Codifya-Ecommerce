@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { useCart } from "@/lib/hooks/use-cart";
-import Link from "next/link";
+import { useCart } from '@/lib/hooks/use-cart';
+import Link from 'next/link';
 
 export function CartButton() {
   const { totalItems } = useCart();
 
   return (
-    <Link
-      href="/cart"
-      className="relative p-2 text-gray-700 hover:text-gray-900"
-    >
+    <Link href="/cart" className="relative p-2 text-gray-700 hover:text-gray-900">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-6 w-6"
@@ -32,4 +29,4 @@ export function CartButton() {
       )}
     </Link>
   );
-} 
+}

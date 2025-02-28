@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SiteSettings } from "@/types";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SiteSettings } from '@/types';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<SiteSettings>({
-    siteName: "Codifya E-Ticaret",
-    siteDescription: "Modern ve kullanıcı dostu e-ticaret platformu",
-    contactEmail: "info@codifya.com",
-    contactPhone: "+90 555 123 4567",
-    address: "Atatürk Cad. No:123, İstanbul, Türkiye",
-    logo: "/logo.png",
-    currency: "TRY",
+    siteName: 'Codifya E-Ticaret',
+    siteDescription: 'Modern ve kullanıcı dostu e-ticaret platformu',
+    contactEmail: 'info@codifya.com',
+    contactPhone: '+90 555 123 4567',
+    address: 'Atatürk Cad. No:123, İstanbul, Türkiye',
+    logo: '/logo.png',
+    currency: 'TRY',
     taxRate: 18,
     shippingFee: 29.99,
     freeShippingThreshold: 500,
@@ -26,9 +26,7 @@ export default function SettingsPage() {
     maintenanceMode: false,
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setSettings({ ...settings, [name]: value });
   };
@@ -50,7 +48,7 @@ export default function SettingsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Burada API'ye ayarları kaydetme işlemi yapılacak
-    alert("Ayarlar kaydedildi!");
+    alert('Ayarlar kaydedildi!');
   };
 
   return (
@@ -76,12 +74,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="logo">Logo URL</Label>
-                  <Input
-                    id="logo"
-                    name="logo"
-                    value={settings.logo}
-                    onChange={handleInputChange}
-                  />
+                  <Input id="logo" name="logo" value={settings.logo} onChange={handleInputChange} />
                 </div>
               </div>
 
@@ -159,7 +152,7 @@ export default function SettingsPage() {
                     id="taxRate"
                     type="number"
                     value={settings.taxRate}
-                    onChange={(e) => handleNumberChange(e, "taxRate")}
+                    onChange={e => handleNumberChange(e, 'taxRate')}
                   />
                 </div>
               </div>
@@ -172,20 +165,16 @@ export default function SettingsPage() {
                     type="number"
                     step="0.01"
                     value={settings.shippingFee}
-                    onChange={(e) => handleNumberChange(e, "shippingFee")}
+                    onChange={e => handleNumberChange(e, 'shippingFee')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="freeShippingThreshold">
-                    Ücretsiz Kargo Limiti (₺)
-                  </Label>
+                  <Label htmlFor="freeShippingThreshold">Ücretsiz Kargo Limiti (₺)</Label>
                   <Input
                     id="freeShippingThreshold"
                     type="number"
                     value={settings.freeShippingThreshold}
-                    onChange={(e) =>
-                      handleNumberChange(e, "freeShippingThreshold")
-                    }
+                    onChange={e => handleNumberChange(e, 'freeShippingThreshold')}
                   />
                 </div>
               </div>
@@ -199,9 +188,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="enableRegistration">
-                    Kullanıcı Kaydını Etkinleştir
-                  </Label>
+                  <Label htmlFor="enableRegistration">Kullanıcı Kaydını Etkinleştir</Label>
                   <p className="text-sm text-muted-foreground">
                     Yeni kullanıcıların siteye kayıt olmasına izin ver
                   </p>
@@ -210,16 +197,14 @@ export default function SettingsPage() {
                   id="enableRegistration"
                   checked={settings.enableRegistration}
                   onCheckedChange={(checked: boolean) =>
-                    handleSwitchChange(checked, "enableRegistration")
+                    handleSwitchChange(checked, 'enableRegistration')
                   }
                 />
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="enableGuestCheckout">
-                    Misafir Alışverişi Etkinleştir
-                  </Label>
+                  <Label htmlFor="enableGuestCheckout">Misafir Alışverişi Etkinleştir</Label>
                   <p className="text-sm text-muted-foreground">
                     Kullanıcıların kayıt olmadan alışveriş yapmasına izin ver
                   </p>
@@ -228,7 +213,7 @@ export default function SettingsPage() {
                   id="enableGuestCheckout"
                   checked={settings.enableGuestCheckout}
                   onCheckedChange={(checked: boolean) =>
-                    handleSwitchChange(checked, "enableGuestCheckout")
+                    handleSwitchChange(checked, 'enableGuestCheckout')
                   }
                 />
               </div>
@@ -244,7 +229,7 @@ export default function SettingsPage() {
                   id="maintenanceMode"
                   checked={settings.maintenanceMode}
                   onCheckedChange={(checked: boolean) =>
-                    handleSwitchChange(checked, "maintenanceMode")
+                    handleSwitchChange(checked, 'maintenanceMode')
                   }
                 />
               </div>
@@ -258,4 +243,4 @@ export default function SettingsPage() {
       </form>
     </div>
   );
-} 
+}

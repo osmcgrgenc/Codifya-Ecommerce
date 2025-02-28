@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { getServerSession } from "next-auth";
+import Link from 'next/link';
+import { getServerSession } from 'next-auth';
 
-import { authOptions } from "@/lib/auth";
-import { UserNav } from "./user-nav";
-import { MobileNav } from "./mobile-nav";
-import { MainNav } from "./main-nav";
-import { CartButton } from "./cart-button";
+import { authOptions } from '@/lib/auth';
+import { UserNav } from './user-nav';
+import { MobileNav } from './mobile-nav';
+import { MainNav } from './main-nav';
+import { CartButton } from './cart-button';
 
 export async function Header() {
   const session = await getServerSession(authOptions);
@@ -53,4 +53,4 @@ export async function Header() {
       </div>
     </header>
   );
-} 
+}

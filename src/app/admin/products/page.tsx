@@ -1,87 +1,87 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Product } from "@/types";
-import { Textarea } from "@/components/ui/textarea";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Product } from '@/types';
+import { Textarea } from '@/components/ui/textarea';
 
 // Örnek ürün verileri
 const initialProducts: Product[] = [
   {
-    id: "1",
-    name: "Akıllı Telefon",
+    id: '1',
+    name: 'Akıllı Telefon',
     price: 5999.99,
-    image: "https://via.placeholder.com/300",
-    category: "Elektronik",
-    description: "Son teknoloji akıllı telefon, yüksek performans ve uzun pil ömrü.",
-    stock: 15
+    image: 'https://via.placeholder.com/300',
+    category: 'Elektronik',
+    description: 'Son teknoloji akıllı telefon, yüksek performans ve uzun pil ömrü.',
+    stock: 15,
   },
   {
-    id: "2",
-    name: "Laptop",
+    id: '2',
+    name: 'Laptop',
     price: 12999.99,
-    image: "https://via.placeholder.com/300",
-    category: "Elektronik",
-    description: "Güçlü işlemci ve yüksek çözünürlüklü ekran ile profesyonel laptop.",
-    stock: 8
+    image: 'https://via.placeholder.com/300',
+    category: 'Elektronik',
+    description: 'Güçlü işlemci ve yüksek çözünürlüklü ekran ile profesyonel laptop.',
+    stock: 8,
   },
   {
-    id: "3",
-    name: "Kablosuz Kulaklık",
+    id: '3',
+    name: 'Kablosuz Kulaklık',
     price: 1299.99,
-    image: "https://via.placeholder.com/300",
-    category: "Elektronik",
-    description: "Gürültü önleyici özellikli, uzun pil ömürlü kablosuz kulaklık.",
-    stock: 25
+    image: 'https://via.placeholder.com/300',
+    category: 'Elektronik',
+    description: 'Gürültü önleyici özellikli, uzun pil ömürlü kablosuz kulaklık.',
+    stock: 25,
   },
   {
-    id: "4",
-    name: "Erkek T-Shirt",
+    id: '4',
+    name: 'Erkek T-Shirt',
     price: 299.99,
-    image: "https://via.placeholder.com/300",
-    category: "Giyim",
-    description: "Yüksek kaliteli pamuktan üretilmiş, rahat kesim erkek t-shirt.",
-    stock: 50
+    image: 'https://via.placeholder.com/300',
+    category: 'Giyim',
+    description: 'Yüksek kaliteli pamuktan üretilmiş, rahat kesim erkek t-shirt.',
+    stock: 50,
   },
   {
-    id: "5",
-    name: "Kadın Elbise",
+    id: '5',
+    name: 'Kadın Elbise',
     price: 499.99,
-    image: "https://via.placeholder.com/300",
-    category: "Giyim",
-    description: "Şık tasarımlı, her mevsim giyilebilen kadın elbisesi.",
-    stock: 30
+    image: 'https://via.placeholder.com/300',
+    category: 'Giyim',
+    description: 'Şık tasarımlı, her mevsim giyilebilen kadın elbisesi.',
+    stock: 30,
   },
   {
-    id: "6",
-    name: "Spor Ayakkabı",
+    id: '6',
+    name: 'Spor Ayakkabı',
     price: 899.99,
-    image: "https://via.placeholder.com/300",
-    category: "Giyim",
-    description: "Hafif ve dayanıklı, her türlü aktivite için uygun spor ayakkabı.",
-    stock: 20
+    image: 'https://via.placeholder.com/300',
+    category: 'Giyim',
+    description: 'Hafif ve dayanıklı, her türlü aktivite için uygun spor ayakkabı.',
+    stock: 20,
   },
 ];
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>({
-    name: "",
+  const [newProduct, setNewProduct] = useState<Omit<Product, 'id'>>({
+    name: '',
     price: 0,
-    image: "https://via.placeholder.com/300",
-    category: "",
-    description: "",
-    stock: 0
+    image: 'https://via.placeholder.com/300',
+    category: '',
+    description: '',
+    stock: 0,
   });
 
   // Ürün arama
   const filteredProducts = products.filter(
-    (product) =>
+    product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -89,27 +89,27 @@ export default function ProductsPage() {
   // Yeni ürün ekleme
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
-      alert("Lütfen tüm alanları doldurun.");
+      alert('Lütfen tüm alanları doldurun.');
       return;
     }
 
     const id = (products.length + 1).toString();
     setProducts([...products, { id, ...newProduct }]);
     setNewProduct({
-      name: "",
+      name: '',
       price: 0,
-      image: "https://via.placeholder.com/300",
-      category: "",
-      description: "",
-      stock: 0
+      image: 'https://via.placeholder.com/300',
+      category: '',
+      description: '',
+      stock: 0,
     });
     setShowAddForm(false);
   };
 
   // Ürün silme
   const handleDeleteProduct = (id: string) => {
-    if (confirm("Bu ürünü silmek istediğinizden emin misiniz?")) {
-      setProducts(products.filter((product) => product.id !== id));
+    if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+      setProducts(products.filter(product => product.id !== id));
     }
   };
 
@@ -118,7 +118,7 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Ürünler</h1>
         <Button onClick={() => setShowAddForm(!showAddForm)}>
-          {showAddForm ? "İptal" : "Yeni Ürün Ekle"}
+          {showAddForm ? 'İptal' : 'Yeni Ürün Ekle'}
         </Button>
       </div>
 
@@ -134,9 +134,7 @@ export default function ProductsPage() {
                 <Input
                   id="name"
                   value={newProduct.name}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, name: e.target.value })
-                  }
+                  onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
                 />
               </div>
               <div>
@@ -144,9 +142,7 @@ export default function ProductsPage() {
                 <Input
                   id="category"
                   value={newProduct.category}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, category: e.target.value })
-                  }
+                  onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
                 />
               </div>
               <div>
@@ -155,7 +151,7 @@ export default function ProductsPage() {
                   id="price"
                   type="number"
                   value={newProduct.price}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewProduct({
                       ...newProduct,
                       price: parseFloat(e.target.value),
@@ -169,7 +165,7 @@ export default function ProductsPage() {
                   id="stock"
                   type="number"
                   value={newProduct.stock || 0}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewProduct({
                       ...newProduct,
                       stock: parseInt(e.target.value),
@@ -182,19 +178,15 @@ export default function ProductsPage() {
                 <Input
                   id="image"
                   value={newProduct.image}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, image: e.target.value })
-                  }
+                  onChange={e => setNewProduct({ ...newProduct, image: e.target.value })}
                 />
               </div>
               <div className="md:col-span-2">
                 <Label htmlFor="description">Ürün Açıklaması</Label>
                 <Textarea
                   id="description"
-                  value={newProduct.description || ""}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, description: e.target.value })
-                  }
+                  value={newProduct.description || ''}
+                  onChange={e => setNewProduct({ ...newProduct, description: e.target.value })}
                   rows={3}
                 />
               </div>
@@ -210,7 +202,7 @@ export default function ProductsPage() {
         <Input
           placeholder="Ürün ara..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           className="max-w-md"
         />
       </div>
@@ -252,7 +244,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map(product => (
               <tr key={product.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -264,9 +256,7 @@ export default function ProductsPage() {
                       />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {product.name}
-                      </div>
+                      <div className="text-sm font-medium text-gray-900">{product.name}</div>
                       <div className="text-xs text-gray-500 truncate max-w-xs">
                         {product.description}
                       </div>
@@ -278,15 +268,15 @@ export default function ProductsPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {product.price.toLocaleString("tr-TR", {
-                      style: "currency",
-                      currency: "TRY",
+                    {product.price.toLocaleString('tr-TR', {
+                      style: 'currency',
+                      currency: 'TRY',
                     })}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {product.stock !== undefined ? product.stock : "N/A"}
+                    {product.stock !== undefined ? product.stock : 'N/A'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -313,4 +303,4 @@ export default function ProductsPage() {
       </div>
     </div>
   );
-} 
+}

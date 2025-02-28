@@ -1,14 +1,14 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { XCircle } from "lucide-react";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { XCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Ödeme Başarısız | Codifya E-Ticaret",
-  description: "Ödeme işlemi sırasında bir hata oluştu.",
+  title: 'Ödeme Başarısız | Codifya E-Ticaret',
+  description: 'Ödeme işlemi sırasında bir hata oluştu.',
 };
 
 export default async function OrderFailedPage({
@@ -21,18 +21,21 @@ export default async function OrderFailedPage({
 
   // Kullanıcı giriş yapmamışsa giriş sayfasına yönlendir
   if (!session || !session.user) {
-    redirect("/auth/login?callbackUrl=/orders/failed");
+    redirect('/auth/login?callbackUrl=/orders/failed');
   }
 
   // Hata mesajını belirle
-  let errorMessage = "Ödeme işlemi sırasında bir hata oluştu.";
-  
-  if (searchParams.error === "payment-process-error") {
-    errorMessage = "Ödeme işlemi sırasında teknik bir hata oluştu. Lütfen daha sonra tekrar deneyin.";
-  } else if (searchParams.error === "payment-rejected") {
-    errorMessage = "Ödeme işlemi banka tarafından reddedildi. Lütfen kart bilgilerinizi kontrol edin veya başka bir ödeme yöntemi deneyin.";
-  } else if (searchParams.error === "insufficient-funds") {
-    errorMessage = "Kartınızda yeterli bakiye bulunmamaktadır. Lütfen başka bir kart ile ödeme yapmayı deneyin.";
+  let errorMessage = 'Ödeme işlemi sırasında bir hata oluştu.';
+
+  if (searchParams.error === 'payment-process-error') {
+    errorMessage =
+      'Ödeme işlemi sırasında teknik bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
+  } else if (searchParams.error === 'payment-rejected') {
+    errorMessage =
+      'Ödeme işlemi banka tarafından reddedildi. Lütfen kart bilgilerinizi kontrol edin veya başka bir ödeme yöntemi deneyin.';
+  } else if (searchParams.error === 'insufficient-funds') {
+    errorMessage =
+      'Kartınızda yeterli bakiye bulunmamaktadır. Lütfen başka bir kart ile ödeme yapmayı deneyin.';
   }
 
   return (
@@ -45,7 +48,10 @@ export default async function OrderFailedPage({
         <p className="text-gray-600 mb-8">
           {errorMessage}
           {searchParams.orderId && (
-            <span> Sipariş numaranız: <strong>{searchParams.orderId}</strong></span>
+            <span>
+              {' '}
+              Sipariş numaranız: <strong>{searchParams.orderId}</strong>
+            </span>
           )}
         </p>
         <div className="bg-gray-50 p-6 rounded-lg mb-8">
@@ -53,7 +59,9 @@ export default async function OrderFailedPage({
           <ul className="text-sm text-gray-600 list-disc list-inside space-y-2 text-left">
             <li>Kart bilgilerinizi kontrol edip tekrar deneyebilirsiniz.</li>
             <li>Farklı bir ödeme yöntemi kullanabilirsiniz.</li>
-            <li>Bankanızla iletişime geçerek online ödemelerin açık olduğundan emin olabilirsiniz.</li>
+            <li>
+              Bankanızla iletişime geçerek online ödemelerin açık olduğundan emin olabilirsiniz.
+            </li>
             <li>Daha sonra tekrar deneyebilirsiniz.</li>
             <li>Sorun devam ederse müşteri hizmetlerimizle iletişime geçebilirsiniz.</li>
           </ul>
@@ -69,4 +77,4 @@ export default async function OrderFailedPage({
       </div>
     </div>
   );
-} 
+}

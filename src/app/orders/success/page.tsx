@@ -1,14 +1,14 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Sipariş Başarılı | Codifya E-Ticaret",
-  description: "Siparişiniz başarıyla oluşturuldu.",
+  title: 'Sipariş Başarılı | Codifya E-Ticaret',
+  description: 'Siparişiniz başarıyla oluşturuldu.',
 };
 
 export default async function OrderSuccessPage({
@@ -21,12 +21,12 @@ export default async function OrderSuccessPage({
 
   // Kullanıcı giriş yapmamışsa giriş sayfasına yönlendir
   if (!session || !session.user) {
-    redirect("/auth/login?callbackUrl=/orders/success");
+    redirect('/auth/login?callbackUrl=/orders/success');
   }
 
   // Sipariş ID'si yoksa ana sayfaya yönlendir
   if (!searchParams.orderId) {
-    redirect("/");
+    redirect('/');
   }
 
   return (
@@ -37,16 +37,17 @@ export default async function OrderSuccessPage({
         </div>
         <h1 className="text-3xl font-bold mb-4">Siparişiniz Alındı!</h1>
         <p className="text-gray-600 mb-8">
-          Siparişiniz başarıyla oluşturuldu. Sipariş numaranız: <strong>{searchParams.orderId}</strong>
+          Siparişiniz başarıyla oluşturuldu. Sipariş numaranız:{' '}
+          <strong>{searchParams.orderId}</strong>
         </p>
         <div className="bg-gray-50 p-6 rounded-lg mb-8">
           <h2 className="text-lg font-semibold mb-2">Sipariş Bilgileri</h2>
           <p className="text-sm text-gray-600 mb-4">
-            Siparişinizle ilgili detayları e-posta adresinize gönderdik. Ayrıca hesabınızın "Siparişlerim" 
-            bölümünden de siparişinizi takip edebilirsiniz.
+            Siparişinizle ilgili detayları e-posta adresinize gönderdik. Ayrıca hesabınızın
+            "Siparişlerim" bölümünden de siparişinizi takip edebilirsiniz.
           </p>
           <p className="text-sm text-gray-600">
-            Siparişiniz onaylandıktan sonra kargoya verilecektir. Kargo takip numarası e-posta ile 
+            Siparişiniz onaylandıktan sonra kargoya verilecektir. Kargo takip numarası e-posta ile
             tarafınıza iletilecektir.
           </p>
         </div>
@@ -61,4 +62,4 @@ export default async function OrderSuccessPage({
       </div>
     </div>
   );
-} 
+}

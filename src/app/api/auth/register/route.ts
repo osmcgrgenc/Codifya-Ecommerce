@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { hash } from "bcrypt";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { hash } from 'bcrypt';
+import { z } from 'zod';
 
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
 
 const registerSchema = z.object({
   name: z.string().min(2),
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Bu e-posta adresi zaten kullanılıyor" },
+        { message: 'Bu e-posta adresi zaten kullanılıyor' },
         { status: 409 }
       );
     }
@@ -47,15 +47,12 @@ export async function POST(req: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: "Geçersiz giriş verileri", errors: error.errors },
+        { message: 'Geçersiz giriş verileri', errors: error.errors },
         { status: 400 }
       );
     }
 
-    console.error("Kayıt hatası:", error);
-    return NextResponse.json(
-      { message: "Bir hata oluştu" },
-      { status: 500 }
-    );
+    console.error('Kayıt hatası:', error);
+    return NextResponse.json({ message: 'Bir hata oluştu' }, { status: 500 });
   }
-} 
+}

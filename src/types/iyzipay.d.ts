@@ -124,4 +124,4 @@ declare module 'iyzipay' {
       ) => void;
     };
   }
-} 
+}

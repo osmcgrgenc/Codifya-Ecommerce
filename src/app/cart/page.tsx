@@ -1,9 +1,9 @@
-import { Metadata } from "next";
-import CartContent from "./cart-content";
+import { Metadata } from 'next';
+import CartContent from './cart-content';
 
 export const metadata: Metadata = {
-  title: "Sepetim | Codifya E-Ticaret",
-  description: "Alışveriş sepetinizi görüntüleyin ve düzenleyin",
+  title: 'Sepetim | Codifya E-Ticaret',
+  description: 'Alışveriş sepetinizi görüntüleyin ve düzenleyin',
 };
 
 export default function CartPage() {
@@ -13,4 +13,4 @@ export default function CartPage() {
       <CartContent />
     </div>
   );
-} 
+}

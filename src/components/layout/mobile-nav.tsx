@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { Session } from "next-auth";
-import { signOut } from "next-auth/react";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Session } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
 interface MobileNavProps {
   session: Session | null;
@@ -87,8 +87,7 @@ export function MobileNav({ session }: MobileNavProps) {
                 >
                   Siparişlerim
                 </Link>
-                {(session.user.role === "ADMIN" ||
-                  session.user.role === "CUSTOMER_SERVICE") && (
+                {(session.user.role === 'ADMIN' || session.user.role === 'CUSTOMER_SERVICE') && (
                   <Link
                     href="/admin"
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
@@ -101,7 +100,7 @@ export function MobileNav({ session }: MobileNavProps) {
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                   onClick={() => {
                     setIsOpen(false);
-                    signOut({ callbackUrl: "/" });
+                    signOut({ callbackUrl: '/' });
                   }}
                 >
                   Çıkış Yap
@@ -130,4 +129,4 @@ export function MobileNav({ session }: MobileNavProps) {
       )}
     </div>
   );
-} 
+}

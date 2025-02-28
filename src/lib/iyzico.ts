@@ -1,10 +1,10 @@
-import Iyzipay from "iyzipay";
+import Iyzipay from 'iyzipay';
 
 // İyzico yapılandırması
 const iyzipay = new Iyzipay({
-  apiKey: process.env.IYZICO_API_KEY || "",
-  secretKey: process.env.IYZICO_SECRET_KEY || "",
-  uri: process.env.IYZICO_URI || "https://sandbox-api.iyzipay.com",
+  apiKey: process.env.IYZICO_API_KEY || '',
+  secretKey: process.env.IYZICO_SECRET_KEY || '',
+  uri: process.env.IYZICO_URI || 'https://sandbox-api.iyzipay.com',
 });
 
 // Tip tanımlamaları
@@ -71,29 +71,31 @@ export const createPaymentForm = (paymentData: {
     price: string;
   }>;
 }) => {
-  return new Promise<{ status: string; paymentPageUrl?: string; token?: string }>((resolve, reject) => {
-    iyzipay.checkoutFormInitialize.create(paymentData as any, (err: any, result: any) => {
-      if (err) {
-        console.error("İyzico ödeme formu oluşturma hatası:", err);
-        reject(err);
-      } else {
-        if (result && result.status === "success") {
-          resolve({
-            status: "success",
-            paymentPageUrl: result.paymentPageUrl,
-            token: result.token,
-          });
+  return new Promise<{ status: string; paymentPageUrl?: string; token?: string }>(
+    (resolve, reject) => {
+      iyzipay.checkoutFormInitialize.create(paymentData as any, (err: any, result: any) => {
+        if (err) {
+          console.error('İyzico ödeme formu oluşturma hatası:', err);
+          reject(err);
         } else {
-          console.error("İyzico ödeme formu oluşturma başarısız:", result?.errorMessage);
-          resolve({
-            status: "error",
-            paymentPageUrl: undefined,
-            token: undefined,
-          });
+          if (result && result.status === 'success') {
+            resolve({
+              status: 'success',
+              paymentPageUrl: result.paymentPageUrl,
+              token: result.token,
+            });
+          } else {
+            console.error('İyzico ödeme formu oluşturma başarısız:', result?.errorMessage);
+            resolve({
+              status: 'error',
+              paymentPageUrl: undefined,
+              token: undefined,
+            });
+          }
         }
-      }
-    });
-  });
+      });
+    }
+  );
 };
 
 /**
@@ -105,12 +107,12 @@ export const retrievePaymentResult = (token: string) => {
   return new Promise<any>((resolve, reject) => {
     iyzipay.checkoutForm.retrieve(
       {
-        locale: "tr",
+        locale: 'tr',
         token: token,
       },
       (err: any, result: any) => {
         if (err) {
-          console.error("İyzico ödeme sonucu alma hatası:", err);
+          console.error('İyzico ödeme sonucu alma hatası:', err);
           reject(err);
         } else {
           resolve(result);
@@ -118,4 +120,4 @@ export const retrievePaymentResult = (token: string) => {
       }
     );
   });
-}; 
+};

@@ -1,15 +1,15 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { CreditCard, Copy, CheckCircle } from "lucide-react";
-import CopyButton from "./copy-button";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { CreditCard, Copy, CheckCircle } from 'lucide-react';
+import CopyButton from './copy-button';
 
 export const metadata: Metadata = {
-  title: "Banka Transferi Bilgileri | Codifya E-Ticaret",
-  description: "Banka transferi ile ödeme bilgileri.",
+  title: 'Banka Transferi Bilgileri | Codifya E-Ticaret',
+  description: 'Banka transferi ile ödeme bilgileri.',
 };
 
 export default async function BankTransferPage({
@@ -22,19 +22,19 @@ export default async function BankTransferPage({
 
   // Kullanıcı giriş yapmamışsa giriş sayfasına yönlendir
   if (!session || !session.user) {
-    redirect("/auth/login?callbackUrl=/orders/bank-transfer");
+    redirect('/auth/login?callbackUrl=/orders/bank-transfer');
   }
 
   // Sipariş ID'si veya referans kodu yoksa ana sayfaya yönlendir
   if (!searchParams.orderId || !searchParams.referenceCode) {
-    redirect("/");
+    redirect('/');
   }
 
   // Banka bilgileri
   const bankInfo = {
-    bankName: "Türkiye İş Bankası",
-    accountName: "Codifya E-Ticaret A.Ş.",
-    iban: "TR12 3456 7890 1234 5678 9012 34",
+    bankName: 'Türkiye İş Bankası',
+    accountName: 'Codifya E-Ticaret A.Ş.',
+    iban: 'TR12 3456 7890 1234 5678 9012 34',
     referenceCode: searchParams.referenceCode,
   };
 
@@ -53,7 +53,7 @@ export default async function BankTransferPage({
 
         <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
           <h2 className="text-xl font-semibold mb-4">Ödeme Bilgileri</h2>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-sm text-gray-500">Sipariş Numarası</p>
@@ -62,7 +62,7 @@ export default async function BankTransferPage({
                 <CopyButton textToCopy={searchParams.orderId} />
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-gray-500">Referans Kodu</p>
               <div className="flex items-center justify-between">
@@ -70,17 +70,17 @@ export default async function BankTransferPage({
                 <CopyButton textToCopy={bankInfo.referenceCode} />
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-gray-500">Banka</p>
               <p className="font-medium">{bankInfo.bankName}</p>
             </div>
-            
+
             <div>
               <p className="text-sm text-gray-500">Hesap Sahibi</p>
               <p className="font-medium">{bankInfo.accountName}</p>
             </div>
-            
+
             <div>
               <p className="text-sm text-gray-500">IBAN</p>
               <div className="flex items-center justify-between">
@@ -112,4 +112,4 @@ export default async function BankTransferPage({
       </div>
     </div>
   );
-} 
+}

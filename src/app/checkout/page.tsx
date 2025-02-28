@@ -1,12 +1,12 @@
-import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import CheckoutContent from "./checkout-content";
+import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import CheckoutContent from './checkout-content';
 
 export const metadata: Metadata = {
-  title: "Ödeme | Codifya E-Ticaret",
-  description: "Siparişinizi tamamlayın ve ödeme yapın.",
+  title: 'Ödeme | Codifya E-Ticaret',
+  description: 'Siparişinizi tamamlayın ve ödeme yapın.',
 };
 
 export default async function CheckoutPage() {
@@ -14,7 +14,7 @@ export default async function CheckoutPage() {
 
   // Kullanıcı giriş yapmamışsa giriş sayfasına yönlendir
   if (!session?.user) {
-    redirect("/api/auth/signin?callbackUrl=/checkout");
+    redirect('/api/auth/signin?callbackUrl=/checkout');
   }
 
   return (
@@ -23,4 +23,4 @@ export default async function CheckoutPage() {
       <CheckoutContent user={session.user} />
     </div>
   );
-} 
+}

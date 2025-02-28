@@ -1,23 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { z } from "zod";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormError,
-  useZodForm,
-} from "@/components/forms/form";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormField, FormLabel, FormError, useZodForm } from '@/components/forms/form';
 
 const loginSchema = z.object({
-  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
-  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
+  email: z.string().email('Geçerli bir e-posta adresi giriniz'),
+  password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -34,21 +28,21 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const response = await signIn("credentials", {
+      const response = await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
 
       if (response?.error) {
-        setError("E-posta veya şifre hatalı");
+        setError('E-posta veya şifre hatalı');
         return;
       }
 
       router.refresh();
-      router.push("/");
+      router.push('/');
     } catch (err) {
-      setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -66,7 +60,7 @@ export default function LoginForm() {
       <FormField form={form} name="email">
         <FormLabel>E-posta</FormLabel>
         <Input
-          {...form.register("email")}
+          {...form.register('email')}
           type="email"
           placeholder="ornek@mail.com"
           disabled={isLoading}
@@ -77,7 +71,7 @@ export default function LoginForm() {
       <FormField form={form} name="password">
         <FormLabel>Şifre</FormLabel>
         <Input
-          {...form.register("password")}
+          {...form.register('password')}
           type="password"
           placeholder="******"
           disabled={isLoading}
@@ -85,13 +79,9 @@ export default function LoginForm() {
         <FormError error={form.formState.errors.password?.message} />
       </FormField>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={isLoading}
-      >
-        {isLoading ? "Giriş yapılıyor..." : "Giriş Yap"}
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
       </Button>
     </Form>
   );
-} 
+}

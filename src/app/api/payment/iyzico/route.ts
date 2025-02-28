@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { createPaymentForm, retrievePaymentResult } from "@/lib/iyzico";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { createPaymentForm, retrievePaymentResult } from '@/lib/iyzico';
+import { prisma } from '@/lib/prisma';
 
 // Sepet öğesi tipi
 interface CartItem {
@@ -28,10 +28,7 @@ export async function POST(req: NextRequest) {
     // Kullanıcı oturumunu kontrol et
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json(
-        { error: "Oturum açmanız gerekiyor" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 });
     }
 
     // İstek gövdesini al
@@ -39,10 +36,7 @@ export async function POST(req: NextRequest) {
     const { items, totalAmount, shippingAddress, billingAddress } = body;
 
     if (!items || !items.length || !totalAmount) {
-      return NextResponse.json(
-        { error: "Geçersiz sepet verileri" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Geçersiz sepet verileri' }, { status: 400 });
     }
 
     // Sipariş oluştur
@@ -50,10 +44,10 @@ export async function POST(req: NextRequest) {
       data: {
         userId: session.user.id,
         totalAmount,
-        status: "PENDING_PAYMENT",
+        status: 'PENDING_PAYMENT',
         shippingAddress: JSON.stringify(shippingAddress),
         billingAddress: JSON.stringify(billingAddress),
-        paymentMethod: "iyzico",
+        paymentMethod: 'iyzico',
         items: {
           create: items.map((item: any) => ({
             productId: item.id,
@@ -66,23 +60,23 @@ export async function POST(req: NextRequest) {
 
     // İyzico ödeme formu oluştur
     const paymentData = {
-      locale: "tr",
+      locale: 'tr',
       conversationId: order.id,
       price: totalAmount.toString(),
       paidPrice: totalAmount.toString(),
-      currency: "TRY",
+      currency: 'TRY',
       basketId: order.id,
-      paymentGroup: "PRODUCT",
+      paymentGroup: 'PRODUCT',
       callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/iyzico/callback?orderId=${order.id}`,
       buyer: {
         id: session.user.id,
-        name: shippingAddress.contactName.split(" ")[0] || "",
-        surname: shippingAddress.contactName.split(" ").slice(1).join(" ") || "",
-        gsmNumber: "+905350000000", // Varsayılan telefon numarası
-        email: session.user.email || "",
-        identityNumber: "11111111111", // TC Kimlik No (test için)
+        name: shippingAddress.contactName.split(' ')[0] || '',
+        surname: shippingAddress.contactName.split(' ').slice(1).join(' ') || '',
+        gsmNumber: '+905350000000', // Varsayılan telefon numarası
+        email: session.user.email || '',
+        identityNumber: '11111111111', // TC Kimlik No (test için)
         registrationAddress: shippingAddress.address,
-        ip: "85.34.78.112", // Test IP adresi
+        ip: '85.34.78.112', // Test IP adresi
         city: shippingAddress.city,
         country: shippingAddress.country,
         zipCode: shippingAddress.zipCode,
@@ -104,25 +98,22 @@ export async function POST(req: NextRequest) {
       basketItems: items.map((item: any) => ({
         id: item.id,
         name: item.name,
-        category1: item.category || "Genel",
-        itemType: "PHYSICAL",
+        category1: item.category || 'Genel',
+        itemType: 'PHYSICAL',
         price: (item.price * item.quantity).toString(),
       })),
     };
 
     const result = await createPaymentForm(paymentData);
 
-    if (result.status !== "success") {
+    if (result.status !== 'success') {
       // Ödeme formu oluşturulamadı, siparişi iptal et
       await prisma.order.update({
         where: { id: order.id },
-        data: { status: "CANCELLED" },
+        data: { status: 'CANCELLED' },
       });
 
-      return NextResponse.json(
-        { error: "Ödeme formu oluşturulamadı" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Ödeme formu oluşturulamadı' }, { status: 500 });
     }
 
     // Ödeme sayfası URL'sini döndür
@@ -131,9 +122,9 @@ export async function POST(req: NextRequest) {
       orderId: order.id,
     });
   } catch (error) {
-    console.error("İyzico ödeme hatası:", error);
+    console.error('İyzico ödeme hatası:', error);
     return NextResponse.json(
-      { error: "Ödeme işlemi başlatılırken bir hata oluştu" },
+      { error: 'Ödeme işlemi başlatılırken bir hata oluştu' },
       { status: 500 }
     );
   }
@@ -143,32 +134,29 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const token = searchParams.get("token");
+    const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.json(
-        { error: "Geçersiz ödeme token'ı." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Geçersiz ödeme token'ı." }, { status: 400 });
     }
 
     // İyzico'dan ödeme sonucunu al
     const paymentResult = await retrievePaymentResult(token);
 
-    if (!paymentResult || typeof paymentResult !== "object") {
-      throw new Error("Ödeme sonucu alınamadı");
+    if (!paymentResult || typeof paymentResult !== 'object') {
+      throw new Error('Ödeme sonucu alınamadı');
     }
 
     // Ödeme başarılıysa siparişi güncelle
-    if (paymentResult.status === "success") {
+    if (paymentResult.status === 'success') {
       const orderId = paymentResult.conversationId;
-      
+
       await prisma.order.update({
         where: { id: orderId },
         data: {
-          status: "PAID",
-          paymentId: paymentResult.paymentId || "",
-          paymentMethod: "IYZICO",
+          status: 'PAID',
+          paymentId: paymentResult.paymentId || '',
+          paymentMethod: 'IYZICO',
         },
       });
 
@@ -179,13 +167,13 @@ export async function GET(req: NextRequest) {
     } else {
       // Ödeme başarısızsa siparişi iptal et
       const orderId = paymentResult.conversationId;
-      
+
       await prisma.order.update({
         where: { id: orderId },
         data: {
-          status: "CANCELLED",
-          paymentId: paymentResult.paymentId || "",
-          paymentMethod: "IYZICO",
+          status: 'CANCELLED',
+          paymentId: paymentResult.paymentId || '',
+          paymentMethod: 'IYZICO',
         },
       });
 
@@ -195,9 +183,9 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("Ödeme sonucu işlenirken hata oluştu:", error);
+    console.error('Ödeme sonucu işlenirken hata oluştu:', error);
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/orders/failed?error=payment-process-error`
     );
   }
-} 
+}

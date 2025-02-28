@@ -29,10 +29,10 @@ export interface Address {
 }
 
 // Sipariş durumları
-export type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
 // Ödeme yöntemleri
-export type PaymentMethod = "CREDIT_CARD" | "BANK_TRANSFER";
+export type PaymentMethod = 'CREDIT_CARD' | 'BANK_TRANSFER';
 
 // Sipariş veri tipi
 export interface Order {
@@ -51,7 +51,7 @@ export interface Order {
 }
 
 // Kullanıcı rolleri
-export type UserRole = "USER" | "ADMIN" | "CUSTOMER_SERVICE";
+export type UserRole = 'USER' | 'ADMIN' | 'CUSTOMER_SERVICE';
 
 // Kullanıcı veri tipi
 export interface User {
@@ -79,4 +79,4 @@ export interface SiteSettings {
   enableRegistration: boolean;
   enableGuestCheckout: boolean;
   maintenanceMode: boolean;
-} 
+}

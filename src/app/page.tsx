@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function HomePage() {
   return (
@@ -8,12 +8,10 @@ export default function HomePage() {
       <section className="relative bg-indigo-600 rounded-lg overflow-hidden mb-12">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-indigo-800 opacity-90"></div>
         <div className="relative z-10 px-8 py-16 md:py-24 md:px-12 flex flex-col items-start">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Yeni Sezon Ürünleri
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Yeni Sezon Ürünleri</h1>
           <p className="text-lg md:text-xl text-indigo-100 mb-8 max-w-lg">
-            En yeni ve trend ürünleri keşfedin. Sınırlı süre için tüm yeni sezon
-            ürünlerinde %20 indirim!
+            En yeni ve trend ürünleri keşfedin. Sınırlı süre için tüm yeni sezon ürünlerinde %20
+            indirim!
           </p>
           <Link href="/shop">
             <Button size="lg" className="bg-white text-indigo-600 hover:bg-indigo-50">
@@ -22,8 +20,10 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 w-1/3 h-full">
-          <div className="h-full w-full bg-contain bg-bottom bg-no-repeat" 
-               style={{ backgroundImage: "url('https://via.placeholder.com/500')" }}></div>
+          <div
+            className="h-full w-full bg-contain bg-bottom bg-no-repeat"
+            style={{ backgroundImage: "url('https://via.placeholder.com/500')" }}
+          ></div>
         </div>
       </section>
 
@@ -33,8 +33,10 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link href="/shop/category/electronics" className="group">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative">
-              <div className="absolute inset-0 bg-cover bg-center" 
-                   style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}></div>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}
+              ></div>
               <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <h3 className="text-white text-xl font-bold">Elektronik</h3>
@@ -43,8 +45,10 @@ export default function HomePage() {
           </Link>
           <Link href="/shop/category/clothing" className="group">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative">
-              <div className="absolute inset-0 bg-cover bg-center" 
-                   style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}></div>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}
+              ></div>
               <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <h3 className="text-white text-xl font-bold">Giyim</h3>
@@ -53,8 +57,10 @@ export default function HomePage() {
           </Link>
           <Link href="/shop/category/home" className="group">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative">
-              <div className="absolute inset-0 bg-cover bg-center" 
-                   style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}></div>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}
+              ></div>
               <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <h3 className="text-white text-xl font-bold">Ev & Yaşam</h3>
@@ -63,8 +69,10 @@ export default function HomePage() {
           </Link>
           <Link href="/shop/category/books" className="group">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative">
-              <div className="absolute inset-0 bg-cover bg-center" 
-                   style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}></div>
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: "url('https://via.placeholder.com/300')" }}
+              ></div>
               <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <h3 className="text-white text-xl font-bold">Kitaplar</h3>
@@ -122,9 +130,7 @@ export default function HomePage() {
             </Link>
             <div className="p-4">
               <Link href="/shop/product/2">
-                <h3 className="text-lg font-medium text-gray-900 hover:text-indigo-600">
-                  Laptop
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 hover:text-indigo-600">Laptop</h3>
               </Link>
               <p className="text-sm text-gray-500 mb-2">Elektronik</p>
               <div className="flex items-center justify-between">
@@ -234,8 +240,8 @@ export default function HomePage() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4">Bültenimize Abone Olun</h2>
           <p className="text-gray-600 mb-6">
-            Yeni ürünler, indirimler ve özel tekliflerden haberdar olmak için
-            bültenimize abone olun.
+            Yeni ürünler, indirimler ve özel tekliflerden haberdar olmak için bültenimize abone
+            olun.
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input

@@ -1,13 +1,7 @@
-import { ReactNode } from "react";
-import {
-  useForm,
-  UseFormReturn,
-  SubmitHandler,
-  UseFormProps,
-  FieldValues,
-} from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { ReactNode } from 'react';
+import { useForm, UseFormReturn, SubmitHandler, UseFormProps, FieldValues } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 interface FormProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -16,12 +10,7 @@ interface FormProps<T extends FieldValues> {
   className?: string;
 }
 
-export function Form<T extends FieldValues>({
-  form,
-  onSubmit,
-  children,
-  className,
-}: FormProps<T>) {
+export function Form<T extends FieldValues>({ form, onSubmit, children, className }: FormProps<T>) {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
       {children}
@@ -51,11 +40,7 @@ interface FormLabelProps {
 }
 
 export function FormLabel({ children, className }: FormLabelProps) {
-  return (
-    <label className={`text-sm font-medium text-gray-700 ${className}`}>
-      {children}
-    </label>
-  );
+  return <label className={`text-sm font-medium text-gray-700 ${className}`}>{children}</label>;
 }
 
 interface FormErrorProps {
@@ -69,10 +54,10 @@ export function FormError({ error }: FormErrorProps) {
 
 export function useZodForm<T extends z.ZodType>(
   schema: T,
-  options?: Omit<UseFormProps<z.infer<T>>, "resolver">
+  options?: Omit<UseFormProps<z.infer<T>>, 'resolver'>
 ) {
   return useForm<z.infer<T>>({
     ...options,
     resolver: zodResolver(schema),
   });
-} 
+}

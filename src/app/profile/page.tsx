@@ -1,20 +1,20 @@
-import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
-import { authOptions } from "@/lib/auth";
-import ProfileContent from "./profile-content";
+import { authOptions } from '@/lib/auth';
+import ProfileContent from './profile-content';
 
 export const metadata: Metadata = {
-  title: "Profilim | Codifya E-Ticaret",
-  description: "Hesap bilgilerinizi ve siparişlerinizi yönetin",
+  title: 'Profilim | Codifya E-Ticaret',
+  description: 'Hesap bilgilerinizi ve siparişlerinizi yönetin',
 };
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/auth/login");
+    redirect('/auth/login');
   }
 
   return (
@@ -23,4 +23,4 @@ export default async function ProfilePage() {
       <ProfileContent user={session.user} />
     </div>
   );
-} 
+}

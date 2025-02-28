@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useCart } from "@/lib/hooks/use-cart";
-import Link from "next/link";
-import { Product } from "./page";
+import { useCart } from '@/lib/hooks/use-cart';
+import Link from 'next/link';
+import { Product } from './page';
 
 interface ProductCardProps {
   product: Product;
@@ -23,11 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <Link href={`/shop/product/${product.id}`}>
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-48 object-cover"
-        />
+        <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
       </Link>
       <div className="p-4">
         <Link href={`/shop/product/${product.id}`}>
@@ -38,9 +34,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-sm text-gray-500 mb-2">{product.category}</p>
         <div className="flex items-center justify-between">
           <p className="text-lg font-bold">
-            {product.price.toLocaleString("tr-TR", {
-              style: "currency",
-              currency: "TRY",
+            {product.price.toLocaleString('tr-TR', {
+              style: 'currency',
+              currency: 'TRY',
             })}
           </p>
           <button
@@ -53,4 +49,4 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
     </div>
   );
-} 
+}
