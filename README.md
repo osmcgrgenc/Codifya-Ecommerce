@@ -1,71 +1,86 @@
-# Codifya E-Ticaret Uygulaması
+# Codifya E-Ticaret
 
-Bu proje, Next.js 14 kullanılarak geliştirilmiş modern bir e-ticaret uygulamasıdır.
-
-## Proje Özellikleri
-
-- **Next.js 14**: Server-side rendering (SSR) ile optimize edilmiş performans
-- **TypeScript**: Tip güvenliği ve daha iyi kod kalitesi
-- **Prisma ORM**: Veritabanı işlemleri için
-- **NextAuth.js**: Kimlik doğrulama ve oturum yönetimi
-- **Tailwind CSS**: Responsive ve modern UI tasarımı
-- **Zod**: Form doğrulama ve veri validasyonu
-
-## Proje Yapısı
-
-```
-codifya-ecommerce-v5/
-├── src/
-│   ├── app/                    # Next.js 14 App Router yapısı
-│   │   ├── api/                # API rotaları
-│   │   ├── admin/              # Admin paneli sayfaları
-│   │   ├── shop/               # Mağaza sayfaları
-│   │   ├── auth/               # Kimlik doğrulama sayfaları
-│   │   └── (site)/             # Ana site sayfaları
-│   ├── components/             # Yeniden kullanılabilir bileşenler
-│   │   ├── ui/                 # Temel UI bileşenleri
-│   │   ├── forms/              # Form bileşenleri
-│   │   ├── layout/             # Layout bileşenleri
-│   │   └── shared/             # Paylaşılan bileşenler
-│   ├── lib/                    # Yardımcı fonksiyonlar ve kütüphaneler
-│   └── types/                  # TypeScript tip tanımlamaları
-├── prisma/                     # Veritabanı şeması ve migrasyonlar
-└── public/                     # Statik dosyalar
-```
-
-## Kullanıcı Tipleri
-
-- **Müşteri**: Normal alışveriş yapan kullanıcılar
-- **Müşteri Temsilcisi**: Müşteri hizmetleri ve sipariş yönetimi
-- **Yönetici**: Tam yetkili sistem yöneticisi
+Modern ve kullanıcı dostu bir e-ticaret platformu.
 
 ## Özellikler
 
-- **SSR Sayfaları**: Tüm sayfalar Server-Side Rendering ile çalışır
-- **Mega Menü**: Kategoriler ve alt kategoriler için gelişmiş mega menü
-- **Sepet Yönetimi**: Kullanıcı girişi olmadan sepete ürün ekleme
-- **Tek Giriş Sistemi**: Tüm kullanıcı tipleri için tek bir login/register sistemi
-- **Yetkilendirme**: Rol tabanlı erişim kontrolü
-- **Responsive Tasarım**: Tüm cihazlarda uyumlu çalışan arayüz
+- Ürün listeleme ve detay sayfaları
+- Sepet yönetimi
+- Ödeme işlemleri (Kredi kartı ve banka havalesi)
+- Kullanıcı hesapları ve profil yönetimi
+- Admin paneli
+  - Ürün yönetimi
+  - Sipariş yönetimi
+  - Kullanıcı yönetimi
+  - Site ayarları
 
-## Kurulum
+## Teknolojiler
 
-```bash
-# Bağımlılıkları yükleyin
-npm install
+- [Next.js](https://nextjs.org/) - React framework
+- [TypeScript](https://www.typescriptlang.org/) - Tip güvenliği
+- [Tailwind CSS](https://tailwindcss.com/) - Stil
+- [Prisma](https://www.prisma.io/) - ORM
+- [NextAuth.js](https://next-auth.js.org/) - Kimlik doğrulama
+- [Iyzipay](https://www.iyzico.com/) - Ödeme entegrasyonu
 
-# Veritabanını hazırlayın
-npx prisma generate
-npx prisma db push
+## Başlangıç
 
-# Geliştirme sunucusunu başlatın
-npm run dev
-```
+### Gereksinimler
 
-## Katkıda Bulunma
+- Node.js 18.x veya üzeri
+- npm veya yarn
 
-Projeye katkıda bulunmak için lütfen bir issue açın veya pull request gönderin.
+### Kurulum
+
+1. Repoyu klonlayın:
+   ```bash
+   git clone https://github.com/kullaniciadi/codifya-ecommerce-v5.git
+   cd codifya-ecommerce-v5
+   ```
+
+2. Bağımlılıkları yükleyin:
+   ```bash
+   npm install
+   ```
+
+3. Ortam değişkenlerini ayarlayın:
+   `.env.local` dosyası oluşturun ve gerekli değişkenleri ekleyin:
+   ```
+   DATABASE_URL="postgresql://user:password@localhost:5432/codifya"
+   NEXTAUTH_SECRET="your-secret-key"
+   NEXTAUTH_URL="http://localhost:3000"
+   IYZIPAY_API_KEY="your-iyzipay-api-key"
+   IYZIPAY_SECRET_KEY="your-iyzipay-secret-key"
+   ```
+
+4. Veritabanını oluşturun:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Geliştirme sunucusunu başlatın:
+   ```bash
+   npm run dev
+   ```
+
+6. Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresini açın.
+
+## Komutlar
+
+- `npm run dev` - Geliştirme sunucusunu başlatır
+- `npm run build` - Üretim için derleme yapar
+- `npm run start` - Üretim sunucusunu başlatır
+- `npm run lint` - ESLint ile kod kontrolü yapar
+- `npm run format` - Prettier ile kod formatlaması yapar
+- `npm run lint:fix` - ESLint ile hataları düzeltir
+
+## CI/CD
+
+Bu proje GitHub Actions kullanarak CI/CD süreçlerini otomatikleştirir:
+
+- **CI**: Her pull request ve main branch'e push işleminde lint ve build işlemleri çalıştırılır.
+- **CD**: Main branch'e push işleminde Vercel'e otomatik deployment yapılır.
 
 ## Lisans
 
-MIT
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
