@@ -1,9 +1,11 @@
-import { InputHTMLAttributes, forwardRef } from "react";
-import { cn } from "@/lib/utils";
+import * as React from "react"
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement>;
+import { cn } from "@/lib/utils"
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
       <input
@@ -15,10 +17,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         {...props}
       />
-    );
+    )
   }
-);
+)
+Input.displayName = "Input"
 
-Input.displayName = "Input";
-
-export { Input }; 
+export { Input } 

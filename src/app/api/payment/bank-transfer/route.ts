@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 // Sepet öğesi tipi
 interface CartItem {
@@ -24,63 +25,41 @@ interface Address {
 // Banka transferi ödeme işlemi endpoint'i
 export async function POST(req: NextRequest) {
   try {
+    // Kullanıcı oturumunu kontrol et
     const session = await getServerSession(authOptions);
-    
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
-        { error: "Bu işlem için giriş yapmanız gerekmektedir." },
+        { error: "Oturum açmanız gerekiyor" },
         { status: 401 }
       );
     }
 
-    const data = await req.json();
-    const { items, totalAmount, shippingAddress, billingAddress, bankInfo } = data as {
-      items: CartItem[];
-      totalAmount: number;
-      shippingAddress: Address;
-      billingAddress: Address;
-      bankInfo: {
-        bankName: string;
-        accountName: string;
-        accountNumber?: string;
-        iban: string;
-      };
-    };
+    // İstek gövdesini al
+    const body = await req.json();
+    const { items, totalAmount, shippingAddress, billingAddress } = body;
 
-    if (!items || !items.length || !totalAmount || !shippingAddress || !billingAddress) {
+    if (!items || !items.length || !totalAmount) {
       return NextResponse.json(
-        { error: "Geçersiz ödeme bilgileri." },
+        { error: "Geçersiz sepet verileri" },
         { status: 400 }
       );
     }
 
-    // Kullanıcı bilgilerini veritabanından al
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email as string },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Kullanıcı bulunamadı." },
-        { status: 404 }
-      );
-    }
-
-    // Benzersiz bir referans kodu oluştur
-    const referenceCode = `BT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    // Benzersiz referans kodu oluştur
+    const referenceCode = `BT-${randomUUID().substring(0, 8).toUpperCase()}`;
 
     // Sipariş oluştur
     const order = await prisma.order.create({
       data: {
-        userId: user.id,
-        status: "PENDING_PAYMENT",
+        userId: session.user.id,
         totalAmount,
+        status: "PENDING_PAYMENT",
         shippingAddress: JSON.stringify(shippingAddress),
         billingAddress: JSON.stringify(billingAddress),
-        paymentMethod: "BANK_TRANSFER",
+        paymentMethod: "bank_transfer",
         referenceCode,
         items: {
-          create: items.map((item) => ({
+          create: items.map((item: any) => ({
             productId: item.id,
             quantity: item.quantity,
             price: item.price,
@@ -89,24 +68,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Banka bilgilerini ve referans kodunu döndür
     return NextResponse.json({
-      status: "success",
-      message: "Sipariş başarıyla oluşturuldu. Lütfen banka transferi yapınız.",
       orderId: order.id,
       referenceCode,
-      bankInfo: {
-        bankName: "Türkiye İş Bankası",
-        accountName: "Codifya E-Ticaret A.Ş.",
-        iban: "TR12 3456 7890 1234 5678 9012 34",
-        description: `Ödeme açıklamasına '${referenceCode}' referans kodunu yazmayı unutmayınız.`,
-      },
-      totalAmount,
+      message: "Sipariş başarıyla oluşturuldu. Lütfen ödemenizi referans kodu ile yapınız.",
     });
   } catch (error) {
-    console.error("Banka transferi işlemi başlatılırken hata oluştu:", error);
+    console.error("Banka transferi sipariş hatası:", error);
     return NextResponse.json(
-      { error: "Banka transferi işlemi başlatılırken bir hata oluştu." },
+      { error: "Sipariş oluşturulurken bir hata oluştu" },
       { status: 500 }
     );
   }

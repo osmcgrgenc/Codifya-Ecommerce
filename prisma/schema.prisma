@@ -29,6 +29,7 @@ model User {
   role          UserRole  @default(CUSTOMER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  phone         String?
 
   accounts      Account[]
   sessions      Session[]
@@ -42,12 +43,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -89,11 +90,13 @@ model Product {
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
-  description String?  @db.Text
+  description String?
   price       Float
   discount    Float?
   stock       Int      @default(0)
-  images      String[]
+  image       String?
+  image2      String?
+  image3      String?
   featured    Boolean  @default(false)
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
@@ -125,17 +128,20 @@ model CartItem {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  userId        String?
-  user          User?       @relation(fields: [userId], references: [id])
-  status        OrderStatus @default(PENDING)
-  total         Float
-  items         OrderItem[]
-  shippingInfo  Json?
-  paymentInfo   Json?
-  sessionId     String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id              String      @id @default(cuid())
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  status          OrderStatus @default(PENDING)
+  totalAmount     Float
+  shippingAddress String?
+  billingAddress  String?
+  paymentMethod   String?
+  paymentId       String?
+  referenceCode   String?
+  notes           String?
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -153,7 +159,7 @@ model Review {
   userId    String
   productId String
   rating    Int
-  comment   String?  @db.Text
+  comment   String?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -164,8 +170,10 @@ model Review {
 
 enum OrderStatus {
   PENDING
+  PENDING_PAYMENT
   PROCESSING
   SHIPPED
   DELIVERED
+  PAID
   CANCELLED
 }

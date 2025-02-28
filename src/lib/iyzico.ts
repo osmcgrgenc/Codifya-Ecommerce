@@ -42,11 +42,12 @@ export const createPaymentForm = (paymentData: {
     surname: string;
     identityNumber: string;
     email: string;
-    phone: string;
+    gsmNumber: string;
     registrationAddress: string;
     city: string;
     country: string;
     ip: string;
+    zipCode?: string;
   };
   shippingAddress: {
     contactName: string;
@@ -66,33 +67,30 @@ export const createPaymentForm = (paymentData: {
     id: string;
     name: string;
     category1: string;
-    category2?: string;
     itemType: string;
     price: string;
   }>;
-}): Promise<IyzipayResult> => {
-  return new Promise((resolve, reject) => {
-    const request = {
-      locale: paymentData.locale || Iyzipay.LOCALE.TR,
-      conversationId: paymentData.conversationId,
-      price: paymentData.price,
-      paidPrice: paymentData.paidPrice,
-      currency: paymentData.currency || Iyzipay.CURRENCY.TRY,
-      basketId: paymentData.basketId,
-      paymentGroup: paymentData.paymentGroup || Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: paymentData.callbackUrl,
-      enabledInstallments: paymentData.enabledInstallments || [1, 2, 3, 6, 9],
-      buyer: paymentData.buyer,
-      shippingAddress: paymentData.shippingAddress,
-      billingAddress: paymentData.billingAddress,
-      basketItems: paymentData.basketItems,
-    };
-
-    iyzipay.checkoutFormInitialize.create(request, (err, result) => {
+}) => {
+  return new Promise<{ status: string; paymentPageUrl?: string; token?: string }>((resolve, reject) => {
+    iyzipay.checkoutFormInitialize.create(paymentData as any, (err: any, result: any) => {
       if (err) {
+        console.error("İyzico ödeme formu oluşturma hatası:", err);
         reject(err);
       } else {
-        resolve(result as IyzipayResult);
+        if (result && result.status === "success") {
+          resolve({
+            status: "success",
+            paymentPageUrl: result.paymentPageUrl,
+            token: result.token,
+          });
+        } else {
+          console.error("İyzico ödeme formu oluşturma başarısız:", result?.errorMessage);
+          resolve({
+            status: "error",
+            paymentPageUrl: undefined,
+            token: undefined,
+          });
+        }
       }
     });
   });
@@ -103,20 +101,21 @@ export const createPaymentForm = (paymentData: {
  * @param token Ödeme token'ı
  * @returns Ödeme sonucu
  */
-export const retrievePaymentResult = (token: string): Promise<IyzipayResult> => {
-  return new Promise((resolve, reject) => {
-    const request = {
-      locale: Iyzipay.LOCALE.TR,
-      conversationId: new Date().getTime().toString(),
-      token: token,
-    };
-
-    iyzipay.checkoutForm.retrieve(request, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result as IyzipayResult);
+export const retrievePaymentResult = (token: string) => {
+  return new Promise<any>((resolve, reject) => {
+    iyzipay.checkoutForm.retrieve(
+      {
+        locale: "tr",
+        token: token,
+      },
+      (err: any, result: any) => {
+        if (err) {
+          console.error("İyzico ödeme sonucu alma hatası:", err);
+          reject(err);
+        } else {
+          resolve(result);
+        }
       }
-    });
+    );
   });
 }; 

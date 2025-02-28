@@ -1,19 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import ProductCard from "./product-card";
+import { Product } from "@/types";
 
 export const metadata: Metadata = {
   title: "Mağaza | Codifya E-Ticaret",
   description: "Ürünlerimizi keşfedin ve alışveriş yapın",
 };
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-}
 
 // Örnek ürün verileri
 const products: Product[] = [
@@ -23,6 +16,8 @@ const products: Product[] = [
     price: 5999.99,
     image: "https://via.placeholder.com/300",
     category: "Elektronik",
+    description: "Son teknoloji akıllı telefon, yüksek performans ve uzun pil ömrü.",
+    stock: 15
   },
   {
     id: "2",
@@ -30,6 +25,8 @@ const products: Product[] = [
     price: 12999.99,
     image: "https://via.placeholder.com/300",
     category: "Elektronik",
+    description: "Güçlü işlemci ve yüksek çözünürlüklü ekran ile profesyonel laptop.",
+    stock: 8
   },
   {
     id: "3",
@@ -37,6 +34,8 @@ const products: Product[] = [
     price: 1299.99,
     image: "https://via.placeholder.com/300",
     category: "Elektronik",
+    description: "Gürültü önleyici özellikli, uzun pil ömürlü kablosuz kulaklık.",
+    stock: 25
   },
   {
     id: "4",
@@ -44,6 +43,8 @@ const products: Product[] = [
     price: 299.99,
     image: "https://via.placeholder.com/300",
     category: "Giyim",
+    description: "Yüksek kaliteli pamuktan üretilmiş, rahat kesim erkek t-shirt.",
+    stock: 50
   },
   {
     id: "5",
@@ -51,6 +52,8 @@ const products: Product[] = [
     price: 499.99,
     image: "https://via.placeholder.com/300",
     category: "Giyim",
+    description: "Şık tasarımlı, her mevsim giyilebilen kadın elbisesi.",
+    stock: 30
   },
   {
     id: "6",
@@ -58,6 +61,8 @@ const products: Product[] = [
     price: 899.99,
     image: "https://via.placeholder.com/300",
     category: "Giyim",
+    description: "Hafif ve dayanıklı, her türlü aktivite için uygun spor ayakkabı.",
+    stock: 20
   },
 ];
 

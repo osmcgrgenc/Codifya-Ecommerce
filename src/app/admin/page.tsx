@@ -1,92 +1,121 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Admin Paneli | Codifya E-Ticaret",
-  description: "Yönetici paneli",
+  description: "E-ticaret sitesi yönetim paneli",
 };
 
-export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "CUSTOMER_SERVICE")) {
-    redirect("/auth/login");
-  }
-
+export default function AdminDashboardPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Admin Paneli</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-medium mb-4">Ürünler</h2>
-          <p className="text-gray-500 mb-4">
-            Ürünleri yönetin, yeni ürünler ekleyin, düzenleyin veya silin.
-          </p>
-          <a
-            href="/admin/products"
-            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Ürünleri Yönet
-          </a>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-medium mb-4">Kategoriler</h2>
-          <p className="text-gray-500 mb-4">
-            Kategorileri yönetin, yeni kategoriler ekleyin, düzenleyin veya silin.
-          </p>
-          <a
-            href="/admin/categories"
-            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Kategorileri Yönet
-          </a>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-medium mb-4">Siparişler</h2>
-          <p className="text-gray-500 mb-4">
-            Siparişleri görüntüleyin ve yönetin.
-          </p>
-          <a
-            href="/admin/orders"
-            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Siparişleri Yönet
-          </a>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-medium mb-4">Kullanıcılar</h2>
-          <p className="text-gray-500 mb-4">
-            Kullanıcıları yönetin ve rolleri düzenleyin.
-          </p>
-          <a
-            href="/admin/users"
-            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Kullanıcıları Yönet
-          </a>
-        </div>
-
-        {session.user.role === "ADMIN" && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-medium mb-4">Ayarlar</h2>
-            <p className="text-gray-500 mb-4">
-              Sistem ayarlarını yapılandırın.
+    <div>
+      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Toplam Satış
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₺24,780.00</div>
+            <p className="text-xs text-green-500 mt-1">
+              +12% geçen aya göre
             </p>
-            <a
-              href="/admin/settings"
-              className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-            >
-              Ayarları Yönet
-            </a>
-          </div>
-        )}
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Toplam Sipariş
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-green-500 mt-1">
+              +8% geçen aya göre
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Toplam Müşteri
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">89</div>
+            <p className="text-xs text-green-500 mt-1">
+              +15% geçen aya göre
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Ortalama Sepet Tutarı
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₺158.85</div>
+            <p className="text-xs text-red-500 mt-1">
+              -3% geçen aya göre
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Son Siparişler</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((order) => (
+                <div key={order} className="flex justify-between items-center border-b pb-2">
+                  <div>
+                    <div className="font-medium">Sipariş #{order + 1000}</div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleDateString("tr-TR")}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">₺{(Math.random() * 1000).toFixed(2)}</div>
+                    <div className="text-sm text-green-500">Tamamlandı</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Popüler Ürünler</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {["Akıllı Telefon", "Laptop", "Kablosuz Kulaklık", "Erkek T-Shirt", "Kadın Elbise"].map((product, index) => (
+                <div key={index} className="flex justify-between items-center border-b pb-2">
+                  <div>
+                    <div className="font-medium">{product}</div>
+                    <div className="text-sm text-gray-500">
+                      {Math.floor(Math.random() * 100)} adet satıldı
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">₺{(Math.random() * 1000).toFixed(2)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -10,20 +10,17 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  // Kullanıcı oturumunu kontrol et
   const session = await getServerSession(authOptions);
 
   // Kullanıcı giriş yapmamışsa giriş sayfasına yönlendir
-  if (!session || !session.user) {
-    redirect("/auth/login?callbackUrl=/checkout");
+  if (!session?.user) {
+    redirect("/api/auth/signin?callbackUrl=/checkout");
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Ödeme</h1>
-        <CheckoutContent user={session.user} />
-      </div>
+    <div className="container py-10">
+      <h1 className="text-3xl font-bold mb-8">Ödeme</h1>
+      <CheckoutContent user={session.user} />
     </div>
   );
 } 

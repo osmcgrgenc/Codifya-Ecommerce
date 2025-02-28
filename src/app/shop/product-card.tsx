@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/lib/cart";
+import { useCart } from "@/lib/hooks/use-cart";
 import Link from "next/link";
 import { Product } from "./page";
 
