@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface CheckoutContentProps {
   user: {
@@ -131,7 +132,6 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
         );
       }
     } catch (error) {
-      console.error('Ödeme işlemi hatası:', error);
       toast.error('Ödeme işlemi başlatılırken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
@@ -317,9 +317,9 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
                   sayfasına yönlendirileceksiniz.
                 </p>
                 <div className="mt-4 flex items-center space-x-2">
-                  <img src="/images/visa.svg" alt="Visa" className="h-8" />
-                  <img src="/images/mastercard.svg" alt="Mastercard" className="h-8" />
-                  <img src="/images/amex.svg" alt="American Express" className="h-8" />
+                  <Image src="/images/visa.svg" alt="Visa" className="h-8" />
+                  <Image src="/images/mastercard.svg" alt="Mastercard" className="h-8" />
+                  <Image src="/images/amex.svg" alt="American Express" className="h-8" />
                 </div>
               </div>
             </TabsContent>

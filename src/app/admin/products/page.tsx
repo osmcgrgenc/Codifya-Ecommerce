@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
-
+import Image from 'next/image';
 // Örnek ürün verileri
 const initialProducts: Product[] = [
   {
@@ -249,7 +249,7 @@ export default function ProductsPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      <img
+                      <Image
                         className="h-10 w-10 rounded-full object-cover"
                         src={product.image}
                         alt={product.name}

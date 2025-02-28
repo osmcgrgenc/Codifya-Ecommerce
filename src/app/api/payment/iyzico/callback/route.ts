@@ -9,9 +9,7 @@ export async function POST(req: NextRequest) {
     const token = formData.get('token') as string;
 
     if (!token) {
-      return NextResponse.redirect(
-        new URL("/payment/error?message=Geçersiz ödeme token'ı", req.url)
-      );
+      return NextResponse.redirect(new URL('/payment/error?message=Geçersiz ödeme token', req.url));
     }
 
     // URL'den sipariş ID'sini al
@@ -57,6 +55,7 @@ export async function POST(req: NextRequest) {
     // Başarılı ödeme sayfasına yönlendir
     return NextResponse.redirect(new URL(`/orders/${orderId}?success=true`, req.url));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('İyzico callback hatası:', error);
     return NextResponse.redirect(
       new URL('/payment/error?message=Ödeme işlemi sırasında bir hata oluştu', req.url)

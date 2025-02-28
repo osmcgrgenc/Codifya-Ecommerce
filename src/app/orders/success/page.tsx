@@ -44,7 +44,7 @@ export default async function OrderSuccessPage({
           <h2 className="text-lg font-semibold mb-2">Sipariş Bilgileri</h2>
           <p className="text-sm text-gray-600 mb-4">
             Siparişinizle ilgili detayları e-posta adresinize gönderdik. Ayrıca hesabınızın
-            "Siparişlerim" bölümünden de siparişinizi takip edebilirsiniz.
+            &quot;Siparişlerim&quot; bölümünden de siparişinizi takip edebilirsiniz.
           </p>
           <p className="text-sm text-gray-600">
             Siparişiniz onaylandıktan sonra kargoya verilecektir. Kargo takip numarası e-posta ile

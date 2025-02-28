@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { authOptions } from '@/lib/auth';
 
@@ -61,6 +62,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
   const order = orderDetails;
 
   // Sipariş ID'sini loglama (gerçek uygulamada bu ID ile veritabanından sorgu yapılacak)
+  // eslint-disable-next-line no-console
   console.log(`Sipariş ID: ${params.id}`);
 
   return (
@@ -107,7 +109,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                 {order.items.map(item => (
                   <li key={item.id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
                         className="w-full h-full object-center object-cover"

@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { useCart } from '@/lib/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/types';
-
+import Image from 'next/image';
 interface ProductPageProps {
   params: {
     id: string;
@@ -109,7 +109,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white rounded-lg overflow-hidden shadow-md">
-          <img src={product.image} alt={product.name} className="w-full h-auto object-cover" />
+          <Image src={product.image} alt={product.name} className="w-full h-auto object-cover" />
         </div>
 
         <div>

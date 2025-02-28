@@ -43,7 +43,6 @@ export default function LoginForm() {
       router.push('/');
     } catch (err) {
       setError('Bir hata oluştu. Lütfen tekrar deneyin.');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }

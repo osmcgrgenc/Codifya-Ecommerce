@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     });
 
     // Hassas bilgileri kaldır
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line
     const { password: _password, ...result } = user;
 
     return NextResponse.json(result, { status: 201 });
@@ -52,7 +52,6 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error('Kayıt hatası:', error);
-    return NextResponse.json({ message: 'Bir hata oluştu' }, { status: 500 });
+    return NextResponse.json({ message: 'Bir hata oluştu', error: error }, { status: 500 });
   }
 }

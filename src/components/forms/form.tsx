@@ -24,13 +24,7 @@ interface FormFieldProps<T extends FieldValues> {
   children: ReactNode;
 }
 
-export function FormField<T extends FieldValues>({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  form,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  name,
-  children,
-}: FormFieldProps<T>) {
+export function FormField<T extends FieldValues>({ form, name, children }: FormFieldProps<T>) {
   return <div className="space-y-2">{children}</div>;
 }
 

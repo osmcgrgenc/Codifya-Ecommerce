@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem } from '@/types';
+import { toast } from 'sonner';
 
 interface CartContextType {
   items: CartItem[];
@@ -27,7 +28,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       try {
         setItems(JSON.parse(storedCart));
       } catch (error) {
-        console.error('Sepet verisi çözümlenemedi:', error);
+        toast.error('Sepet verisi çözümlenemedi');
         setItems([]);
       }
     }

@@ -3,7 +3,7 @@
 import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-
+import Image from 'next/image';
 export default function CartContent() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice } = useCart();
 
@@ -29,7 +29,7 @@ export default function CartContent() {
           {items.map(item => (
             <li key={item.id} className="py-6 flex">
               <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                <img
+                <Image
                   src={item.image}
                   alt={item.name}
                   className="w-full h-full object-center object-cover"

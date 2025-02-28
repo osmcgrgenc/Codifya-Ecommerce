@@ -27,7 +27,6 @@ export default function CopyButton({ textToCopy }: CopyButtonProps) {
         }, 2000);
       })
       .catch(err => {
-        console.error('Kopyalama hatası:', err);
         toast.error('Kopyalama başarısız oldu');
       });
   };

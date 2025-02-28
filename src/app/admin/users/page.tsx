@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User, UserRole } from '@/types';
+import Image from 'next/image';
 
 // Örnek kullanıcı verileri
 const initialUsers: User[] = [
@@ -191,7 +192,7 @@ export default function UsersPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      <img
+                      <Image
                         className="h-10 w-10 rounded-full"
                         src={user.image || 'https://via.placeholder.com/40'}
                         alt={user.name}

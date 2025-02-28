@@ -2,8 +2,8 @@
 
 import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
-import { Product } from './page';
-
+import { Product } from '@/types';
+import Image from 'next/image';
 interface ProductCardProps {
   product: Product;
 }
@@ -17,13 +17,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       name: product.name,
       price: product.price,
       image: product.image,
+      quantity: 1,
     });
   };
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <Link href={`/shop/product/${product.id}`}>
-        <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+        <Image src={product.image} alt={product.name} className="w-full h-48 object-cover" />
       </Link>
       <div className="p-4">
         <Link href={`/shop/product/${product.id}`}>

@@ -122,9 +122,8 @@ export async function POST(req: NextRequest) {
       orderId: order.id,
     });
   } catch (error) {
-    console.error('İyzico ödeme hatası:', error);
     return NextResponse.json(
-      { error: 'Ödeme işlemi başlatılırken bir hata oluştu' },
+      { message: 'Ödeme işlemi başlatılırken bir hata oluştu', error: error },
       { status: 500 }
     );
   }
@@ -137,7 +136,7 @@ export async function GET(req: NextRequest) {
     const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.json({ error: "Geçersiz ödeme token'ı." }, { status: 400 });
+      return NextResponse.json({ error: 'Geçersiz ödeme token.' }, { status: 400 });
     }
 
     // İyzico'dan ödeme sonucunu al
@@ -183,6 +182,7 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Ödeme sonucu işlenirken hata oluştu:', error);
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/orders/failed?error=payment-process-error`

@@ -68,8 +68,10 @@ export async function POST(req: NextRequest) {
       message: 'Sipariş başarıyla oluşturuldu. Lütfen ödemenizi referans kodu ile yapınız.',
     });
   } catch (error) {
-    console.error('Banka transferi sipariş hatası:', error);
-    return NextResponse.json({ error: 'Sipariş oluşturulurken bir hata oluştu' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Sipariş oluşturulurken bir hata oluştu', error: error },
+      { status: 500 }
+    );
   }
 }
 
@@ -116,9 +118,8 @@ export async function PUT(req: NextRequest) {
       order,
     });
   } catch (error) {
-    console.error('Banka transferi onaylanırken hata oluştu:', error);
     return NextResponse.json(
-      { error: 'Banka transferi onaylanırken bir hata oluştu.' },
+      { message: 'Banka transferi onaylanırken bir hata oluştu.', error: error },
       { status: 500 }
     );
   }

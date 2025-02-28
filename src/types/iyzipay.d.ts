@@ -1,3 +1,4 @@
+// eslint-disable-file
 declare module 'iyzipay' {
   export interface IyzipayConfig {
     apiKey: string;

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface MainNavProps {
@@ -144,7 +145,7 @@ export function MainNav({ className }: MainNavProps) {
                   <h3 className="text-sm font-medium text-gray-900 mb-2">Öne Çıkanlar</h3>
                   <div className="space-y-4">
                     <div className="aspect-w-1 aspect-h-1 bg-gray-100 rounded-md overflow-hidden">
-                      <img
+                      <Image
                         src="https://via.placeholder.com/300x200"
                         alt="Öne Çıkan Ürün"
                         className="object-cover"

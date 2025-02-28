@@ -75,7 +75,6 @@ export const createPaymentForm = (paymentData: {
     (resolve, reject) => {
       iyzipay.checkoutFormInitialize.create(paymentData as any, (err: any, result: any) => {
         if (err) {
-          console.error('İyzico ödeme formu oluşturma hatası:', err);
           reject(err);
         } else {
           if (result && result.status === 'success') {
@@ -85,6 +84,7 @@ export const createPaymentForm = (paymentData: {
               token: result.token,
             });
           } else {
+            // eslint-disable-next-line no-console
             console.error('İyzico ödeme formu oluşturma başarısız:', result?.errorMessage);
             resolve({
               status: 'error',
@@ -112,7 +112,6 @@ export const retrievePaymentResult = (token: string) => {
       },
       (err: any, result: any) => {
         if (err) {
-          console.error('İyzico ödeme sonucu alma hatası:', err);
           reject(err);
         } else {
           resolve(result);

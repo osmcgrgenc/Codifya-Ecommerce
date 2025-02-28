@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-
+import Image from 'next/image';
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,7 +94,7 @@ export default function HomePage() {
           {/* Product 1 */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <Link href="/shop/product/1">
-              <img
+              <Image
                 src="https://via.placeholder.com/300"
                 alt="Akıllı Telefon"
                 className="w-full h-48 object-cover"
@@ -122,7 +122,7 @@ export default function HomePage() {
           {/* Product 2 */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <Link href="/shop/product/2">
-              <img
+              <Image
                 src="https://via.placeholder.com/300"
                 alt="Laptop"
                 className="w-full h-48 object-cover"
@@ -148,7 +148,7 @@ export default function HomePage() {
           {/* Product 3 */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <Link href="/shop/product/4">
-              <img
+              <Image
                 src="https://via.placeholder.com/300"
                 alt="Erkek T-Shirt"
                 className="w-full h-48 object-cover"
@@ -176,7 +176,7 @@ export default function HomePage() {
           {/* Product 4 */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <Link href="/shop/product/5">
-              <img
+              <Image
                 src="https://via.placeholder.com/300"
                 alt="Kadın Elbise"
                 className="w-full h-48 object-cover"
@@ -211,7 +211,7 @@ export default function HomePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Yaz İndirimleri</h3>
                 <p className="text-gray-600 mb-4">
-                  Yaz koleksiyonunda %30'a varan indirimler sizi bekliyor!
+                  Yaz koleksiyonunda %30 varan indirimler sizi bekliyor!
                 </p>
               </div>
               <Link href="/shop/category/clothing">
