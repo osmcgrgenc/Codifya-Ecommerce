@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,55 +12,29 @@ import {
 } from '@/components/ui/select';
 import { User, UserRole } from '@/types';
 import Image from 'next/image';
-
-// Örnek kullanıcı verileri
-const initialUsers: User[] = [
-  {
-    id: '1',
-    name: 'Ahmet Yılmaz',
-    email: 'ahmet@example.com',
-    role: 'ADMIN',
-    createdAt: new Date('2023-01-15').toISOString(),
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-  },
-  {
-    id: '2',
-    name: 'Ayşe Demir',
-    email: 'ayse@example.com',
-    role: 'USER',
-    createdAt: new Date('2023-02-20').toISOString(),
-    image: 'https://randomuser.me/api/portraits/women/1.jpg',
-  },
-  {
-    id: '3',
-    name: 'Mehmet Kaya',
-    email: 'mehmet@example.com',
-    role: 'USER',
-    createdAt: new Date('2023-03-10').toISOString(),
-    image: 'https://randomuser.me/api/portraits/men/2.jpg',
-  },
-  {
-    id: '4',
-    name: 'Zeynep Şahin',
-    email: 'zeynep@example.com',
-    role: 'CUSTOMER_SERVICE',
-    createdAt: new Date('2023-04-05').toISOString(),
-    image: 'https://randomuser.me/api/portraits/women/2.jpg',
-  },
-  {
-    id: '5',
-    name: 'Ali Öztürk',
-    email: 'ali@example.com',
-    role: 'USER',
-    createdAt: new Date('2023-05-12').toISOString(),
-    image: 'https://randomuser.me/api/portraits/men/3.jpg',
-  },
-];
-
+import { useToast } from '@/components/ui/use-toast';
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<UserRole | 'ALL'>('ALL');
+
+  const { toast } = useToast();
+  const loadUsers = useCallback(async () => {
+    try {
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      toast({
+        title: 'Hata',
+        description: 'Kullanıcılar yüklenirken bir hata oluştu.',
+      });
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   // Kullanıcı arama ve filtreleme
   const filteredUsers = users.filter(user => {
@@ -194,8 +168,10 @@ export default function UsersPage() {
                     <div className="flex-shrink-0 h-10 w-10">
                       <Image
                         className="h-10 w-10 rounded-full"
-                        src={user.image || 'https://via.placeholder.com/40'}
+                        src={user.image || '/images/placeholder.jpg'}
                         alt={user.name}
+                        width={50}
+                        height={50}
                       />
                     </div>
                     <div className="ml-4">

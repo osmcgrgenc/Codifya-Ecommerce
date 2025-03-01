@@ -18,7 +18,7 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 mx-auto">
       <h1 className="text-3xl font-bold mb-8">Ödeme</h1>
       <CheckoutContent user={session.user} />
     </div>

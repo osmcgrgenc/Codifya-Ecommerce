@@ -146,9 +146,11 @@ export function MainNav({ className }: MainNavProps) {
                   <div className="space-y-4">
                     <div className="aspect-w-1 aspect-h-1 bg-gray-100 rounded-md overflow-hidden">
                       <Image
-                        src="https://via.placeholder.com/300x200"
+                        src="/images/products/headphones.jpg"
                         alt="Öne Çıkan Ürün"
                         className="object-cover"
+                        width={150}
+                        height={150}
                       />
                       <div className="p-2">
                         <p className="text-sm font-medium text-gray-900">Yeni Ürünler</p>

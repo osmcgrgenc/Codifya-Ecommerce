@@ -6,6 +6,7 @@ import { UserNav } from './user-nav';
 import { MobileNav } from './mobile-nav';
 import { MainNav } from './main-nav';
 import { CartButton } from './cart-button';
+import SearchBar from '@/components/search-bar';
 
 export async function Header() {
   const session = await getServerSession(authOptions);
@@ -19,6 +20,10 @@ export async function Header() {
               Codifya
             </Link>
             <MainNav className="hidden md:ml-10 md:flex" />
+          </div>
+
+          <div className="hidden md:flex items-center mx-auto max-w-md w-full px-4">
+            <SearchBar />
           </div>
 
           <div className="flex items-center space-x-4">

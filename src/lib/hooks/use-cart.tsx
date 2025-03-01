@@ -55,11 +55,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prevItems, { ...item, quantity: item.quantity || 1 }];
       }
     });
+    
+    toast.success('Ürün sepete eklendi');
   };
 
   // Sepetten ürün çıkar
   const removeItem = (id: string) => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
+    toast.info('Ürün sepetten çıkarıldı');
   };
 
   // Ürün miktarını güncelle
@@ -70,11 +73,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     setItems(prevItems => prevItems.map(item => (item.id === id ? { ...item, quantity } : item)));
+    toast.info('Ürün miktarı güncellendi');
   };
 
   // Sepeti temizle
   const clearCart = () => {
     setItems([]);
+    toast.info('Sepet temizlendi');
   };
 
   // Toplam ürün sayısı

@@ -161,7 +161,7 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {/* Sol taraf - Adres ve Ödeme Bilgileri */}
-      <div className="md:col-span-2 space-y-6">
+      <div className="md:col-span-2 ml-auto space-y-6">
         {/* Teslimat Adresi */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold mb-4">Teslimat Adresi</h2>
@@ -317,9 +317,9 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
                   sayfasına yönlendirileceksiniz.
                 </p>
                 <div className="mt-4 flex items-center space-x-2">
-                  <Image src="/images/visa.svg" alt="Visa" className="h-8" />
-                  <Image src="/images/mastercard.svg" alt="Mastercard" className="h-8" />
-                  <Image src="/images/amex.svg" alt="American Express" className="h-8" />
+                  <Image src="/images/visa.svg" alt="Visa" className="h-8" width={96} height={96} />
+                  <Image src="/images/mastercard.svg" alt="Mastercard" className="h-8" width={96} height={96} />
+                  <Image src="/images/amex.svg" alt="American Express" className="h-8" width={96} height={96} />
                 </div>
               </div>
             </TabsContent>

@@ -1,41 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { OrderStatus } from '@prisma/client';
 
 interface ProfileContentProps {
   user: User;
 }
 
-// Örnek sipariş verileri
-const orders = [
-  {
-    id: 'ORD-001',
-    date: '2023-05-15',
-    status: 'Tamamlandı',
-    total: 1299.99,
-    items: 3,
-  },
-  {
-    id: 'ORD-002',
-    date: '2023-06-20',
-    status: 'Kargoda',
-    total: 499.99,
-    items: 1,
-  },
-  {
-    id: 'ORD-003',
-    date: '2023-07-05',
-    status: 'İşleniyor',
-    total: 2599.98,
-    items: 2,
-  },
-];
+interface Order {
+  id: string;
+  status: OrderStatus;
+  totalAmount: number;
+  createdAt: string;
+  items: { id: string }[];
+}
 
 export default function ProfileContent({ user }: ProfileContentProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('profile');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/orders');
+      if (!response.ok) {
+        throw new Error('Siparişler alınamadı');
+      }
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error('Siparişler yüklenirken hata oluştu:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -164,7 +172,11 @@ export default function ProfileContent({ user }: ProfileContentProps) {
         ) : (
           <div>
             <h3 className="text-lg font-medium mb-4">Siparişlerim</h3>
-            {orders.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Siparişler yükleniyor...</p>
+              </div>
+            ) : orders.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500 mb-4">Henüz bir sipariş vermediniz.</p>
                 <Link
@@ -221,29 +233,39 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                           {order.id}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {order.date}
+                          {new Date(order.createdAt).toLocaleDateString('tr-TR')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              order.status === 'Tamamlandı'
+                              order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
                                 ? 'bg-green-100 text-green-800'
-                                : order.status === 'Kargoda'
+                                : order.status === OrderStatus.SHIPPED
                                   ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-yellow-100 text-yellow-800'
+                                  : order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {order.status}
+                            {order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
+                              ? 'Tamamlandı'
+                              : order.status === OrderStatus.SHIPPED
+                                ? 'Kargoda'
+                                : order.status === OrderStatus.PENDING
+                                  ? 'İşleniyor'
+                                  : order.status === OrderStatus.CANCELLED
+                                    ? 'İptal Edildi'
+                                    : order.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {order.total.toLocaleString('tr-TR', {
+                          {order.totalAmount.toLocaleString('tr-TR', {
                             style: 'currency',
                             currency: 'TRY',
                           })}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {order.items} ürün
+                          {order.items.length} ürün
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <Link

@@ -1,0 +1,14 @@
+# Codifya E-Ticaret Robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://codifya-ecommerce.com/sitemap.xml
+
+# Özel kurallar
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /checkout/success
+Disallow: /checkout/error 

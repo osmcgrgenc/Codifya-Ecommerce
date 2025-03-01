@@ -4,9 +4,11 @@ import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 export default function CartContent() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice } = useCart();
-
+  const router = useRouter();
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
@@ -33,6 +35,8 @@ export default function CartContent() {
                   src={item.image}
                   alt={item.name}
                   className="w-full h-full object-center object-cover"
+                  width={96}
+                  height={96}
                 />
               </div>
 
@@ -112,7 +116,7 @@ export default function CartContent() {
           </p>
         </div>
         <div className="mt-6">
-          <Button className="w-full">Ödemeye Geç</Button>
+          <Button className="w-full" onClick={() => router.push('/checkout')}>Ödemeye Geç</Button>
         </div>
         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
           <p>

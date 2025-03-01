@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
+import SearchBar from '@/components/search-bar';
 
 interface MobileNavProps {
   session: Session | null;
@@ -55,6 +56,9 @@ export function MobileNav({ session }: MobileNavProps) {
 
       {isOpen && (
         <div className="absolute top-16 inset-x-0 z-50 bg-white shadow-lg">
+          <div className="p-4">
+            <SearchBar />
+          </div>
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link
               href="/"
