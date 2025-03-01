@@ -22,7 +22,7 @@ export default function SearchBar() {
         type="text"
         placeholder="Ürün ara..."
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={e => setSearchQuery(e.target.value)}
         className="flex-1"
       />
       <Button type="submit" className="shrink-0">
@@ -30,4 +30,4 @@ export default function SearchBar() {
       </Button>
     </form>
   );
-} 
+}

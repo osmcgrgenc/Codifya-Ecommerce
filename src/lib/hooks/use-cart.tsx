@@ -55,7 +55,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prevItems, { ...item, quantity: item.quantity || 1 }];
       }
     });
-    
+
     toast.success('Ürün sepete eklendi');
   };
 

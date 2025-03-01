@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { OrderStatus } from '@prisma/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ProfileContentProps {
   user: User;
@@ -22,14 +23,9 @@ export default function ProfileContent({ user }: ProfileContentProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('profile');
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    if (activeTab === 'orders') {
-      fetchOrders();
-    }
-  }, [activeTab]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/orders');
@@ -39,14 +35,23 @@ export default function ProfileContent({ user }: ProfileContentProps) {
       const data = await response.json();
       setOrders(data);
     } catch (error) {
-      console.error('Siparişler yüklenirken hata oluştu:', error);
+      toast({
+        title: 'Hata',
+        description: 'Siparişler yüklenirken hata oluştu',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab, fetchOrders]);
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className=" rounded-lg shadow-md overflow-hidden">
       <div className="border-b border-gray-200">
         <nav className="flex -mb-px">
           <button
@@ -226,7 +231,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className=" divide-y divide-gray-200">
                     {orders.map(order => (
                       <tr key={order.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -238,16 +243,19 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
+                              order.status === OrderStatus.PAID ||
+                              order.status === OrderStatus.DELIVERED
                                 ? 'bg-green-100 text-green-800'
                                 : order.status === OrderStatus.SHIPPED
                                   ? 'bg-blue-100 text-blue-800'
-                                  : order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING
+                                  : order.status === OrderStatus.PENDING ||
+                                      order.status === OrderStatus.PROCESSING
                                     ? 'bg-yellow-100 text-yellow-800'
                                     : 'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
+                            {order.status === OrderStatus.PAID ||
+                            order.status === OrderStatus.DELIVERED
                               ? 'Tamamlandı'
                               : order.status === OrderStatus.SHIPPED
                                 ? 'Kargoda'

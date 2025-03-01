@@ -55,7 +55,7 @@ export function MobileNav({ session }: MobileNavProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-16 inset-x-0 z-50 bg-white shadow-lg">
+        <div className="absolute top-16 inset-x-0 z-50  shadow-lg">
           <div className="p-4">
             <SearchBar />
           </div>

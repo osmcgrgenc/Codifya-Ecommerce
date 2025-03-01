@@ -248,4 +248,4 @@ export const productService = {
       where: { id },
     });
   },
-}; 
+};

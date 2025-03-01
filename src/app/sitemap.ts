@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Kategorileri çek
   const categories = await categoryService.getAllCategories();
-  const categoryUrls = categories.map((category) => ({
+  const categoryUrls = categories.map(category => ({
     url: `https://codifya-ecommerce.com/shop/category/${category.slug}`,
     lastModified: category.updatedAt,
     changeFrequency: 'weekly' as ChangeFrequency,
@@ -55,7 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Ürünleri çek
   const products = await productService.getAllProducts();
-  const productUrls = products.map((product) => ({
+  const productUrls = products.map(product => ({
     url: `https://codifya-ecommerce.com/shop/product/${product.slug}`,
     lastModified: product.updatedAt,
     changeFrequency: 'weekly' as ChangeFrequency,
@@ -64,4 +64,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Tüm URL'leri birleştir
   return [...staticPages, ...categoryUrls, ...productUrls];
-} 
+}

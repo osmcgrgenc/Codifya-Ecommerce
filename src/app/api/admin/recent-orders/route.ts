@@ -27,7 +27,6 @@ export async function GET() {
 
     return NextResponse.json(recentOrders);
   } catch (error) {
-    console.error('Son siparişler alınırken hata oluştu:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

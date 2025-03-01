@@ -34,8 +34,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error('Ürün alınırken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
 }
 
@@ -63,7 +62,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Slug güncelle (eğer isim değiştiyse ve slug verilmediyse)
     let updateData = { ...body };
     if (body.name && !body.slug) {
-      updateData.slug = body.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      updateData.slug = body.name
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
     }
 
     // Ürünü güncelle
@@ -86,8 +88,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(updatedProduct);
   } catch (error) {
-    console.error('Ürün güncellenirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
 }
 
@@ -118,7 +119,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Ürün silinirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

@@ -19,10 +19,10 @@ export default async function ShopPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div className="md:col-span-1">
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className=" p-4 rounded-lg shadow">
             <h2 className="text-lg font-medium mb-4">Kategoriler</h2>
             <ul className="space-y-2">
-              {categories.map((category) => (
+              {categories.map(category => (
                 <li key={category.id}>
                   <Link
                     href={`/shop/category/${category.slug}`}

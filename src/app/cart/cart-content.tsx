@@ -25,7 +25,7 @@ export default function CartContent() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className=" rounded-lg shadow-md p-6">
       <div className="flow-root">
         <ul className="-my-6 divide-y divide-gray-200">
           {items.map(item => (
@@ -116,7 +116,9 @@ export default function CartContent() {
           </p>
         </div>
         <div className="mt-6">
-          <Button className="w-full" onClick={() => router.push('/checkout')}>Ödemeye Geç</Button>
+          <Button className="w-full" onClick={() => router.push('/checkout')}>
+            Ödemeye Geç
+          </Button>
         </div>
         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
           <p>

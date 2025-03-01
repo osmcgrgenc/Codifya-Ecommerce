@@ -21,8 +21,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.error('Kategoriler listelenirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
 }
 
@@ -40,10 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Zorunlu alanları kontrol et
     if (!body.name) {
-      return NextResponse.json(
-        { error: 'Kategori adı zorunludur' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Kategori adı zorunludur' }, { status: 400 });
     }
 
     // Slug oluştur
@@ -61,7 +57,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
-    console.error('Kategori eklenirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

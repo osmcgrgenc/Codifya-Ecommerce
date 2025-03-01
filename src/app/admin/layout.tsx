@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
+      <div className="w-64  shadow-md">
         <div className="p-4 border-b">
           <h2 className="text-xl font-bold">Admin Paneli</h2>
         </div>

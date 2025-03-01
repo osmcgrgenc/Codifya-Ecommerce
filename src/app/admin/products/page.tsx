@@ -8,21 +8,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product, Category } from '@prisma/client';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious, 
-  PaginationEllipsis 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
 } from '@/components/ui/pagination';
 import { useToast } from '@/components/ui/use-toast';
 import { PaginatedResult, ProductFilter, productService } from '@/services/product-service';
@@ -40,19 +40,19 @@ interface ProductFormData {
 }
 
 // Ürün listesi bileşeni (Single Responsibility Principle)
-const ProductList = ({ 
-  products, 
-  onDelete, 
+const ProductList = ({
+  products,
+  onDelete,
   onEdit,
-  onViewDetails
-}: { 
-  products: (Product & { category?: { name: string } })[], 
-  onDelete: (id: string) => void, 
-  onEdit: (id: string) => void,
-  onViewDetails: (id: string) => void
+  onViewDetails,
+}: {
+  products: (Product & { category?: { name: string } })[];
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+  onViewDetails: (id: string) => void;
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className=" rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -95,7 +95,7 @@ const ProductList = ({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className=" divide-y divide-gray-200">
             {products.map(product => (
               <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -118,7 +118,9 @@ const ProductList = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{product.category?.name || 'Kategori Yok'}</div>
+                  <div className="text-sm text-gray-900">
+                    {product.category?.name || 'Kategori Yok'}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
@@ -129,7 +131,9 @@ const ProductList = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className={`text-sm ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}>
+                  <div
+                    className={`text-sm ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}
+                  >
                     {product.stock !== undefined ? product.stock : 'N/A'}
                   </div>
                 </td>
@@ -155,11 +159,7 @@ const ProductList = ({
                   >
                     Düzenle
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => onDelete(product.id)}
-                  >
+                  <Button variant="destructive" size="sm" onClick={() => onDelete(product.id)}>
                     Sil
                   </Button>
                   <Button
@@ -181,16 +181,16 @@ const ProductList = ({
 };
 
 // Ürün formu bileşeni (Single Responsibility Principle)
-const ProductForm = ({ 
-  product, 
-  categories, 
-  onSubmit, 
-  onCancel 
-}: { 
-  product: ProductFormData, 
-  categories: Category[], 
-  onSubmit: (data: ProductFormData) => void, 
-  onCancel: () => void 
+const ProductForm = ({
+  product,
+  categories,
+  onSubmit,
+  onCancel,
+}: {
+  product: ProductFormData;
+  categories: Category[];
+  onSubmit: (data: ProductFormData) => void;
+  onCancel: () => void;
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ProductFormData>(product);
@@ -203,9 +203,9 @@ const ProductForm = ({
     e.preventDefault();
     if (!formData.name || !formData.categoryId || formData.price <= 0) {
       toast({
-        title: "Hata",
-        description: "Lütfen tüm zorunlu alanları doldurun.",
-        variant: "destructive"
+        title: 'Hata',
+        description: 'Lütfen tüm zorunlu alanları doldurun.',
+        variant: 'destructive',
       });
       return;
     }
@@ -230,8 +230,8 @@ const ProductForm = ({
             </div>
             <div>
               <Label htmlFor="category">Kategori</Label>
-              <Select 
-                value={formData.categoryId} 
+              <Select
+                value={formData.categoryId}
                 onValueChange={value => handleChange('categoryId', value)}
               >
                 <SelectTrigger>
@@ -274,9 +274,9 @@ const ProductForm = ({
             </div>
             <div className="flex items-center space-x-2">
               <Label htmlFor="featured">Öne Çıkan Ürün</Label>
-              <Select 
-                value={formData.featured ? "true" : "false"} 
-                onValueChange={value => handleChange('featured', value === "true")}
+              <Select
+                value={formData.featured ? 'true' : 'false'}
+                onValueChange={value => handleChange('featured', value === 'true')}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Öne çıkan" />
@@ -301,9 +301,7 @@ const ProductForm = ({
             <Button type="button" variant="outline" onClick={onCancel}>
               İptal
             </Button>
-            <Button type="submit">
-              {product.name ? 'Güncelle' : 'Ekle'}
-            </Button>
+            <Button type="submit">{product.name ? 'Güncelle' : 'Ekle'}</Button>
           </div>
         </form>
       </CardContent>
@@ -312,20 +310,20 @@ const ProductForm = ({
 };
 
 // Sayfalama bileşeni (Single Responsibility Principle)
-const ProductPagination = ({ 
-  currentPage, 
-  totalPages, 
-  onPageChange 
-}: { 
-  currentPage: number, 
-  totalPages: number, 
-  onPageChange: (page: number) => void 
+const ProductPagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }) => {
   // Sayfa numaralarını oluştur
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       // Toplam sayfa sayısı az ise tüm sayfaları göster
       for (let i = 1; i <= totalPages; i++) {
@@ -334,26 +332,26 @@ const ProductPagination = ({
     } else {
       // Toplam sayfa sayısı çok ise akıllı sayfalama yap
       pages.push(1); // İlk sayfa her zaman görünür
-      
+
       if (currentPage > 3) {
         pages.push(null); // Ellipsis
       }
-      
+
       // Mevcut sayfanın etrafındaki sayfaları göster
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
-      
+
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
-      
+
       if (currentPage < totalPages - 2) {
         pages.push(null); // Ellipsis
       }
-      
+
       pages.push(totalPages); // Son sayfa her zaman görünür
     }
-    
+
     return pages;
   };
 
@@ -364,24 +362,27 @@ const ProductPagination = ({
       <PaginationContent>
         {currentPage > 1 && (
           <PaginationItem>
-            <PaginationPrevious href="#" onClick={(e) => {
-              e.preventDefault();
-              onPageChange(currentPage - 1);
-            }} />
+            <PaginationPrevious
+              href="#"
+              onClick={e => {
+                e.preventDefault();
+                onPageChange(currentPage - 1);
+              }}
+            />
           </PaginationItem>
         )}
-        
-        {pageNumbers.map((page, index) => (
+
+        {pageNumbers.map((page, index) =>
           page === null ? (
             <PaginationItem key={`ellipsis-${index}`}>
               <PaginationEllipsis />
             </PaginationItem>
           ) : (
             <PaginationItem key={page}>
-              <PaginationLink 
-                href="#" 
+              <PaginationLink
+                href="#"
                 isActive={page === currentPage}
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault();
                   onPageChange(page as number);
                 }}
@@ -390,14 +391,17 @@ const ProductPagination = ({
               </PaginationLink>
             </PaginationItem>
           )
-        ))}
-        
+        )}
+
         {currentPage < totalPages && (
           <PaginationItem>
-            <PaginationNext href="#" onClick={(e) => {
-              e.preventDefault();
-              onPageChange(currentPage + 1);
-            }} />
+            <PaginationNext
+              href="#"
+              onClick={e => {
+                e.preventDefault();
+                onPageChange(currentPage + 1);
+              }}
+            />
           </PaginationItem>
         )}
       </PaginationContent>
@@ -409,7 +413,7 @@ const ProductPagination = ({
 export default function ProductsPage() {
   const { toast } = useToast();
   const router = useRouter();
-  
+
   // State tanımlamaları
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -440,18 +444,18 @@ export default function ProductsPage() {
   const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       // Filtreleri oluştur
       const filters: ProductFilter = {};
-      
+
       if (searchTerm) {
         filters.name = searchTerm;
       }
-      
+
       if (categoryFilter !== 'ALL') {
         filters.category = categoryFilter;
       }
-      
+
       // Ürün servisini kullanarak ürünleri getir
       const result = await productService.getPaginatedProducts(
         currentPage,
@@ -460,16 +464,15 @@ export default function ProductsPage() {
         sortBy,
         sortOrder
       );
-      
+
       setProducts(result.data);
       setTotalPages(result.totalPages);
       setTotalItems(result.total);
     } catch (error) {
-      console.error('Ürünler yüklenirken hata:', error);
       toast({
-        title: "Hata",
-        description: "Ürünler yüklenirken bir hata oluştu.",
-        variant: "destructive"
+        title: 'Hata',
+        description: 'Ürünler yüklenirken bir hata oluştu.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -480,19 +483,18 @@ export default function ProductsPage() {
   const loadCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/categories');
-      
+
       if (!response.ok) {
         throw new Error('Kategoriler yüklenirken bir hata oluştu');
       }
-      
+
       const data = await response.json();
       setCategories(data);
     } catch (error) {
-      console.error('Kategoriler yüklenirken hata:', error);
       toast({
-        title: "Hata",
-        description: "Kategoriler yüklenirken bir hata oluştu.",
-        variant: "destructive"
+        title: 'Hata',
+        description: 'Kategoriler yüklenirken bir hata oluştu.',
+        variant: 'destructive',
       });
     }
   }, [toast]);
@@ -511,20 +513,19 @@ export default function ProductsPage() {
     if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
       try {
         await productService.deleteProduct(id);
-        
+
         // Başarılı silme işlemi sonrası ürünleri yeniden yükle
         loadProducts();
-        
+
         toast({
-          title: "Başarılı",
-          description: "Ürün başarıyla silindi.",
+          title: 'Başarılı',
+          description: 'Ürün başarıyla silindi.',
         });
       } catch (error) {
-        console.error('Ürün silinirken hata:', error);
         toast({
-          title: "Hata",
-          description: "Ürün silinirken bir hata oluştu.",
-          variant: "destructive"
+          title: 'Hata',
+          description: 'Ürün silinirken bir hata oluştu.',
+          variant: 'destructive',
         });
       }
     }
@@ -534,19 +535,18 @@ export default function ProductsPage() {
   const handleEditProduct = async (id: string) => {
     try {
       const product = await productService.getProductById(id);
-      
+
       if (!product) {
         throw new Error('Ürün bulunamadı');
       }
-      
+
       setEditingProduct(product);
       setShowForm(true);
     } catch (error) {
-      console.error('Ürün bilgileri alınırken hata:', error);
       toast({
-        title: "Hata",
-        description: "Ürün bilgileri alınırken bir hata oluştu.",
-        variant: "destructive"
+        title: 'Hata',
+        description: 'Ürün bilgileri alınırken bir hata oluştu.',
+        variant: 'destructive',
       });
     }
   };
@@ -582,24 +582,21 @@ export default function ProductsPage() {
           featured: formData.featured,
         });
       }
-      
+
       // Başarılı işlem sonrası formu kapat ve ürünleri yeniden yükle
       setShowForm(false);
       setEditingProduct(null);
       loadProducts();
-      
+
       toast({
-        title: "Başarılı",
-        description: editingProduct 
-          ? "Ürün başarıyla güncellendi." 
-          : "Ürün başarıyla eklendi.",
+        title: 'Başarılı',
+        description: editingProduct ? 'Ürün başarıyla güncellendi.' : 'Ürün başarıyla eklendi.',
       });
     } catch (error) {
-      console.error('Ürün kaydedilirken hata:', error);
       toast({
-        title: "Hata",
-        description: "Ürün kaydedilirken bir hata oluştu.",
-        variant: "destructive"
+        title: 'Hata',
+        description: 'Ürün kaydedilirken bir hata oluştu.',
+        variant: 'destructive',
       });
     }
   };
@@ -631,7 +628,7 @@ export default function ProductsPage() {
   // Düzenleme için ürün formunu hazırla
   const getProductFormData = (product: Product | null): ProductFormData => {
     if (!product) return emptyProductForm;
-    
+
     return {
       name: product.name,
       price: product.price,
@@ -647,16 +644,18 @@ export default function ProductsPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Ürünler</h1>
-        <Button onClick={() => {
-          setShowForm(!showForm);
-          setEditingProduct(null);
-        }}>
+        <Button
+          onClick={() => {
+            setShowForm(!showForm);
+            setEditingProduct(null);
+          }}
+        >
           {showForm && !editingProduct ? 'İptal' : 'Yeni Ürün Ekle'}
         </Button>
       </div>
 
       {showForm && (
-        <ProductForm 
+        <ProductForm
           product={getProductFormData(editingProduct)}
           categories={categories}
           onSubmit={handleSubmitProduct}
@@ -674,7 +673,7 @@ export default function ProductsPage() {
           onChange={handleSearch}
           className="max-w-md"
         />
-        
+
         <Select
           value={categoryFilter}
           onValueChange={(value: string) => {
@@ -694,11 +693,8 @@ export default function ProductsPage() {
             ))}
           </SelectContent>
         </Select>
-        
-        <Select
-          value={sortBy}
-          onValueChange={(value: string) => handleSortChange(value)}
-        >
+
+        <Select value={sortBy} onValueChange={(value: string) => handleSortChange(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sıralama" />
           </SelectTrigger>
@@ -709,7 +705,7 @@ export default function ProductsPage() {
             <SelectItem value="stock">Stok</SelectItem>
           </SelectContent>
         </Select>
-        
+
         <Select
           value={sortOrder}
           onValueChange={(value: 'asc' | 'desc') => {
@@ -726,8 +722,8 @@ export default function ProductsPage() {
           </SelectContent>
         </Select>
 
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="ml-auto"
           onClick={() => {
             setSearchTerm('');
@@ -747,34 +743,34 @@ export default function ProductsPage() {
         </div>
       ) : products.length > 0 ? (
         <>
-          <ProductList 
-            products={products} 
-            onDelete={handleDeleteProduct} 
+          <ProductList
+            products={products}
+            onDelete={handleDeleteProduct}
             onEdit={handleEditProduct}
             onViewDetails={handleViewProductDetails}
           />
-          
+
           <div className="mt-4 text-sm text-gray-500 text-center">
             Toplam {totalItems} ürün, {totalPages} sayfa
           </div>
-          
-          <ProductPagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={handlePageChange} 
+
+          <ProductPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
           />
         </>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
+        <div className="text-center py-12  rounded-lg shadow">
           <h2 className="text-xl font-medium mb-2">Ürün bulunamadı</h2>
           <p className="text-gray-500">
             {searchTerm || categoryFilter !== 'ALL'
-              ? `Arama kriterlerinize uygun ürün bulunamadı.` 
+              ? `Arama kriterlerinize uygun ürün bulunamadı.`
               : 'Henüz ürün bulunmuyor.'}
           </p>
           {(searchTerm || categoryFilter !== 'ALL') && (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="mt-4"
               onClick={() => {
                 setSearchTerm('');

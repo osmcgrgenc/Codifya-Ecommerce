@@ -31,13 +31,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg overflow-hidden shadow-md">
-          <Image 
-          src={imageSrc} 
-          alt={product.name} 
-          className="w-full h-auto object-cover" 
-          width={500}
-          height={500}
+        <div className=" rounded-lg overflow-hidden shadow-md">
+          <Image
+            src={imageSrc}
+            alt={product.name}
+            className="w-full h-auto object-cover"
+            width={500}
+            height={500}
           />
         </div>
 
@@ -112,4 +112,4 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       </div>
     </div>
   );
-} 
+}

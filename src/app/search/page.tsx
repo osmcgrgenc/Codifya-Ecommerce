@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2">Arama Sonuçları</h1>
       <p className="text-gray-500 mb-8">
-        "{query}" için {products.length} sonuç bulundu
+        &quot;{query}&quot; için {products.length} sonuç bulundu
       </p>
 
       {products.length > 0 ? (
@@ -32,7 +32,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
+        <div className="text-center py-12  rounded-lg shadow">
           <h2 className="text-xl font-medium mb-4">Sonuç bulunamadı</h2>
           <p className="text-gray-500 mb-8">
             Aramanız için ürün bulunamadı. Lütfen farklı anahtar kelimelerle tekrar deneyin.
@@ -47,4 +47,4 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       )}
     </div>
   );
-} 
+}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OrderStatus } from '@prisma/client';
-
+import { useToast } from '@/components/ui/use-toast';
 interface DashboardStats {
   totalSales: number;
   totalOrders: number;
@@ -43,26 +43,26 @@ export default function AdminDashboardPage() {
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [popularProducts, setPopularProducts] = useState<PopularProduct[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { toast } = useToast();
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
+
         // İstatistikleri getir
         const statsResponse = await fetch('/api/admin/stats');
         if (statsResponse.ok) {
           const statsData = await statsResponse.json();
           setStats(statsData);
         }
-        
+
         // Son siparişleri getir
         const ordersResponse = await fetch('/api/admin/recent-orders');
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json();
           setRecentOrders(ordersData);
         }
-        
+
         // Popüler ürünleri getir
         const productsResponse = await fetch('/api/admin/popular-products');
         if (productsResponse.ok) {
@@ -70,14 +70,17 @@ export default function AdminDashboardPage() {
           setPopularProducts(productsData);
         }
       } catch (error) {
-        console.error('Dashboard verisi yüklenirken hata oluştu:', error);
+        toast({
+          title: 'Hata',
+          description: 'Dashboard verisi yüklenirken hata oluştu',
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [toast]);
 
   // Sipariş durumunu Türkçe'ye çeviren yardımcı fonksiyon
   const getStatusText = (status: OrderStatus) => {
@@ -141,8 +144,11 @@ export default function AdminDashboardPage() {
                 currency: 'TRY',
               })}
             </div>
-            <p className={`text-xs ${stats.salesGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}>
-              {stats.salesGrowth >= 0 ? '+' : ''}{stats.salesGrowth}% geçen aya göre
+            <p
+              className={`text-xs ${stats.salesGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}
+            >
+              {stats.salesGrowth >= 0 ? '+' : ''}
+              {stats.salesGrowth}% geçen aya göre
             </p>
           </CardContent>
         </Card>
@@ -153,8 +159,11 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            <p className={`text-xs ${stats.ordersGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}>
-              {stats.ordersGrowth >= 0 ? '+' : ''}{stats.ordersGrowth}% geçen aya göre
+            <p
+              className={`text-xs ${stats.ordersGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}
+            >
+              {stats.ordersGrowth >= 0 ? '+' : ''}
+              {stats.ordersGrowth}% geçen aya göre
             </p>
           </CardContent>
         </Card>
@@ -165,8 +174,11 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalCustomers}</div>
-            <p className={`text-xs ${stats.customersGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}>
-              {stats.customersGrowth >= 0 ? '+' : ''}{stats.customersGrowth}% geçen aya göre
+            <p
+              className={`text-xs ${stats.customersGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}
+            >
+              {stats.customersGrowth >= 0 ? '+' : ''}
+              {stats.customersGrowth}% geçen aya göre
             </p>
           </CardContent>
         </Card>
@@ -184,8 +196,11 @@ export default function AdminDashboardPage() {
                 currency: 'TRY',
               })}
             </div>
-            <p className={`text-xs ${stats.aovGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}>
-              {stats.aovGrowth >= 0 ? '+' : ''}{stats.aovGrowth}% geçen aya göre
+            <p
+              className={`text-xs ${stats.aovGrowth >= 0 ? 'text-green-500' : 'text-red-500'} mt-1`}
+            >
+              {stats.aovGrowth >= 0 ? '+' : ''}
+              {stats.aovGrowth}% geçen aya göre
             </p>
           </CardContent>
         </Card>
@@ -240,9 +255,7 @@ export default function AdminDashboardPage() {
                   <div key={product.id} className="flex justify-between items-center border-b pb-2">
                     <div>
                       <div className="font-medium">{product.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {product.soldCount} adet satıldı
-                      </div>
+                      <div className="text-sm text-gray-500">{product.soldCount} adet satıldı</div>
                     </div>
                     <div className="text-right">
                       <div className="font-medium">

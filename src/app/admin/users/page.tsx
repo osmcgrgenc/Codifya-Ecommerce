@@ -124,7 +124,7 @@ export default function UsersPage() {
         </Select>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className=" rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -160,7 +160,7 @@ export default function UsersPage() {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className=" divide-y divide-gray-200">
             {filteredUsers.map(user => (
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">

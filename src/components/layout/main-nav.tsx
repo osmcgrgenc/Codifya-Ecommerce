@@ -57,7 +57,7 @@ export function MainNav({ className }: MainNavProps) {
             {route.label}
           </Link>
           {route.hasMegaMenu && isMegaMenuOpen && (
-            <div className="absolute left-0 mt-2 w-screen max-w-screen-md bg-white shadow-lg rounded-md overflow-hidden z-50">
+            <div className="absolute left-0 mt-2 w-screen max-w-screen-md  shadow-lg rounded-md overflow-hidden z-50">
               <div className="grid grid-cols-3 gap-4 p-6">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900 mb-2">Kategoriler</h3>

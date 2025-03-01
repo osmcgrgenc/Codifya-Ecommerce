@@ -163,7 +163,7 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
       {/* Sol taraf - Adres ve Ödeme Bilgileri */}
       <div className="md:col-span-2 ml-auto space-y-6">
         {/* Teslimat Adresi */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className=" p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold mb-4">Teslimat Adresi</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -224,7 +224,7 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
         </div>
 
         {/* Fatura Adresi */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className=" p-6 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Fatura Adresi</h2>
             <div className="flex items-center">
@@ -302,7 +302,7 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
         </div>
 
         {/* Ödeme Yöntemi */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className=" p-6 rounded-lg shadow-sm border">
           <h2 className="text-xl font-semibold mb-4">Ödeme Yöntemi</h2>
           <Tabs defaultValue="iyzico" onValueChange={setPaymentMethod}>
             <TabsList className="grid w-full grid-cols-2">
@@ -318,8 +318,20 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
                 </p>
                 <div className="mt-4 flex items-center space-x-2">
                   <Image src="/images/visa.svg" alt="Visa" className="h-8" width={96} height={96} />
-                  <Image src="/images/mastercard.svg" alt="Mastercard" className="h-8" width={96} height={96} />
-                  <Image src="/images/amex.svg" alt="American Express" className="h-8" width={96} height={96} />
+                  <Image
+                    src="/images/mastercard.svg"
+                    alt="Mastercard"
+                    className="h-8"
+                    width={96}
+                    height={96}
+                  />
+                  <Image
+                    src="/images/amex.svg"
+                    alt="American Express"
+                    className="h-8"
+                    width={96}
+                    height={96}
+                  />
                 </div>
               </div>
             </TabsContent>
@@ -344,7 +356,7 @@ export default function CheckoutContent({ user }: CheckoutContentProps) {
 
       {/* Sağ taraf - Sipariş Özeti */}
       <div className="md:col-span-1">
-        <div className="bg-white p-6 rounded-lg shadow-sm border sticky top-4">
+        <div className=" p-6 rounded-lg shadow-sm border sticky top-4">
           <h2 className="text-xl font-semibold mb-4">Sipariş Özeti</h2>
 
           {/* Ürünler */}

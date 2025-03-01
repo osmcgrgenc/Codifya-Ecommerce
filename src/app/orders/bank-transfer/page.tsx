@@ -51,7 +51,7 @@ export default async function BankTransferPage({
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
+        <div className=" p-6 rounded-lg shadow-sm border mb-8">
           <h2 className="text-xl font-semibold mb-4">Ödeme Bilgileri</h2>
 
           <div className="space-y-4">

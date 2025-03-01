@@ -8,16 +8,17 @@ import { Providers } from './providers';
 import { ToastProvider } from '@/components/ui/use-toast';
 
 // Font optimizasyonu
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap', // Font yüklenene kadar sistem fontunu göster
   preload: true,
-  fallback: ['system-ui', 'sans-serif']
+  fallback: ['system-ui', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
   title: 'Codifya E-Ticaret',
-  description: 'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
+  description:
+    'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
   keywords: 'e-ticaret, online alışveriş, moda, elektronik, indirim, kampanya',
   authors: [{ name: 'Codifya E-Ticaret' }],
   creator: 'Codifya E-Ticaret',
@@ -37,7 +38,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Codifya E-Ticaret',
-    description: 'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
+    description:
+      'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
     url: 'https://codifya-ecommerce.com',
     siteName: 'Codifya E-Ticaret',
     images: [
@@ -54,7 +56,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Codifya E-Ticaret',
-    description: 'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
+    description:
+      'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
     images: ['/images/twitter-image.jpg'],
     creator: '@codifya',
   },
@@ -87,11 +90,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/images/hero-image.jpg" as="image" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
+
         {/* PWA için manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#4f46e5" />
-        
+
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />

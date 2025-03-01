@@ -3,10 +3,10 @@
 import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
 import { Product, Category } from '@prisma/client';
-
+import Image from 'next/image';
 interface ProductCardProps {
-  product: Product & { 
-    category?: Category | null
+  product: Product & {
+    category?: Category | null;
   };
 }
 
@@ -28,13 +28,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageSrc = product.image || '/images/placeholder.jpg';
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className=" rounded-lg shadow overflow-hidden">
       <Link href={`/shop/product/${product.id}`}>
         <div className="w-full h-48 relative">
-          <img 
-            src={imageSrc} 
-            alt={product.name} 
+          <Image
+            src={imageSrc}
+            alt={product.name}
             className="w-full h-full object-cover"
+            width={500}
+            height={500}
           />
         </div>
       </Link>
@@ -44,9 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-sm text-gray-500 mb-2">
-          {product.category?.name || 'Kategori Yok'}
-        </p>
+        <p className="text-sm text-gray-500 mb-2">{product.category?.name || 'Kategori Yok'}</p>
         <div className="flex items-center justify-between">
           <p className="text-lg font-bold">
             {product.price.toLocaleString('tr-TR', {

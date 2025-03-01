@@ -45,7 +45,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
   }
 
   // Veritabanından sipariş detaylarını getir
-  const order = await orderService.getOrderById(params.id) as OrderWithItems;
+  const order = (await orderService.getOrderById(params.id)) as OrderWithItems;
 
   // Sipariş bulunamadıysa 404 sayfasına yönlendir
   if (!order) {
@@ -66,7 +66,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
         <h1 className="text-3xl font-bold">Sipariş #{order.id}</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+      <div className=" rounded-lg shadow-md overflow-hidden mb-8">
         <div className="p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
             <div>
@@ -88,7 +88,8 @@ export default async function OrderPage({ params }: OrderPageProps) {
                     ? 'bg-green-100 text-green-800'
                     : order.status === OrderStatus.SHIPPED
                       ? 'bg-blue-100 text-blue-800'
-                      : order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING
+                      : order.status === OrderStatus.PENDING ||
+                          order.status === OrderStatus.PROCESSING
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-gray-100 text-gray-800'
                 }`}
@@ -110,7 +111,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
             <h2 className="text-lg font-medium mb-4">Sipariş Öğeleri</h2>
             <div className="flow-root">
               <ul className="-my-6 divide-y divide-gray-200">
-                {order.items.map((item) => (
+                {order.items.map(item => (
                   <li key={item.id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <Image
@@ -155,7 +156,8 @@ export default async function OrderPage({ params }: OrderPageProps) {
             <div>
               <h2 className="text-lg font-medium mb-4">Teslimat Bilgileri</h2>
               <p className="text-gray-600 mb-2">
-                <span className="font-medium">Adres:</span> {order.shippingAddress || 'Belirtilmemiş'}
+                <span className="font-medium">Adres:</span>{' '}
+                {order.shippingAddress || 'Belirtilmemiş'}
               </p>
               <p className="text-gray-600">
                 <span className="font-medium">Kargo Ücreti:</span> Ücretsiz
@@ -165,7 +167,8 @@ export default async function OrderPage({ params }: OrderPageProps) {
             <div>
               <h2 className="text-lg font-medium mb-4">Ödeme Bilgileri</h2>
               <p className="text-gray-600 mb-2">
-                <span className="font-medium">Ödeme Yöntemi:</span> {order.paymentMethod || 'Belirtilmemiş'}
+                <span className="font-medium">Ödeme Yöntemi:</span>{' '}
+                {order.paymentMethod || 'Belirtilmemiş'}
               </p>
             </div>
           </div>

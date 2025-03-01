@@ -243,7 +243,7 @@ export default function OrdersPage() {
         </Select>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className=" rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -292,7 +292,7 @@ export default function OrdersPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className=" divide-y divide-gray-200">
               {filteredOrders.map(order => (
                 <tr key={order.id}>
                   <td className="px-6 py-4 whitespace-nowrap">

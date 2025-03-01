@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     // Oturum kontrolü
     const session = await getServerSession(authOptions);
-    
+
     // Kullanıcı giriş yapmamışsa erişimi reddet
     if (!session) {
       return NextResponse.json(
@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    
+
     // İstek gövdesini al
     const body = await request.json();
-    
+
     // Gerekli alanları kontrol et
     if (!body.totalAmount || !Array.isArray(body.items) || body.items.length === 0) {
       return NextResponse.json(
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Ürün öğelerini kontrol et
     for (const item of body.items) {
       if (!item.productId || !item.quantity || !item.price) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
     // Sipariş verilerini hazırla
     const orderData = {
       userId: session.user.id,
@@ -54,16 +54,12 @@ export async function POST(request: NextRequest) {
         price: item.price,
       })),
     };
-    
+
     // Siparişi oluştur
     const newOrder = await orderService.createOrder(orderData);
-    
+
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
-    console.error('Sipariş oluşturulurken hata:', error);
-    return NextResponse.json(
-      { error: 'Sipariş oluşturulurken bir hata oluştu.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

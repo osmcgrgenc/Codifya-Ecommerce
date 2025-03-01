@@ -73,9 +73,18 @@ export async function GET() {
     });
 
     // İstatistikleri hesapla
-    const currentMonthSales = currentMonthOrders.reduce((sum: number, order: Order) => sum + order.totalAmount, 0);
-    const lastMonthSales = lastMonthOrders.reduce((sum: number, order: Order) => sum + order.totalAmount, 0);
-    const twoMonthsAgoSales = twoMonthsAgoOrders.reduce((sum: number, order: Order) => sum + order.totalAmount, 0);
+    const currentMonthSales = currentMonthOrders.reduce(
+      (sum: number, order: Order) => sum + order.totalAmount,
+      0
+    );
+    const lastMonthSales = lastMonthOrders.reduce(
+      (sum: number, order: Order) => sum + order.totalAmount,
+      0
+    );
+    const twoMonthsAgoSales = twoMonthsAgoOrders.reduce(
+      (sum: number, order: Order) => sum + order.totalAmount,
+      0
+    );
 
     const currentMonthOrderCount = currentMonthOrders.length;
     const lastMonthOrderCount = lastMonthOrders.length;
@@ -117,7 +126,8 @@ export async function GET() {
       },
     });
 
-    const averageOrderValue = totalOrders > 0 ? (totalSales._sum.totalAmount || 0) / totalOrders : 0;
+    const averageOrderValue =
+      totalOrders > 0 ? (totalSales._sum.totalAmount || 0) / totalOrders : 0;
 
     return NextResponse.json({
       totalSales: totalSales._sum.totalAmount || 0,
@@ -130,7 +140,6 @@ export async function GET() {
       aovGrowth,
     });
   } catch (error) {
-    console.error('İstatistik verileri alınırken hata oluştu:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

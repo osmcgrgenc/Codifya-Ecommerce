@@ -98,7 +98,7 @@ export const orderService = {
         paymentMethod: data.paymentMethod,
         status: OrderStatus.PENDING,
         items: {
-          create: data.items.map((item) => ({
+          create: data.items.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
             price: item.price,
@@ -114,4 +114,4 @@ export const orderService = {
       },
     });
   },
-}; 
+};

@@ -41,10 +41,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div className="md:col-span-1">
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className=" p-4 rounded-lg shadow">
             <h2 className="text-lg font-medium mb-4">Kategoriler</h2>
             <ul className="space-y-2">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <li key={cat.id}>
                   <Link
                     href={`/shop/category/${cat.slug}`}
@@ -68,7 +68,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white rounded-lg shadow">
+            <div className="text-center py-12  rounded-lg shadow">
               <h2 className="text-xl font-medium mb-4">Bu kategoride ürün bulunamadı</h2>
               <p className="text-gray-500 mb-8">
                 Şu anda bu kategoride ürün bulunmamaktadır. Lütfen daha sonra tekrar kontrol edin.
@@ -85,4 +85,4 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       </div>
     </div>
   );
-} 
+}

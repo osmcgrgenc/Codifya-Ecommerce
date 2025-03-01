@@ -87,8 +87,7 @@ export async function GET(request: NextRequest) {
       totalPages,
     });
   } catch (error) {
-    console.error('Ürünler listelenirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
 }
 
@@ -113,7 +112,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Slug oluştur
-    const slug = body.slug || body.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const slug =
+      body.slug ||
+      body.name
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
 
     // Ürünü oluştur
     const product = await db.product.create({
@@ -131,7 +135,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    console.error('Ürün eklenirken hata:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

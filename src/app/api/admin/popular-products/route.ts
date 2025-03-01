@@ -41,7 +41,7 @@ export async function GET() {
 
     // Ürünleri grupla ve satış sayılarını hesapla
     const productSales = new Map<string, ProductWithSales>();
-    
+
     orderItems.forEach((item: any) => {
       const productId = item.product.id;
       if (!productSales.has(productId)) {
@@ -52,7 +52,7 @@ export async function GET() {
           soldCount: 0,
         });
       }
-      
+
       const productData = productSales.get(productId);
       if (productData) {
         productData.soldCount += item.quantity;
@@ -66,7 +66,6 @@ export async function GET() {
 
     return NextResponse.json(popularProducts);
   } catch (error) {
-    console.error('Popüler ürünler alınırken hata oluştu:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
   }
-} 
+}

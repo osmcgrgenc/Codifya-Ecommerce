@@ -22,7 +22,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const toast = (props: ToastProps) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { ...props, id }]);
+    setToasts(prev => [...prev, { ...props, id }]);
 
     // Otomatik kapat
     if (props.duration !== 0) {
@@ -34,7 +34,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const dismiss = (id?: string) => {
     if (id) {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      setToasts(prev => prev.filter(toast => toast.id !== id));
     } else {
       setToasts([]);
     }
@@ -59,15 +59,15 @@ function ToastContainer({
 
   return (
     <div className="fixed bottom-0 right-0 z-50 p-4 space-y-4 max-w-md w-full">
-      {toasts.map((toast) => (
+      {toasts.map(toast => (
         <div
           key={toast.id}
           className={`p-4 rounded-md shadow-md transition-all transform translate-y-0 opacity-100 ${
             toast.variant === 'destructive'
               ? 'bg-red-100 border-l-4 border-red-500 text-red-700'
               : toast.variant === 'success'
-              ? 'bg-green-100 border-l-4 border-green-500 text-green-700'
-              : 'bg-white border-l-4 border-blue-500 text-gray-700'
+                ? 'bg-green-100 border-l-4 border-green-500 text-green-700'
+                : ' border-l-4 border-blue-500 text-gray-700'
           }`}
           role="alert"
         >
@@ -121,11 +121,15 @@ export const toast = (props: ToastProps) => {
         if (context) {
           context.toast(props);
         } else {
-          console.warn('Toast context not found. Make sure ToastProvider is in the component tree.');
+          // eslint-disable-next-line no-console
+          console.warn(
+            'Toast context not found. Make sure ToastProvider is in the component tree.'
+          );
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('Failed to show toast:', error);
       }
     }, 0);
   }
-}; 
+};
