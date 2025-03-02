@@ -102,10 +102,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           <div className="border-t border-gray-200 pt-4">
             <h2 className="text-lg font-medium mb-2">Özellikler</h2>
             <ul className="list-disc list-inside text-gray-600">
-              <li>Özellik 1</li>
-              <li>Özellik 2</li>
-              <li>Özellik 3</li>
-              <li>Özellik 4</li>
+              <li className="text-gray-600">Özellik 1</li>
+              <li className="text-gray-600">Özellik 2</li>
+              <li className="text-gray-600">Özellik 3</li>
+              <li className="text-gray-600">Özellik 4</li>
             </ul>
           </div>
         </div>

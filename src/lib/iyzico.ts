@@ -1,5 +1,12 @@
 import Iyzipay from 'iyzipay';
 
+// Monkey patch Iyzipay to prevent resources directory errors
+// @ts-ignore - Override _initResources to prevent directory errors
+Iyzipay.prototype._initResources = function () {
+  // Do nothing - prevents resources directory errors
+  return;
+};
+
 // İyzico yapılandırması
 const iyzipay = new Iyzipay({
   apiKey: process.env.IYZICO_API_KEY || '',

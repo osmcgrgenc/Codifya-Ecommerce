@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
-const { PrismaClient, UserRole } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+import { PrismaClient, UserRole } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient();
+// Global prisma değişkenini kontrol et ve yeniden tanımlama
+const prisma = global.prisma || new PrismaClient();
 
 async function main() {
   console.log('Seed başlatılıyor...');

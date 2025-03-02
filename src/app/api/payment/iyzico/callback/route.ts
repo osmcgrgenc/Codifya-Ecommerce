@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { retrievePaymentResult } from '@/lib/iyzico';
 import { db } from '@/lib/db';
-import { redirect } from 'next/navigation';
 
 export async function POST(req: NextRequest) {
   try {
