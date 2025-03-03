@@ -3,7 +3,7 @@ import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 // Global prisma değişkenini kontrol et ve yeniden tanımlama
-const prisma = global.prisma || new PrismaClient();
+const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seed başlatılıyor...');
@@ -18,6 +18,7 @@ async function main() {
       name: 'Admin Kullanıcı',
       password: adminPassword,
       role: UserRole.ADMIN,
+      phone: '1234567890',
     },
   });
   console.log('Admin kullanıcısı oluşturuldu:', admin.email);
@@ -32,9 +33,55 @@ async function main() {
       name: 'Test Kullanıcı',
       password: userPassword,
       role: UserRole.CUSTOMER,
+      phone: '1112223333',
     },
   });
   console.log('Normal kullanıcı oluşturuldu:', user.email);
+
+  // Müşteri Temsilcisi kullanıcı oluştur
+  const customerServiceUserPassword = await bcrypt.hash('agent123', 10);
+  const customerServiceUser = await prisma.user.upsert({
+    where: { email: 'agent@codifya.com' },
+    update: {},
+    create: {
+      name: 'Customer Service',
+      email: 'support@codifya.com',
+      password: customerServiceUserPassword,
+      role: UserRole.CUSTOMER_SERVICE,
+      phone: '0987654321',
+    },
+  });
+  console.log('Müşteri temsilcisi kullanıcı oluşturuldu:', customerServiceUser.email);
+
+  // Satıcı oluşturuluyor
+  const sellerUserPassword = await bcrypt.hash('seller123', 10);
+  const sellerUser = await prisma.user.create({
+    data: {
+      name: 'Trusted Seller',
+      email: 'seller@codifya.com',
+      password: sellerUserPassword,
+      role: UserRole.CUSTOMER,
+      phone: '5556667777',
+    },
+  });
+  console.log('Satıcı kullanıcı oluşturuldu:', sellerUser.email);
+
+  // Markalar oluşturuluyor
+  const brand1 = await prisma.brand.create({
+    data: {
+      name: 'TechMaster',
+      slug: 'techmaster',
+      description: 'Advanced technology products',
+    },
+  });
+
+  const brand2 = await prisma.brand.create({
+    data: {
+      name: 'EcoLiving',
+      slug: 'ecoliving',
+      description: 'Eco-friendly and sustainable products',
+    },
+  });
 
   // Kategoriler oluştur
   const elektronik = await prisma.category.upsert({
@@ -47,7 +94,28 @@ async function main() {
       image: '/images/categories/electronics.jpg',
     },
   });
-
+  const elektronikBilgisayar = await prisma.category.upsert({
+    where: { slug: 'elektronik-bilgisayar' },
+    update: {},
+    create: {
+      name: 'Bilgisayar',
+      slug: 'elektronik-bilgisayar',
+      description: 'Bilgisayar ve aksesuarları',
+      image: '/images/categories/computers.jpg',
+      parentId: elektronik.id,
+    },
+  });
+  const elektronikTelefon = await prisma.category.upsert({
+    where: { slug: 'elektronik-telefon' },
+    update: {},
+    create: {
+      name: 'Telefon',
+      slug: 'elektronik-telefon',
+      description: 'Telefon ve aksesuarları',
+      image: '/images/categories/telefon.jpg',
+      parentId: elektronik.id,
+    },
+  });
   const giyim = await prisma.category.upsert({
     where: { slug: 'giyim' },
     update: {},
@@ -80,9 +148,22 @@ async function main() {
       description: 'Yüksek performanslı akıllı telefon, 6.5 inç ekran, 128GB depolama, 8GB RAM.',
       price: 8999.99,
       stock: 50,
-      image: '/images/products/smartphone.jpg',
-      categoryId: elektronik.id,
+      categoryId: elektronikTelefon.id,
       featured: true,
+      brandId: brand1.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/smartphone.jpg', isMain: true
+        }]
+      }
     },
     {
       name: 'Dizüstü Bilgisayar',
@@ -90,9 +171,22 @@ async function main() {
       description: 'Güçlü işlemci, 16GB RAM, 512GB SSD, 15.6 inç ekran.',
       price: 15999.99,
       stock: 25,
-      image: '/images/products/laptop.jpg',
-      categoryId: elektronik.id,
+      categoryId: elektronikBilgisayar.id,
       featured: true,
+      brandId: brand1.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/laptop.jpg', isMain: true
+        }]
+      }
     },
     {
       name: 'Kablosuz Kulaklık',
@@ -100,9 +194,22 @@ async function main() {
       description: 'Gürültü önleyici, 30 saat pil ömrü, Bluetooth 5.0.',
       price: 1299.99,
       stock: 100,
-      image: '/images/products/headphones.jpg',
-      categoryId: elektronik.id,
+      categoryId: elektronikTelefon.id,
       featured: false,
+      brandId: brand1.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/headphones.jpg', isMain: true
+        }]
+      }
     },
     {
       name: 'Erkek T-Shirt',
@@ -110,9 +217,22 @@ async function main() {
       description: '100% pamuk, rahat kesim, çeşitli renklerde.',
       price: 199.99,
       stock: 200,
-      image: '/images/products/tshirt.jpg',
       categoryId: giyim.id,
       featured: false,
+      brandId: brand2.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/tshirt.jpg', isMain: true
+        }]
+      }
     },
     {
       name: 'Kadın Elbise',
@@ -120,9 +240,22 @@ async function main() {
       description: 'Şık tasarım, rahat kumaş, günlük kullanım için ideal.',
       price: 349.99,
       stock: 75,
-      image: '/images/products/dress.jpg',
       categoryId: giyim.id,
       featured: true,
+      brandId: brand2.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/dress.jpg', isMain: true
+        }]
+      }
     },
     {
       name: 'Spor Ayakkabı',
@@ -130,9 +263,22 @@ async function main() {
       description: 'Hafif, esnek, koşu ve günlük kullanım için uygun.',
       price: 799.99,
       stock: 120,
-      image: '/images/products/shoes.jpg',
       categoryId: spor.id,
       featured: true,
+      brandId: brand2.id,
+      seller: {
+        create: {
+          sellerId: sellerUser.id,
+          price: 1000,
+          stock: 20,
+          rating: 3.3,
+        }
+      },
+      images: {
+        create: [{
+          url: '/images/products/shoes.jpg', isMain: true
+        }]
+      }
     },
   ];
 

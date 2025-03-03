@@ -1,11 +1,21 @@
 import { db } from '@/lib/db';
-import { Product } from '@prisma/client';
+import { Product, ProductImage, ProductSeller, Variation, Brand } from '@prisma/client';
 
 export interface ProductFilter {
   name?: string;
   category?: string;
+  brand?: string;
   minPrice?: number;
   maxPrice?: number;
+  featured?: boolean;
+}
+
+export interface ProductWithRelations extends Product {
+  category: any;
+  brand: Brand;
+  images: ProductImage[];
+  seller: ProductSeller[];
+  variations: Variation[];
 }
 
 export interface PaginatedResult<T> {
@@ -20,10 +30,14 @@ export const productService = {
   /**
    * Tüm ürünleri getirir
    */
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(): Promise<ProductWithRelations[]> {
     return db.product.findMany({
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -40,7 +54,7 @@ export const productService = {
     filters?: ProductFilter,
     sortBy: string = 'createdAt',
     sortOrder: 'asc' | 'desc' = 'desc'
-  ): Promise<PaginatedResult<Product>> {
+  ): Promise<PaginatedResult<ProductWithRelations>> {
     const skip = (page - 1) * limit;
 
     // Filtreleri oluştur
@@ -56,11 +70,18 @@ export const productService = {
 
       if (filters.category) {
         where.category = {
-          name: {
-            contains: filters.category,
-            mode: 'insensitive',
-          },
+          slug: filters.category,
         };
+      }
+
+      if (filters.brand) {
+        where.brand = {
+          slug: filters.brand,
+        };
+      }
+
+      if (filters.featured !== undefined) {
+        where.featured = filters.featured;
       }
 
       if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
@@ -88,6 +109,10 @@ export const productService = {
       where,
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
       orderBy,
       skip,
@@ -109,13 +134,17 @@ export const productService = {
   /**
    * Öne çıkan ürünleri getirir
    */
-  async getFeaturedProducts(): Promise<Product[]> {
+  async getFeaturedProducts(): Promise<ProductWithRelations[]> {
     return db.product.findMany({
       where: {
         featured: true,
       },
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
       take: 6,
     });
@@ -124,7 +153,7 @@ export const productService = {
   /**
    * Belirli bir kategorideki ürünleri getirir
    */
-  async getProductsByCategory(categorySlug: string): Promise<Product[]> {
+  async getProductsByCategory(categorySlug: string): Promise<ProductWithRelations[]> {
     return db.product.findMany({
       where: {
         category: {
@@ -133,6 +162,10 @@ export const productService = {
       },
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
     });
   },
@@ -140,11 +173,15 @@ export const productService = {
   /**
    * Belirli bir ürünü ID'ye göre getirir
    */
-  async getProductById(id: string): Promise<Product | null> {
+  async getProductById(id: string): Promise<ProductWithRelations | null> {
     return db.product.findUnique({
       where: { id },
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
     });
   },
@@ -152,11 +189,15 @@ export const productService = {
   /**
    * Belirli bir ürünü slug'a göre getirir
    */
-  async getProductBySlug(slug: string): Promise<Product | null> {
+  async getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
     return db.product.findUnique({
       where: { slug },
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
     });
   },
@@ -164,7 +205,7 @@ export const productService = {
   /**
    * Arama sorgusuna göre ürünleri getirir
    */
-  async searchProducts(query: string): Promise<Product[]> {
+  async searchProducts(query: string): Promise<ProductWithRelations[]> {
     return db.product.findMany({
       where: {
         OR: [
@@ -184,6 +225,10 @@ export const productService = {
       },
       include: {
         category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
     });
   },
@@ -193,21 +238,41 @@ export const productService = {
    */
   async createProduct(data: {
     name: string;
-    description: string;
+    description?: string;
     price: number;
-    image: string;
     categoryId: string;
+    brandId: string;
     stock?: number;
     featured?: boolean;
     slug?: string;
-  }): Promise<Product> {
-    // Slug oluştur (eğer verilmemişse)
+    images: { url: string; isMain?: boolean }[];
+    metaTitle?: string;
+    metaDescription?: string;
+  }): Promise<ProductWithRelations> {
     const slug = data.slug || data.name.toLowerCase().replace(/\s+/g, '-');
-
+    
     return db.product.create({
       data: {
-        ...data,
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        stock: data.stock || 0,
+        featured: data.featured || false,
         slug,
+        categoryId: data.categoryId,
+        brandId: data.brandId,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        images: {
+          create: data.images,
+        },
+      },
+      include: {
+        category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
       },
     });
   },
@@ -221,14 +286,15 @@ export const productService = {
       name?: string;
       description?: string;
       price?: number;
-      image?: string;
       categoryId?: string;
+      brandId?: string;
       stock?: number;
       featured?: boolean;
       slug?: string;
+      metaTitle?: string;
+      metaDescription?: string;
     }
-  ): Promise<Product> {
-    // Slug güncelle (eğer isim değiştiyse ve slug verilmediyse)
+  ): Promise<ProductWithRelations> {
     let updateData = { ...data };
     if (data.name && !data.slug) {
       updateData.slug = data.name.toLowerCase().replace(/\s+/g, '-');
@@ -237,6 +303,13 @@ export const productService = {
     return db.product.update({
       where: { id },
       data: updateData,
+      include: {
+        category: true,
+        brand: true,
+        images: true,
+        seller: true,
+        variations: true,
+      },
     });
   },
 
@@ -246,6 +319,81 @@ export const productService = {
   async deleteProduct(id: string): Promise<Product> {
     return db.product.delete({
       where: { id },
+    });
+  },
+
+  // Yeni eklenen metodlar
+  async addProductImage(
+    productId: string,
+    data: { url: string; isMain?: boolean }
+  ): Promise<ProductImage> {
+    return db.productImage.create({
+      data: {
+        ...data,
+        productId,
+      },
+    });
+  },
+
+  async updateProductImage(
+    id: string,
+    data: { url?: string; isMain?: boolean }
+  ): Promise<ProductImage> {
+    return db.productImage.update({
+      where: { id },
+      data,
+    });
+  },
+
+  async deleteProductImage(id: string): Promise<ProductImage> {
+    return db.productImage.delete({
+      where: { id },
+    });
+  },
+
+  async addProductSeller(
+    data: {
+      productId: string;
+      sellerId: string;
+      price: number;
+      stock: number;
+    }
+  ): Promise<ProductSeller> {
+    return db.productSeller.create({
+      data,
+    });
+  },
+
+  async updateProductSeller(
+    productId: string,
+    sellerId: string,
+    data: {
+      price?: number;
+      stock?: number;
+    }
+  ): Promise<ProductSeller> {
+    return db.productSeller.update({
+      where: {
+        productId_sellerId: {
+          productId,
+          sellerId,
+        },
+      },
+      data,
+    });
+  },
+
+  async deleteProductSeller(
+    productId: string,
+    sellerId: string,
+  ): Promise<ProductSeller> {
+    return db.productSeller.delete({
+      where: {
+        productId_sellerId: {
+          productId,
+          sellerId,
+        },
+      },
     });
   },
 };
