@@ -19,6 +19,7 @@ async function main() {
       password: adminPassword,
       role: UserRole.ADMIN,
       phone: '1234567890',
+      emailVerified: new Date(),
     },
   });
   console.log('Admin kullanıcısı oluşturuldu:', admin.email);
@@ -140,6 +141,21 @@ async function main() {
 
   console.log('Kategoriler oluşturuldu');
 
+  // Varyasyon tipleri oluşturuluyor
+  const sizeOptionType = await prisma.optionType.create({
+    data: {
+      name: 'Size',
+    },
+  });
+
+  const colorOptionType = await prisma.optionType.create({
+    data: {
+      name: 'Color',
+    },
+  });
+
+  console.log('Varyasyon tipleri oluşturuldu');
+
   // Ürünler oluştur
   const products = [
     {
@@ -151,18 +167,59 @@ async function main() {
       categoryId: elektronikTelefon.id,
       featured: true,
       brandId: brand1.id,
+      metaTitle: 'Akıllı Telefon | En İyi Fiyatlarla',
+      metaDescription: 'Yüksek performanslı akıllı telefon modellerini uygun fiyatlarla satın alın.',
       seller: {
         create: {
           sellerId: sellerUser.id,
-          price: 1000,
+          price: 8999.99,
           stock: 20,
-          rating: 3.3,
+          rating: 4.5,
         }
       },
       images: {
         create: [{
-          url: '/images/products/smartphone.jpg', isMain: true
+          url: '/images/products/smartphone.jpg',
+          isMain: true
         }]
+      },
+      variations: {
+        create: [
+          {
+            sku: 'PHONE-BLK-128',
+            price: 8999.99,
+            stock: 30,
+            VariationOption: {
+              create: [
+                {
+                  optionTypeId: colorOptionType.id,
+                  value: 'Siyah'
+                },
+                {
+                  optionTypeId: sizeOptionType.id,
+                  value: '128GB'
+                }
+              ]
+            }
+          },
+          {
+            sku: 'PHONE-WHT-256',
+            price: 9999.99,
+            stock: 20,
+            VariationOption: {
+              create: [
+                {
+                  optionTypeId: colorOptionType.id,
+                  value: 'Beyaz'
+                },
+                {
+                  optionTypeId: sizeOptionType.id,
+                  value: '256GB'
+                }
+              ]
+            }
+          }
+        ]
       }
     },
     {
@@ -174,6 +231,8 @@ async function main() {
       categoryId: elektronikBilgisayar.id,
       featured: true,
       brandId: brand1.id,
+      metaTitle: 'Dizüstü Bilgisayar | Güçlü Performans',
+      metaDescription: 'Yüksek performanslı dizüstü bilgisayarlar uygun fiyatlarla.',
       seller: {
         create: {
           sellerId: sellerUser.id,
@@ -186,6 +245,23 @@ async function main() {
         create: [{
           url: '/images/products/laptop.jpg', isMain: true
         }]
+      },
+      variations: {
+        create: [
+          {
+            sku: 'LAPTOP-i5',
+            price: 15999.99,
+            stock: 15,
+            VariationOption: {
+              create: [
+                {
+                  optionTypeId: sizeOptionType.id,
+                  value: '15.6"'
+                }
+              ]
+            }
+          }
+        ]
       }
     },
     {
@@ -290,7 +366,36 @@ async function main() {
     });
   }
 
-  console.log('Ürünler oluşturuldu');
+  // Örnek sipariş ve ödeme oluştur
+  const order = await prisma.order.create({
+    data: {
+      userId: user.id,
+      totalAmount: 8999.99,
+      status: 'PENDING',
+      shippingAddress: 'Test Adres 1',
+      billingAddress: 'Test Adres 1',
+      items: {
+        create: [
+          {
+            productId: (await prisma.product.findUnique({ where: { slug: 'akilli-telefon' } }))!.id,
+            quantity: 1,
+            price: 8999.99,
+            subtotal: 8999.99
+          }
+        ]
+      },
+      payment: {
+        create: {
+          method: 'Kredi Kartı',
+          status: 'PENDING',
+          provider: 'Stripe',
+          transactionId: 'test_transaction'
+        }
+      }
+    }
+  });
+
+  console.log('Örnek sipariş oluşturuldu:', order.id);
 
   console.log('Seed tamamlandı!');
 }
