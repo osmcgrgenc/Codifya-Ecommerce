@@ -8,6 +8,10 @@ import Image from 'next/image';
 interface ProductDetailProps {
   product: Product & {
     category: Category | null;
+    images: {
+      url: string;
+      isMain: boolean;
+    }[];
   };
 }
 
@@ -20,13 +24,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image || '/images/placeholder.jpg',
+      image: product.images[0]?.url || '/images/placeholder.jpg',
       quantity: quantity,
       category: product.category?.name || 'Kategori Yok',
     });
   };
 
-  const imageSrc = product.image || '/images/placeholder.jpg';
+  const imageSrc = product.images[0]?.url || '/images/placeholder.jpg';
 
   return (
     <div className="container mx-auto px-4 py-8">

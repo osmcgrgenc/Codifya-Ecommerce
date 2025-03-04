@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { FileSpreadsheet } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -30,6 +31,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
     );
   }
+
+  // Menü öğeleri içine import sayfasını ekle
+  const menuItems = [
+    {
+      title: 'Toplu İçe Aktarma',
+      href: '/admin/import',
+      icon: <FileSpreadsheet className="h-5 w-5" />,
+    },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -58,6 +68,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <li>
               <Link href="/admin/users" className="block p-2 rounded hover:bg-gray-100">
                 Kullanıcılar
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/import" className="block p-2 rounded hover:bg-gray-100">
+                Toplu İçe Aktarma
               </Link>
             </li>
             <li>

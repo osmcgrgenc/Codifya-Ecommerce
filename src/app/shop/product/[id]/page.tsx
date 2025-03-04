@@ -32,5 +32,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
     return notFound();
   }
 
-  return <ProductDetail product={product as Product & { category: Category | null }} />;
+  return (
+    <ProductDetail
+      product={
+        product as Product & {
+          category: Category | null;
+          images: { url: string; isMain: boolean }[];
+        }
+      }
+    />
+  );
 }

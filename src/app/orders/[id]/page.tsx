@@ -73,7 +73,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
     redirect('/auth/login');
   }
 
-  const order = await orderService.getOrderById(params.id) as Order | null;
+  const order = (await orderService.getOrderById(params.id)) as Order | null;
 
   if (!order) {
     return notFound();
@@ -89,9 +89,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
         <Link href="/profile" className="text-indigo-600 hover:text-indigo-900 mr-4">
           ← Siparişlerime Dön
         </Link>
-        <h1 className="text-3xl font-bold">
-          Sipariş #{order.referenceCode || order.id}
-        </h1>
+        <h1 className="text-3xl font-bold">Sipariş #{order.referenceCode || order.id}</h1>
       </div>
 
       <div className="rounded-lg shadow-md overflow-hidden mb-8">
@@ -122,11 +120,11 @@ export default async function OrderPage({ params }: OrderPageProps) {
                     : order.status === OrderStatus.SHIPPED
                       ? 'bg-blue-100 text-blue-800'
                       : order.status === OrderStatus.PENDING ||
-                        order.status === OrderStatus.PROCESSING
+                          order.status === OrderStatus.PROCESSING
                         ? 'bg-yellow-100 text-yellow-800'
-                      : order.status === OrderStatus.CANCELLED
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-gray-100 text-gray-800'
+                        : order.status === OrderStatus.CANCELLED
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
                 }`}
               >
                 {order.status === OrderStatus.PAID
@@ -152,7 +150,10 @@ export default async function OrderPage({ params }: OrderPageProps) {
                   <li key={item.id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <Image
-                        src={item.product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg'}
+                        src={
+                          item.product.images.find(img => img.isMain)?.url ||
+                          '/images/placeholder.jpg'
+                        }
                         alt={item.product.name}
                         className="w-full h-full object-center object-cover"
                         width={96}
@@ -164,7 +165,10 @@ export default async function OrderPage({ params }: OrderPageProps) {
                       <div>
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <h3>
-                            <Link href={`/products/${item.product.slug}`} className="hover:text-indigo-600">
+                            <Link
+                              href={`/products/${item.product.slug}`}
+                              className="hover:text-indigo-600"
+                            >
                               {item.product.name}
                             </Link>
                           </h3>

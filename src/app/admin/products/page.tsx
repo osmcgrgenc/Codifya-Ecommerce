@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Product, Category } from '@prisma/client';
+import { Product, Category, ProductImage, Brand } from '@prisma/client';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import {
@@ -27,6 +27,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { PaginatedResult, ProductFilter, productService } from '@/services/product-service';
 import { useRouter } from 'next/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Ürün formu için arayüz
 interface ProductFormData {
@@ -37,6 +38,10 @@ interface ProductFormData {
   description: string;
   stock: number;
   featured?: boolean;
+  brandId?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  slug?: string;
 }
 
 // Ürün listesi bileşeni (Single Responsibility Principle)
@@ -46,7 +51,11 @@ const ProductList = ({
   onEdit,
   onViewDetails,
 }: {
-  products: (Product & { category?: { name: string } })[];
+  products: (Product & {
+    category?: { name: string };
+    brand?: { name: string };
+    images?: ProductImage[];
+  })[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onViewDetails: (id: string) => void;
@@ -73,19 +82,13 @@ const ProductList = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Fiyat
+                Marka
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Stok
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Öne Çıkan
               </th>
               <th
                 scope="col"
@@ -103,7 +106,10 @@ const ProductList = ({
                     <div className="flex-shrink-0 h-10 w-10">
                       <Image
                         className="h-10 w-10 rounded-md object-cover"
-                        src={product.image || 'https://via.placeholder.com/300'}
+                        src={
+                          product.images?.find(img => img.isMain)?.url ||
+                          'https://via.placeholder.com/300'
+                        }
                         alt={product.name}
                         width={50}
                         height={50}
@@ -111,8 +117,11 @@ const ProductList = ({
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                      <div className="text-xs text-gray-500 truncate max-w-xs">
-                        {product.description}
+                      <div className="text-xs text-gray-500">
+                        {product.price.toLocaleString('tr-TR', {
+                          style: 'currency',
+                          currency: 'TRY',
+                        })}
                       </div>
                     </div>
                   </div>
@@ -123,31 +132,13 @@ const ProductList = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
-                    {product.price.toLocaleString('tr-TR', {
-                      style: 'currency',
-                      currency: 'TRY',
-                    })}
-                  </div>
+                  <div className="text-sm text-gray-900">{product.brand?.name || 'Marka Yok'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div
                     className={`text-sm ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}
                   >
                     {product.stock !== undefined ? product.stock : 'N/A'}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <div className="text-sm">
-                    {product.featured ? (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        Evet
-                      </span>
-                    ) : (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                        Hayır
-                      </span>
-                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -180,20 +171,33 @@ const ProductList = ({
   );
 };
 
+// Ürün ekleme/düzenleme adımları
+enum ProductFormStep {
+  BASIC_INFO = 'Temel Bilgiler',
+  IMAGES = 'Ürün Görselleri',
+  SEO = 'SEO Bilgileri',
+  VARIANTS = 'Varyasyonlar',
+  REVIEW = 'Önizleme',
+}
+
 // Ürün formu bileşeni (Single Responsibility Principle)
 const ProductForm = ({
   product,
   categories,
+  brands,
   onSubmit,
   onCancel,
 }: {
   product: ProductFormData;
   categories: Category[];
+  brands: Brand[];
   onSubmit: (data: ProductFormData) => void;
   onCancel: () => void;
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ProductFormData>(product);
+  const [currentStep, setCurrentStep] = useState<ProductFormStep>(ProductFormStep.BASIC_INFO);
+  const [imagePreview, setImagePreview] = useState<string | null>(product.image || null);
 
   const handleChange = (field: keyof ProductFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -201,7 +205,7 @@ const ProductForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.categoryId || formData.price <= 0) {
+    if (!formData.name || !formData.categoryId || !formData.brandId || formData.price <= 0) {
       toast({
         title: 'Hata',
         description: 'Lütfen tüm zorunlu alanları doldurun.',
@@ -212,96 +216,376 @@ const ProductForm = ({
     onSubmit(formData);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImagePreview(result);
+        handleChange('image', result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const nextStep = () => {
+    // Adım doğrulaması
+    if (currentStep === ProductFormStep.BASIC_INFO) {
+      if (!formData.name || !formData.categoryId || !formData.brandId || formData.price <= 0) {
+        toast({
+          title: 'Hata',
+          description: 'Lütfen tüm zorunlu alanları doldurun.',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
+    // Bir sonraki adıma geç
+    const steps = Object.values(ProductFormStep);
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex < steps.length - 1) {
+      setCurrentStep(steps[currentIndex + 1]);
+    }
+  };
+
+  const prevStep = () => {
+    const steps = Object.values(ProductFormStep);
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(steps[currentIndex - 1]);
+    }
+  };
+
+  // Temel bilgiler adımı
+  const renderBasicInfoStep = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="name">Ürün Adı *</Label>
+        <Input
+          id="name"
+          value={formData.name}
+          onChange={e => handleChange('name', e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <Label htmlFor="price">Fiyat *</Label>
+        <Input
+          id="price"
+          type="number"
+          min="0"
+          step="0.01"
+          value={formData.price}
+          onChange={e => handleChange('price', parseFloat(e.target.value))}
+          required
+        />
+      </div>
+      <div>
+        <Label htmlFor="category">Kategori *</Label>
+        <Select
+          value={formData.categoryId}
+          onValueChange={value => handleChange('categoryId', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Kategori seçin" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map(category => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="brand">Marka *</Label>
+        <Select
+          value={formData.brandId || ''}
+          onValueChange={value => handleChange('brandId', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Marka seçin" />
+          </SelectTrigger>
+          <SelectContent>
+            {brands.map(brand => (
+              <SelectItem key={brand.id} value={brand.id}>
+                {brand.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="md:col-span-2">
+        <Label htmlFor="description">Açıklama</Label>
+        <Textarea
+          id="description"
+          value={formData.description}
+          onChange={e => handleChange('description', e.target.value)}
+          rows={4}
+        />
+      </div>
+      <div>
+        <Label htmlFor="stock">Stok</Label>
+        <Input
+          id="stock"
+          type="number"
+          min="0"
+          step="1"
+          value={formData.stock}
+          onChange={e => handleChange('stock', parseInt(e.target.value))}
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="featured"
+          checked={formData.featured}
+          onCheckedChange={(checked: CheckedState) => handleChange('featured', checked)}
+        />
+        <Label htmlFor="featured">Öne Çıkan Ürün</Label>
+      </div>
+    </div>
+  );
+
+  // Ürün görselleri adımı
+  const renderImagesStep = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="image">Ana Ürün Görseli</Label>
+        <div className="mt-2 flex items-center space-x-4">
+          <div className="w-32 h-32 border rounded-md overflow-hidden">
+            {imagePreview ? (
+              <Image
+                src={imagePreview}
+                alt="Ürün görseli önizleme"
+                width={128}
+                height={128}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                Görsel Yok
+              </div>
+            )}
+          </div>
+          <div>
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Önerilen boyut: 800x800px, maksimum dosya boyutu: 2MB
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* Ek görseller için buraya daha fazla alan eklenebilir */}
+    </div>
+  );
+
+  // SEO bilgileri adımı
+  const renderSeoStep = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="metaTitle">SEO Başlığı</Label>
+        <Input
+          id="metaTitle"
+          value={formData.metaTitle || ''}
+          onChange={e => handleChange('metaTitle', e.target.value)}
+          placeholder="SEO için sayfa başlığı"
+        />
+        <p className="text-xs text-gray-500 mt-1">Önerilen uzunluk: 50-60 karakter</p>
+      </div>
+      <div>
+        <Label htmlFor="metaDescription">SEO Açıklaması</Label>
+        <Textarea
+          id="metaDescription"
+          value={formData.metaDescription || ''}
+          onChange={e => handleChange('metaDescription', e.target.value)}
+          placeholder="SEO için sayfa açıklaması"
+          rows={3}
+        />
+        <p className="text-xs text-gray-500 mt-1">Önerilen uzunluk: 150-160 karakter</p>
+      </div>
+      <div>
+        <Label htmlFor="slug">URL Slug</Label>
+        <Input
+          id="slug"
+          value={formData.slug || ''}
+          onChange={e => handleChange('slug', e.target.value)}
+          placeholder="urun-adi-seo-dostu"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Boş bırakırsanız, ürün adından otomatik oluşturulacaktır.
+        </p>
+      </div>
+    </div>
+  );
+
+  // Varyasyonlar adımı
+  const renderVariantsStep = () => (
+    <div className="space-y-4">
+      <div className="bg-blue-50 p-4 rounded-md">
+        <p className="text-sm text-blue-700">
+          Ürün kaydedildikten sonra varyasyonları düzenleyebilirsiniz. Şu anda varsayılan bir
+          varyasyon otomatik olarak oluşturulacaktır.
+        </p>
+      </div>
+      <div>
+        <Label htmlFor="defaultStock">Varsayılan Varyasyon Stok Miktarı</Label>
+        <Input
+          id="defaultStock"
+          type="number"
+          min="0"
+          step="1"
+          value={formData.stock}
+          onChange={e => handleChange('stock', parseInt(e.target.value))}
+        />
+      </div>
+    </div>
+  );
+
+  // Önizleme adımı
+  const renderReviewStep = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Temel Bilgiler</h3>
+          <div className="mt-2 space-y-2">
+            <p>
+              <span className="font-medium">Ürün Adı:</span> {formData.name}
+            </p>
+            <p>
+              <span className="font-medium">Fiyat:</span>{' '}
+              {formData.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+            </p>
+            <p>
+              <span className="font-medium">Kategori:</span>{' '}
+              {categories.find(c => c.id === formData.categoryId)?.name}
+            </p>
+            <p>
+              <span className="font-medium">Marka:</span>{' '}
+              {brands.find(b => b.id === formData.brandId)?.name}
+            </p>
+            <p>
+              <span className="font-medium">Stok:</span> {formData.stock}
+            </p>
+            <p>
+              <span className="font-medium">Öne Çıkan:</span> {formData.featured ? 'Evet' : 'Hayır'}
+            </p>
+          </div>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Görsel</h3>
+          <div className="mt-2">
+            {imagePreview ? (
+              <Image
+                src={imagePreview}
+                alt="Ürün görseli önizleme"
+                width={200}
+                height={200}
+                className="rounded-md object-cover"
+              />
+            ) : (
+              <div className="w-48 h-48 flex items-center justify-center bg-gray-100 text-gray-400 rounded-md">
+                Görsel Yok
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-medium text-gray-500">Açıklama</h3>
+        <p className="mt-2 text-sm text-gray-700">{formData.description || 'Açıklama yok'}</p>
+      </div>
+      <div>
+        <h3 className="text-sm font-medium text-gray-500">SEO Bilgileri</h3>
+        <div className="mt-2 space-y-2">
+          <p>
+            <span className="font-medium">SEO Başlığı:</span>{' '}
+            {formData.metaTitle || 'Belirtilmemiş'}
+          </p>
+          <p>
+            <span className="font-medium">SEO Açıklaması:</span>{' '}
+            {formData.metaDescription || 'Belirtilmemiş'}
+          </p>
+          <p>
+            <span className="font-medium">URL Slug:</span>{' '}
+            {formData.slug || 'Otomatik oluşturulacak'}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Adıma göre içerik render et
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case ProductFormStep.BASIC_INFO:
+        return renderBasicInfoStep();
+      case ProductFormStep.IMAGES:
+        return renderImagesStep();
+      case ProductFormStep.SEO:
+        return renderSeoStep();
+      case ProductFormStep.VARIANTS:
+        return renderVariantsStep();
+      case ProductFormStep.REVIEW:
+        return renderReviewStep();
+      default:
+        return null;
+    }
+  };
+
   return (
     <Card className="mb-8">
       <CardHeader>
         <CardTitle>Ürün {product.name ? 'Düzenle' : 'Ekle'}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">Ürün Adı</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={e => handleChange('name', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="category">Kategori</Label>
-              <Select
-                value={formData.categoryId}
-                onValueChange={value => handleChange('categoryId', value)}
+        <div className="mb-6">
+          <div className="flex justify-between border-b pb-4">
+            {Object.values(ProductFormStep).map((step, index) => (
+              <button
+                key={step}
+                type="button"
+                className={`text-sm font-medium ${
+                  currentStep === step
+                    ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-4'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setCurrentStep(step)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Kategori seçin" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="price">Fiyat (₺)</Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={e => handleChange('price', parseFloat(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="stock">Stok Adedi</Label>
-              <Input
-                id="stock"
-                type="number"
-                value={formData.stock || 0}
-                onChange={e => handleChange('stock', parseInt(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="image">Görsel URL</Label>
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={e => handleChange('image', e.target.value)}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="featured">Öne Çıkan Ürün</Label>
-              <Select
-                value={formData.featured ? 'true' : 'false'}
-                onValueChange={value => handleChange('featured', value === 'true')}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Öne çıkan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Evet</SelectItem>
-                  <SelectItem value="false">Hayır</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <Label htmlFor="description">Ürün Açıklaması</Label>
-              <Textarea
-                id="description"
-                value={formData.description || ''}
-                onChange={e => handleChange('description', e.target.value)}
-                rows={3}
-              />
-            </div>
+                {index + 1}. {step}
+              </button>
+            ))}
           </div>
-          <div className="flex justify-end gap-2 mt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              İptal
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          {renderStepContent()}
+
+          <div className="mt-6 flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={currentStep === ProductFormStep.BASIC_INFO ? onCancel : prevStep}
+            >
+              {currentStep === ProductFormStep.BASIC_INFO ? 'İptal' : 'Geri'}
             </Button>
-            <Button type="submit">{product.name ? 'Güncelle' : 'Ekle'}</Button>
+            <div>
+              {currentStep === ProductFormStep.REVIEW ? (
+                <Button type="submit">Kaydet</Button>
+              ) : (
+                <Button type="button" onClick={nextStep}>
+                  İleri
+                </Button>
+              )}
+            </div>
           </div>
         </form>
       </CardContent>
@@ -409,65 +693,108 @@ const ProductPagination = ({
   );
 };
 
+// Checkbox onCheckedChange için tip tanımı
+type CheckedState = boolean | 'indeterminate';
+
 // Ana sayfa bileşeni
 export default function ProductsPage() {
-  const { toast } = useToast();
   const router = useRouter();
-
-  // State tanımlamaları
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
+  const [products, setProducts] = useState<
+    PaginatedResult<
+      Product & {
+        category?: { name: string };
+        brand?: { name: string };
+        images?: ProductImage[];
+      }
+    >
+  >({
+    data: [],
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+  });
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<
+    (Product & { images?: ProductImage[] }) | null
+  >(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
+  const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const itemsPerPage = 10;
 
-  // Boş ürün formu
-  const emptyProductForm: ProductFormData = {
-    name: '',
-    price: 0,
-    image: 'https://via.placeholder.com/300',
-    categoryId: '',
-    description: '',
-    stock: 0,
-    featured: false,
-  };
+  // Kategorileri getir
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/admin/categories');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+        }
+      } catch (error) {
+        toast({
+          title: 'Hata',
+          description: 'Kategoriler yüklenirken bir hata oluştu.',
+          variant: 'destructive',
+        });
+      }
+    };
 
-  // Ürünleri yükle (Open/Closed Principle - yeni filtreler eklenebilir)
-  const loadProducts = useCallback(async () => {
+    fetchCategories();
+  }, [toast]);
+
+  // Markaları getir
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await fetch('/api/admin/brands');
+        if (response.ok) {
+          const data = await response.json();
+          setBrands(data);
+        }
+      } catch (error) {
+        toast({
+          title: 'Hata',
+          description: 'Markalar yüklenirken bir hata oluştu.',
+          variant: 'destructive',
+        });
+      }
+    };
+
+    fetchBrands();
+  }, [toast]);
+
+  // Ürünleri getir
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // Filtreleri oluştur
-      const filters: ProductFilter = {};
+      const filter: ProductFilter = {};
 
       if (searchTerm) {
-        filters.name = searchTerm;
+        filter.name = searchTerm;
       }
 
-      if (categoryFilter !== 'ALL') {
-        filters.category = categoryFilter;
+      if (categoryFilter && categoryFilter !== 'ALL') {
+        filter.category = categoryFilter as string;
       }
 
-      // Ürün servisini kullanarak ürünleri getir
       const result = await productService.getPaginatedProducts(
         currentPage,
         itemsPerPage,
-        filters,
+        filter,
         sortBy,
         sortOrder
       );
 
-      setProducts(result.data);
-      setTotalPages(result.totalPages);
-      setTotalItems(result.total);
+      setProducts(result);
     } catch (error) {
       toast({
         title: 'Hata',
@@ -479,127 +806,10 @@ export default function ProductsPage() {
     }
   }, [currentPage, searchTerm, categoryFilter, sortBy, sortOrder, toast]);
 
-  // Kategorileri yükle
-  const loadCategories = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/categories');
-
-      if (!response.ok) {
-        throw new Error('Kategoriler yüklenirken bir hata oluştu');
-      }
-
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      toast({
-        title: 'Hata',
-        description: 'Kategoriler yüklenirken bir hata oluştu.',
-        variant: 'destructive',
-      });
-    }
-  }, [toast]);
-
   // Sayfa yüklendiğinde verileri getir
   useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
-
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
-
-  // Ürün silme işlemi
-  const handleDeleteProduct = async (id: string) => {
-    if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
-      try {
-        await productService.deleteProduct(id);
-
-        // Başarılı silme işlemi sonrası ürünleri yeniden yükle
-        loadProducts();
-
-        toast({
-          title: 'Başarılı',
-          description: 'Ürün başarıyla silindi.',
-        });
-      } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Ürün silinirken bir hata oluştu.',
-          variant: 'destructive',
-        });
-      }
-    }
-  };
-
-  // Ürün düzenleme işlemi
-  const handleEditProduct = async (id: string) => {
-    try {
-      const product = await productService.getProductById(id);
-
-      if (!product) {
-        throw new Error('Ürün bulunamadı');
-      }
-
-      setEditingProduct(product);
-      setShowForm(true);
-    } catch (error) {
-      toast({
-        title: 'Hata',
-        description: 'Ürün bilgileri alınırken bir hata oluştu.',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  // Ürün detaylarını görüntüleme
-  const handleViewProductDetails = (id: string) => {
-    router.push(`/admin/products/${id}`);
-  };
-
-  // Ürün ekleme/güncelleme işlemi
-  const handleSubmitProduct = async (formData: ProductFormData) => {
-    try {
-      if (editingProduct) {
-        // Ürün güncelleme
-        await productService.updateProduct(editingProduct.id, {
-          name: formData.name,
-          description: formData.description,
-          price: formData.price,
-          image: formData.image,
-          categoryId: formData.categoryId,
-          stock: formData.stock,
-          featured: formData.featured,
-        });
-      } else {
-        // Yeni ürün ekleme
-        await productService.createProduct({
-          name: formData.name,
-          description: formData.description,
-          price: formData.price,
-          image: formData.image,
-          categoryId: formData.categoryId,
-          stock: formData.stock,
-          featured: formData.featured,
-        });
-      }
-
-      // Başarılı işlem sonrası formu kapat ve ürünleri yeniden yükle
-      setShowForm(false);
-      setEditingProduct(null);
-      loadProducts();
-
-      toast({
-        title: 'Başarılı',
-        description: editingProduct ? 'Ürün başarıyla güncellendi.' : 'Ürün başarıyla eklendi.',
-      });
-    } catch (error) {
-      toast({
-        title: 'Hata',
-        description: 'Ürün kaydedilirken bir hata oluştu.',
-        variant: 'destructive',
-      });
-    }
-  };
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Arama işlemi
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -607,7 +817,7 @@ export default function ProductsPage() {
     setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön
   };
 
-  // Sayfa değiştirme işlemi
+  // Sayfa değiştirme
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -625,163 +835,213 @@ export default function ProductsPage() {
     setCurrentPage(1); // Sıralama değiştiğinde ilk sayfaya dön
   };
 
-  // Düzenleme için ürün formunu hazırla
-  const getProductFormData = (product: Product | null): ProductFormData => {
-    if (!product) return emptyProductForm;
+  // Ürün silme
+  const handleDeleteProduct = async (id: string) => {
+    if (window.confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+      try {
+        await productService.deleteProduct(id);
+        toast({
+          title: 'Başarılı',
+          description: 'Ürün başarıyla silindi.',
+        });
+        fetchProducts();
+      } catch (error) {
+        toast({
+          title: 'Hata',
+          description: 'Ürün silinirken bir hata oluştu.',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
+  // Ürün düzenleme
+  const handleEditProduct = (id: string) => {
+    const product = products.data.find(p => p.id === id);
+    if (product) {
+      setEditingProduct(product);
+      setShowForm(true);
+    }
+  };
+
+  // Ürün detaylarını görüntüleme
+  const handleViewProductDetails = (id: string) => {
+    router.push(`/admin/products/${id}`);
+  };
+
+  // Ürün ekleme/güncelleme
+  const handleSubmitProduct = async (data: ProductFormData) => {
+    try {
+      if (editingProduct) {
+        // Ürün güncelleme
+        await productService.updateProduct(editingProduct.id, {
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+          featured: data.featured,
+          categoryId: data.categoryId,
+          brandId: data.brandId || '',
+          metaTitle: data.metaTitle,
+          metaDescription: data.metaDescription,
+          slug: data.slug,
+        });
+
+        // Eğer yeni bir görsel yüklendiyse
+        if (
+          data.image &&
+          (!editingProduct.images || !editingProduct.images.some(img => img.url === data.image))
+        ) {
+          // Mevcut ana görseli bul
+          const mainImage = editingProduct.images?.find(img => img.isMain);
+
+          if (mainImage) {
+            // Mevcut ana görseli güncelle
+            await productService.updateProductImage(mainImage.id, {
+              url: data.image,
+              isMain: true,
+            });
+          } else {
+            // Yeni ana görsel ekle
+            await productService.addProductImage(editingProduct.id, {
+              url: data.image,
+              isMain: true,
+            });
+          }
+        }
+
+        toast({
+          title: 'Başarılı',
+          description: 'Ürün başarıyla güncellendi.',
+        });
+      } else {
+        // Yeni ürün ekleme
+        const newProduct = await productService.createProduct({
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+          featured: data.featured,
+          categoryId: data.categoryId,
+          brandId: data.brandId || '',
+          metaTitle: data.metaTitle,
+          metaDescription: data.metaDescription,
+          slug: data.slug,
+          images: data.image ? [{ url: data.image, isMain: true }] : [],
+        });
+
+        toast({
+          title: 'Başarılı',
+          description: 'Ürün başarıyla eklendi.',
+        });
+      }
+
+      // Formu kapat ve ürünleri yeniden yükle
+      setShowForm(false);
+      setEditingProduct(null);
+      fetchProducts();
+    } catch (error) {
+      toast({
+        title: 'Hata',
+        description: 'Ürün kaydedilirken bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Ürün formunu göster
+  const getProductFormData = (
+    product: (Product & { images?: ProductImage[] }) | null
+  ): ProductFormData => {
+    if (product) {
+      return {
+        name: product.name,
+        price: product.price,
+        image: product.images?.find(img => img.isMain)?.url || '',
+        categoryId: product.categoryId,
+        description: product.description || '',
+        stock: product.stock,
+        featured: product.featured,
+        brandId: product.brandId,
+        metaTitle: product.metaTitle || '',
+        metaDescription: product.metaDescription || '',
+        slug: product.slug,
+      };
+    }
 
     return {
-      name: product.name,
-      price: product.price,
-      image: product.image || 'https://via.placeholder.com/300',
-      categoryId: product.categoryId,
-      description: product.description || '',
-      stock: product.stock,
-      featured: product.featured,
+      name: '',
+      price: 0,
+      image: '',
+      categoryId: '',
+      description: '',
+      stock: 0,
+      featured: false,
+      brandId: '',
+      metaTitle: '',
+      metaDescription: '',
+      slug: '',
     };
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Ürünler</h1>
-        <Button
-          onClick={() => {
-            setShowForm(!showForm);
-            setEditingProduct(null);
-          }}
-        >
-          {showForm && !editingProduct ? 'İptal' : 'Yeni Ürün Ekle'}
-        </Button>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Ürünler</h1>
 
+      {/* Ürün formu */}
       {showForm && (
         <ProductForm
           product={getProductFormData(editingProduct)}
           categories={categories}
+          brands={brands}
           onSubmit={handleSubmitProduct}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingProduct(null);
-          }}
+          onCancel={() => setShowForm(false)}
         />
       )}
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6 flex-wrap">
-        <Input
-          placeholder="Ürün ara..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="max-w-md"
-        />
-
-        <Select
-          value={categoryFilter}
-          onValueChange={(value: string) => {
-            setCategoryFilter(value);
-            setCurrentPage(1); // Kategori değiştiğinde ilk sayfaya dön
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Kategori Filtresi" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">Tüm Kategoriler</SelectItem>
-            {categories.map(category => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={sortBy} onValueChange={(value: string) => handleSortChange(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sıralama" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="createdAt">Eklenme Tarihi</SelectItem>
-            <SelectItem value="name">Ürün Adı</SelectItem>
-            <SelectItem value="price">Fiyat</SelectItem>
-            <SelectItem value="stock">Stok</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={sortOrder}
-          onValueChange={(value: 'asc' | 'desc') => {
-            setSortOrder(value);
-            setCurrentPage(1); // Sıralama yönü değiştiğinde ilk sayfaya dön
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sıralama Yönü" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="asc">Artan</SelectItem>
-            <SelectItem value="desc">Azalan</SelectItem>
-          </SelectContent>
-        </Select>
-
+      {/* Ürün listesi */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex-1 w-full sm:w-auto">
+          <Input
+            placeholder="Ürün ara..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="max-w-md"
+          />
+        </div>
         <Button
-          variant="outline"
-          className="ml-auto"
           onClick={() => {
-            setSearchTerm('');
-            setCategoryFilter('ALL');
-            setSortBy('createdAt');
-            setSortOrder('desc');
-            setCurrentPage(1);
+            setEditingProduct(null);
+            setShowForm(true);
           }}
         >
-          Filtreleri Sıfırla
+          Yeni Ürün Ekle
         </Button>
       </div>
 
+      {/* Ürün listesi */}
       {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
         </div>
-      ) : products.length > 0 ? (
+      ) : (
         <>
           <ProductList
-            products={products}
+            products={products.data}
             onDelete={handleDeleteProduct}
             onEdit={handleEditProduct}
             onViewDetails={handleViewProductDetails}
           />
 
-          <div className="mt-4 text-sm text-gray-500 text-center">
-            Toplam {totalItems} ürün, {totalPages} sayfa
+          {/* Sayfalama */}
+          <div className="mt-6">
+            <ProductPagination
+              currentPage={products.page}
+              totalPages={products.totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
-
-          <ProductPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
         </>
-      ) : (
-        <div className="text-center py-12  rounded-lg shadow">
-          <h2 className="text-xl font-medium mb-2">Ürün bulunamadı</h2>
-          <p className="text-gray-500">
-            {searchTerm || categoryFilter !== 'ALL'
-              ? `Arama kriterlerinize uygun ürün bulunamadı.`
-              : 'Henüz ürün bulunmuyor.'}
-          </p>
-          {(searchTerm || categoryFilter !== 'ALL') && (
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => {
-                setSearchTerm('');
-                setCategoryFilter('ALL');
-                setCurrentPage(1);
-              }}
-            >
-              Filtreleri Temizle
-            </Button>
-          )}
-        </div>
       )}
     </div>
   );

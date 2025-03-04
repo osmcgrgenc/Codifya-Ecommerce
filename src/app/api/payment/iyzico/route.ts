@@ -47,7 +47,12 @@ export async function POST(req: NextRequest) {
         status: 'PENDING_PAYMENT',
         shippingAddress: JSON.stringify(shippingAddress),
         billingAddress: JSON.stringify(billingAddress),
-        paymentMethod: 'iyzico',
+        payment: {
+          create: {
+            method: 'iyzico',
+            status: 'PENDING',
+          },
+        },
         items: {
           create: items.map((item: any) => ({
             productId: item.id,
@@ -155,7 +160,12 @@ export async function GET(req: NextRequest) {
         data: {
           status: 'PAID',
           paymentId: paymentResult.paymentId || '',
-          paymentMethod: 'IYZICO',
+          payment: {
+            create: {
+              method: 'iyzico',
+              status: 'PAID',
+            },
+          },
         },
       });
 
@@ -172,7 +182,12 @@ export async function GET(req: NextRequest) {
         data: {
           status: 'CANCELLED',
           paymentId: paymentResult.paymentId || '',
-          paymentMethod: 'IYZICO',
+          payment: {
+            update: {
+              method: 'iyzico',
+              status: 'CANCELLED',
+            },
+          },
         },
       });
 

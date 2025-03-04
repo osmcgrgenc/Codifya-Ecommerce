@@ -168,20 +168,23 @@ async function main() {
       featured: true,
       brandId: brand1.id,
       metaTitle: 'Akıllı Telefon | En İyi Fiyatlarla',
-      metaDescription: 'Yüksek performanslı akıllı telefon modellerini uygun fiyatlarla satın alın.',
+      metaDescription:
+        'Yüksek performanslı akıllı telefon modellerini uygun fiyatlarla satın alın.',
       seller: {
         create: {
           sellerId: sellerUser.id,
           price: 8999.99,
           stock: 20,
           rating: 4.5,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/smartphone.jpg',
-          isMain: true
-        }]
+        create: [
+          {
+            url: '/images/products/smartphone.jpg',
+            isMain: true,
+          },
+        ],
       },
       variations: {
         create: [
@@ -193,14 +196,14 @@ async function main() {
               create: [
                 {
                   optionTypeId: colorOptionType.id,
-                  value: 'Siyah'
+                  value: 'Siyah',
                 },
                 {
                   optionTypeId: sizeOptionType.id,
-                  value: '128GB'
-                }
-              ]
-            }
+                  value: '128GB',
+                },
+              ],
+            },
           },
           {
             sku: 'PHONE-WHT-256',
@@ -210,17 +213,17 @@ async function main() {
               create: [
                 {
                   optionTypeId: colorOptionType.id,
-                  value: 'Beyaz'
+                  value: 'Beyaz',
                 },
                 {
                   optionTypeId: sizeOptionType.id,
-                  value: '256GB'
-                }
-              ]
-            }
-          }
-        ]
-      }
+                  value: '256GB',
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       name: 'Dizüstü Bilgisayar',
@@ -239,12 +242,15 @@ async function main() {
           price: 1000,
           stock: 20,
           rating: 3.3,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/laptop.jpg', isMain: true
-        }]
+        create: [
+          {
+            url: '/images/products/laptop.jpg',
+            isMain: true,
+          },
+        ],
       },
       variations: {
         create: [
@@ -256,13 +262,13 @@ async function main() {
               create: [
                 {
                   optionTypeId: sizeOptionType.id,
-                  value: '15.6"'
-                }
-              ]
-            }
-          }
-        ]
-      }
+                  value: '15.6"',
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       name: 'Kablosuz Kulaklık',
@@ -279,13 +285,16 @@ async function main() {
           price: 1000,
           stock: 20,
           rating: 3.3,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/headphones.jpg', isMain: true
-        }]
-      }
+        create: [
+          {
+            url: '/images/products/headphones.jpg',
+            isMain: true,
+          },
+        ],
+      },
     },
     {
       name: 'Erkek T-Shirt',
@@ -302,13 +311,16 @@ async function main() {
           price: 1000,
           stock: 20,
           rating: 3.3,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/tshirt.jpg', isMain: true
-        }]
-      }
+        create: [
+          {
+            url: '/images/products/tshirt.jpg',
+            isMain: true,
+          },
+        ],
+      },
     },
     {
       name: 'Kadın Elbise',
@@ -325,13 +337,16 @@ async function main() {
           price: 1000,
           stock: 20,
           rating: 3.3,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/dress.jpg', isMain: true
-        }]
-      }
+        create: [
+          {
+            url: '/images/products/dress.jpg',
+            isMain: true,
+          },
+        ],
+      },
     },
     {
       name: 'Spor Ayakkabı',
@@ -348,13 +363,16 @@ async function main() {
           price: 1000,
           stock: 20,
           rating: 3.3,
-        }
+        },
       },
       images: {
-        create: [{
-          url: '/images/products/shoes.jpg', isMain: true
-        }]
-      }
+        create: [
+          {
+            url: '/images/products/shoes.jpg',
+            isMain: true,
+          },
+        ],
+      },
     },
   ];
 
@@ -380,19 +398,19 @@ async function main() {
             productId: (await prisma.product.findUnique({ where: { slug: 'akilli-telefon' } }))!.id,
             quantity: 1,
             price: 8999.99,
-            subtotal: 8999.99
-          }
-        ]
+            subtotal: 8999.99,
+          },
+        ],
       },
       payment: {
         create: {
           method: 'Kredi Kartı',
           status: 'PENDING',
           provider: 'Stripe',
-          transactionId: 'test_transaction'
-        }
-      }
-    }
+          transactionId: 'test_transaction',
+        },
+      },
+    },
   });
 
   console.log('Örnek sipariş oluşturuldu:', order.id);

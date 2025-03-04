@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { OrderStatus } from '@prisma/client';
 import { useToast } from '@/components/ui/use-toast';
-
+import Image from 'next/image';
 interface ProfileContentProps {
   user: User & {
     phone: string | null;
@@ -125,7 +125,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
   const handleProfileUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    
+
     try {
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
@@ -210,9 +210,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                       : 'Müşteri'}
                 </p>
                 {user.emailVerified && (
-                  <p className="text-sm text-green-600 mt-1">
-                    ✓ E-posta Doğrulandı
-                  </p>
+                  <p className="text-sm text-green-600 mt-1">✓ E-posta Doğrulandı</p>
                 )}
               </div>
             </div>
@@ -221,9 +219,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
               <h3 className="text-lg font-medium mb-4">Hesap Bilgileri</h3>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ad Soyad
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad</label>
                   <input
                     type="text"
                     name="name"
@@ -232,9 +228,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    E-posta
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
                   <input
                     type="email"
                     defaultValue={user.email || ''}
@@ -243,9 +237,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Telefon
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
                   <input
                     type="tel"
                     name="phone"
@@ -272,9 +264,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Yeni Şifre
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Yeni Şifre</label>
                   <input
                     type="password"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -365,7 +355,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                                 : order.status === OrderStatus.SHIPPED
                                   ? 'bg-blue-100 text-blue-800'
                                   : order.status === OrderStatus.PENDING ||
-                                    order.status === OrderStatus.PROCESSING
+                                      order.status === OrderStatus.PROCESSING
                                     ? 'bg-yellow-100 text-yellow-800'
                                     : order.status === OrderStatus.CANCELLED
                                       ? 'bg-red-100 text-red-800'
@@ -443,16 +433,15 @@ export default function ProfileContent({ user }: ProfileContentProps) {
             ) : (
               <div className="space-y-4">
                 {reviews.map(review => (
-                  <div
-                    key={review.id}
-                    className="border border-gray-200 rounded-lg p-4"
-                  >
+                  <div key={review.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <img
+                        <Image
                           src={review.product.images.find(img => img.isMain)?.url || ''}
                           alt={review.product.name}
                           className="w-16 h-16 object-cover rounded"
+                          width={16}
+                          height={16}
                         />
                         <div className="ml-4">
                           <h4 className="font-medium">{review.product.name}</h4>
@@ -461,9 +450,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                               <svg
                                 key={i}
                                 className={`w-4 h-4 ${
-                                  i < review.rating
-                                    ? 'text-yellow-400'
-                                    : 'text-gray-300'
+                                  i < review.rating ? 'text-yellow-400' : 'text-gray-300'
                                 }`}
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
@@ -478,9 +465,7 @@ export default function ProfileContent({ user }: ProfileContentProps) {
                         {new Date(review.createdAt).toLocaleDateString('tr-TR')}
                       </div>
                     </div>
-                    {review.comment && (
-                      <p className="mt-4 text-gray-600">{review.comment}</p>
-                    )}
+                    {review.comment && <p className="mt-4 text-gray-600">{review.comment}</p>}
                     <div className="mt-4 flex items-center space-x-4 text-sm text-gray-500">
                       <span>{review.likes} beğeni</span>
                       <span>{review.dislikes} beğenmeme</span>

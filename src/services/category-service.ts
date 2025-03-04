@@ -167,7 +167,7 @@ export const categoryService = {
     parentId?: string;
   }): Promise<Category> {
     const slug = data.slug || data.name.toLowerCase().replace(/\s+/g, '-');
-    
+
     return db.category.create({
       data: {
         ...data,

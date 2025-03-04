@@ -1,5 +1,7 @@
 import { db } from '@/lib/db';
 import { Product, ProductImage, ProductSeller, Variation, Brand } from '@prisma/client';
+import { variationService } from './variation-service';
+import { slugify } from '@/lib/utils';
 
 export interface ProductFilter {
   name?: string;
@@ -31,7 +33,7 @@ export const productService = {
    * Tüm ürünleri getirir
    */
   async getAllProducts(): Promise<ProductWithRelations[]> {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       include: {
         category: true,
         brand: true,
@@ -43,6 +45,12 @@ export const productService = {
         createdAt: 'desc',
       },
     });
+
+    // Her ürün için toplam stok değerini hesapla
+    return products.map(product => ({
+      ...product,
+      stock: this.calculateTotalStock(product),
+    }));
   },
 
   /**
@@ -119,11 +127,17 @@ export const productService = {
       take: limit,
     });
 
+    // Her ürün için toplam stok değerini hesapla
+    const productsWithStock = products.map(product => ({
+      ...product,
+      stock: this.calculateTotalStock(product),
+    }));
+
     // Toplam sayfa sayısını hesapla
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: products,
+      data: productsWithStock,
       total,
       page,
       limit,
@@ -135,7 +149,7 @@ export const productService = {
    * Öne çıkan ürünleri getirir
    */
   async getFeaturedProducts(): Promise<ProductWithRelations[]> {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         featured: true,
       },
@@ -148,13 +162,19 @@ export const productService = {
       },
       take: 6,
     });
+
+    // Her ürün için toplam stok değerini hesapla
+    return products.map(product => ({
+      ...product,
+      stock: this.calculateTotalStock(product),
+    }));
   },
 
   /**
    * Belirli bir kategorideki ürünleri getirir
    */
   async getProductsByCategory(categorySlug: string): Promise<ProductWithRelations[]> {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         category: {
           slug: categorySlug,
@@ -168,14 +188,20 @@ export const productService = {
         variations: true,
       },
     });
+
+    // Her ürün için toplam stok değerini hesapla
+    return products.map(product => ({
+      ...product,
+      stock: this.calculateTotalStock(product),
+    }));
   },
 
   /**
    * Belirli bir ürünü ID'ye göre getirir
    */
   async getProductById(id: string): Promise<ProductWithRelations | null> {
-    return db.product.findUnique({
-      where: { slug: id },
+    const product = await db.product.findUnique({
+      where: { id },
       include: {
         category: true,
         brand: true,
@@ -184,13 +210,21 @@ export const productService = {
         variations: true,
       },
     });
+
+    if (!product) return null;
+
+    // Toplam stok değerini hesapla
+    return {
+      ...product,
+      stock: this.calculateTotalStock(product),
+    };
   },
 
   /**
    * Belirli bir ürünü slug'a göre getirir
    */
   async getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
-    return db.product.findUnique({
+    const product = await db.product.findUnique({
       where: { slug },
       include: {
         category: true,
@@ -200,13 +234,21 @@ export const productService = {
         variations: true,
       },
     });
+
+    if (!product) return null;
+
+    // Toplam stok değerini hesapla
+    return {
+      ...product,
+      stock: this.calculateTotalStock(product),
+    };
   },
 
   /**
    * Arama sorgusuna göre ürünleri getirir
    */
   async searchProducts(query: string): Promise<ProductWithRelations[]> {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         OR: [
           {
@@ -231,6 +273,12 @@ export const productService = {
         variations: true,
       },
     });
+
+    // Her ürün için toplam stok değerini hesapla
+    return products.map(product => ({
+      ...product,
+      stock: this.calculateTotalStock(product),
+    }));
   },
 
   /**
@@ -249,14 +297,15 @@ export const productService = {
     metaTitle?: string;
     metaDescription?: string;
   }): Promise<ProductWithRelations> {
-    const slug = data.slug || data.name.toLowerCase().replace(/\s+/g, '-');
-    
-    return db.product.create({
+    const slug = data.slug || slugify(data.name);
+
+    // Ürünü oluştur
+    const product = await db.product.create({
       data: {
         name: data.name,
         description: data.description,
         price: data.price,
-        stock: data.stock || 0,
+        stock: 0, // Stok değeri varyasyonlardan hesaplanacak
         featured: data.featured || false,
         slug,
         categoryId: data.categoryId,
@@ -275,6 +324,12 @@ export const productService = {
         variations: true,
       },
     });
+
+    // Varsayılan varyasyon oluştur
+    await variationService.createDefaultVariation(product.id, data.price);
+
+    // Güncellenmiş ürünü getir
+    return this.getProductById(product.id) as Promise<ProductWithRelations>;
   },
 
   /**
@@ -297,10 +352,14 @@ export const productService = {
   ): Promise<ProductWithRelations> {
     let updateData = { ...data };
     if (data.name && !data.slug) {
-      updateData.slug = data.name.toLowerCase().replace(/\s+/g, '-');
+      updateData.slug = slugify(data.name);
     }
 
-    return db.product.update({
+    // Stok değerini güncelleme verilerinden çıkar
+    delete updateData.stock;
+
+    // Ürünü güncelle
+    const product = await db.product.update({
       where: { id },
       data: updateData,
       include: {
@@ -311,22 +370,65 @@ export const productService = {
         variations: true,
       },
     });
+
+    // Eğer fiyat güncellendiyse ve varsayılan varyasyon varsa, onu da güncelle
+    if (data.price !== undefined) {
+      const defaultVariation = product.variations.find(v => v.name === 'Varsayılan');
+      if (defaultVariation) {
+        await variationService.updateVariation(defaultVariation.id, {
+          price: data.price,
+        });
+      }
+    }
+
+    // Eğer stok değeri belirtildiyse, varsayılan varyasyonun stok değerini güncelle
+    if (data.stock !== undefined) {
+      const defaultVariation = product.variations.find(v => v.name === 'Varsayılan');
+      if (defaultVariation) {
+        await variationService.updateVariation(defaultVariation.id, {
+          stock: data.stock,
+        });
+      }
+    }
+
+    // Güncellenmiş ürünü getir
+    return this.getProductById(id) as Promise<ProductWithRelations>;
   },
 
   /**
    * Ürün siler
    */
   async deleteProduct(id: string): Promise<Product> {
+    // Önce ürüne ait varyasyonları sil
+    const variations = await db.variation.findMany({
+      where: { productId: id },
+    });
+
+    for (const variation of variations) {
+      await variationService.deleteVariation(variation.id);
+    }
+
+    // Sonra ürünü sil
     return db.product.delete({
       where: { id },
     });
   },
 
-  // Yeni eklenen metodlar
+  /**
+   * Ürün resmi ekler
+   */
   async addProductImage(
     productId: string,
     data: { url: string; isMain?: boolean }
   ): Promise<ProductImage> {
+    // Eğer ana resim olarak işaretlendiyse, diğer resimleri ana resim olmaktan çıkar
+    if (data.isMain) {
+      await db.productImage.updateMany({
+        where: { productId, isMain: true },
+        data: { isMain: false },
+      });
+    }
+
     return db.productImage.create({
       data: {
         ...data,
@@ -335,35 +437,58 @@ export const productService = {
     });
   },
 
+  /**
+   * Ürün resmi günceller
+   */
   async updateProductImage(
     id: string,
     data: { url?: string; isMain?: boolean }
   ): Promise<ProductImage> {
+    const image = await db.productImage.findUnique({
+      where: { id },
+      select: { productId: true },
+    });
+
+    // Eğer ana resim olarak işaretlendiyse, diğer resimleri ana resim olmaktan çıkar
+    if (data.isMain && image) {
+      await db.productImage.updateMany({
+        where: { productId: image.productId, isMain: true },
+        data: { isMain: false },
+      });
+    }
+
     return db.productImage.update({
       where: { id },
       data,
     });
   },
 
+  /**
+   * Ürün resmi siler
+   */
   async deleteProductImage(id: string): Promise<ProductImage> {
     return db.productImage.delete({
       where: { id },
     });
   },
 
-  async addProductSeller(
-    data: {
-      productId: string;
-      sellerId: string;
-      price: number;
-      stock: number;
-    }
-  ): Promise<ProductSeller> {
+  /**
+   * Ürün satıcısı ekler
+   */
+  async addProductSeller(data: {
+    productId: string;
+    sellerId: string;
+    price: number;
+    stock: number;
+  }): Promise<ProductSeller> {
     return db.productSeller.create({
       data,
     });
   },
 
+  /**
+   * Ürün satıcısı günceller
+   */
   async updateProductSeller(
     productId: string,
     sellerId: string,
@@ -383,10 +508,10 @@ export const productService = {
     });
   },
 
-  async deleteProductSeller(
-    productId: string,
-    sellerId: string,
-  ): Promise<ProductSeller> {
+  /**
+   * Ürün satıcısı siler
+   */
+  async deleteProductSeller(productId: string, sellerId: string): Promise<ProductSeller> {
     return db.productSeller.delete({
       where: {
         productId_sellerId: {
@@ -395,5 +520,17 @@ export const productService = {
         },
       },
     });
+  },
+
+  /**
+   * Ürünün toplam stok değerini hesaplar
+   */
+  calculateTotalStock(product: Product & { variations?: Variation[] }): number {
+    if (!product.variations || product.variations.length === 0) {
+      return 0;
+    }
+
+    // Tüm varyasyonların stok değerlerini topla
+    return product.variations.reduce((total, variation) => total + variation.stock, 0);
   },
 };

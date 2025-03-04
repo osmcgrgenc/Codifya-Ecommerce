@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         description: updateData.description,
         price: updateData.price !== undefined ? parseFloat(updateData.price) : undefined,
         stock: updateData.stock !== undefined ? parseInt(updateData.stock) : undefined,
-        image: updateData.image,
+        images: updateData.images,
         categoryId: updateData.categoryId,
         featured: updateData.featured !== undefined ? Boolean(updateData.featured) : undefined,
       },

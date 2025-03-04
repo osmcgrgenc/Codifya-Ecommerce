@@ -65,7 +65,7 @@ export default async function OrdersPage() {
     redirect('/auth/login');
   }
 
-  const orders = await orderService.getUserOrders(session.user.id) as Order[];
+  const orders = (await orderService.getUserOrders(session.user.id)) as Order[];
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -81,7 +81,9 @@ export default async function OrdersPage() {
       {orders.length === 0 ? (
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz bir sipariş vermediniz</h3>
-          <p className="text-gray-500 mb-6">Alışverişe başlamak için aşağıdaki butona tıklayabilirsiniz.</p>
+          <p className="text-gray-500 mb-6">
+            Alışverişe başlamak için aşağıdaki butona tıklayabilirsiniz.
+          </p>
           <Link
             href="/shop"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
@@ -92,10 +94,7 @@ export default async function OrdersPage() {
       ) : (
         <div className="space-y-6">
           {orders.map(order => (
-            <div
-              key={order.id}
-              className="bg-white rounded-lg shadow overflow-hidden"
-            >
+            <div key={order.id} className="bg-white rounded-lg shadow overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -113,11 +112,11 @@ export default async function OrdersPage() {
                         : order.status === OrderStatus.SHIPPED
                           ? 'bg-blue-100 text-blue-800'
                           : order.status === OrderStatus.PENDING ||
-                            order.status === OrderStatus.PROCESSING
+                              order.status === OrderStatus.PROCESSING
                             ? 'bg-yellow-100 text-yellow-800'
-                          : order.status === OrderStatus.CANCELLED
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
+                            : order.status === OrderStatus.CANCELLED
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
                     }`}
                   >
                     {order.status === OrderStatus.PAID
@@ -140,7 +139,10 @@ export default async function OrdersPage() {
                       <li key={item.id} className="py-4 flex items-center">
                         <div className="flex-shrink-0 w-16 h-16 border border-gray-200 rounded-md overflow-hidden">
                           <Image
-                            src={item.product?.images?.find(img => img.isMain)?.url || '/images/placeholder.jpg'}
+                            src={
+                              item.product?.images?.find(img => img.isMain)?.url ||
+                              '/images/placeholder.jpg'
+                            }
                             alt={item.product?.name || 'Ürün'}
                             className="w-full h-full object-center object-cover"
                             width={64}
@@ -149,7 +151,10 @@ export default async function OrdersPage() {
                         </div>
                         <div className="ml-4 flex-1">
                           <h3 className="text-sm font-medium text-gray-900">
-                            <Link href={`/products/${item.product.slug}`} className="hover:text-indigo-600">
+                            <Link
+                              href={`/products/${item.product.slug}`}
+                              className="hover:text-indigo-600"
+                            >
                               {item.product.name}
                             </Link>
                           </h3>
@@ -207,4 +212,4 @@ export default async function OrdersPage() {
       )}
     </div>
   );
-} 
+}

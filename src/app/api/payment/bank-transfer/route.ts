@@ -50,7 +50,13 @@ export async function POST(req: NextRequest) {
         status: 'PENDING_PAYMENT',
         shippingAddress: JSON.stringify(shippingAddress),
         billingAddress: JSON.stringify(billingAddress),
-        paymentMethod: 'bank_transfer',
+        payment: {
+          create: {
+            method: 'bank_transfer',
+            status: 'PENDING',
+            provider: 'bank_transfer',
+          },
+        },
         referenceCode,
         items: {
           create: items.map((item: any) => ({

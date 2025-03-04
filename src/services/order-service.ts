@@ -210,10 +210,7 @@ export const orderService = {
     });
   },
 
-  async getOrdersByDateRange(
-    startDate: Date,
-    endDate: Date
-  ): Promise<OrderWithRelations[]> {
+  async getOrdersByDateRange(startDate: Date, endDate: Date): Promise<OrderWithRelations[]> {
     return db.order.findMany({
       where: {
         createdAt: {
