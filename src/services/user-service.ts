@@ -1,11 +1,24 @@
 import { db } from '@/lib/db';
-import { User, UserRole, Order, Review, ProductSeller } from '@prisma/client';
+import { User, UserRole, Order, Review, ProductSeller, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 export interface UserWithRelations extends User {
   orders: Order[];
   reviews: Review[];
   ProductSeller: ProductSeller[];
+}
+
+export interface UserFilter {
+  search?: string;
+  role?: UserRole;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export const userService = {
@@ -23,6 +36,82 @@ export const userService = {
         createdAt: 'desc',
       },
     });
+  },
+
+  /**
+   * Sayfalanmış ve filtrelenmiş kullanıcıları getirir
+   */
+  async getPaginatedUsers(
+    page: number = 1,
+    limit: number = 10,
+    filters?: UserFilter,
+    sortBy: string = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc'
+  ): Promise<PaginatedResult<UserWithRelations>> {
+    const skip = (page - 1) * limit;
+
+    // Filtreleri oluştur
+    const where: Prisma.UserWhereInput = {};
+
+    if (filters) {
+      if (filters.search) {
+        where.OR = [
+          {
+            name: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            phone: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+        ];
+      }
+
+      if (filters.role) {
+        where.role = filters.role;
+      }
+    }
+
+    // Sıralama seçeneklerini oluştur
+    const orderBy: Prisma.UserOrderByWithRelationInput = {};
+    orderBy[sortBy as keyof Prisma.UserOrderByWithRelationInput] = sortOrder;
+
+    // Toplam kullanıcı sayısını al
+    const total = await db.user.count({ where });
+
+    // Kullanıcıları getir
+    const users = await db.user.findMany({
+      where,
+      orderBy,
+      skip,
+      take: limit,
+      include: {
+        orders: true,
+        reviews: true,
+        ProductSeller: true,
+      },
+    });
+
+    // Toplam sayfa sayısını hesapla
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: users as UserWithRelations[],
+      total,
+      page,
+      limit,
+      totalPages,
+    };
   },
 
   /**
@@ -198,5 +287,25 @@ export const userService = {
         emailVerified: new Date(),
       },
     });
+  },
+
+  /**
+   * Kullanıcı rolünü günceller
+   */
+  async updateUserRole(userId: string, role: UserRole): Promise<User> {
+    // Kullanıcının var olduğunu kontrol et
+    const user = await db.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('Kullanıcı bulunamadı');
+    }
+
+    // Kullanıcı rolünü güncelle
+    return db.user.update({
+      where: { id: userId },
+      data: { role },
+    }) as Promise<User>;
   },
 };
