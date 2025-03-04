@@ -25,7 +25,7 @@ async function getOptionTypeById(
     const optionType = await prisma.optionType.findUnique({
       where: { id },
       include: {
-        options: true
+        VariationOption: true
       }
     });
     
@@ -93,11 +93,9 @@ async function updateOptionType(
       where: { id },
       data: {
         name: data.name,
-        description: data.description,
-        isActive: data.isActive
       },
       include: {
-        options: true
+        VariationOption: true
       }
     });
     
@@ -122,7 +120,7 @@ async function deleteOptionType(
     const optionType = await prisma.optionType.findUnique({
       where: { id },
       include: {
-        options: true
+        VariationOption: true
       }
     });
     
@@ -131,7 +129,7 @@ async function deleteOptionType(
     }
     
     // Seçenek tipine bağlı seçenekler varsa uyarı ver
-    if (optionType.options.length > 0) {
+    if (optionType.VariationOption.length > 0) {
       return createValidationErrorResponse([
         'Bu seçenek tipine bağlı seçenekler bulunmaktadır. Önce bu seçenekleri silmelisiniz.'
       ]);

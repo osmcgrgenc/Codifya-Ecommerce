@@ -13,7 +13,7 @@ export interface UserFilter {
   role?: UserRole;
 }
 
-export interface PaginatedResult<T> {
+interface PaginatedResult<T> {
   data: T[];
   total: number;
   page: number;

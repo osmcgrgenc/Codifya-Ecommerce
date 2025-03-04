@@ -72,16 +72,12 @@ async function getProductVariations(
     }
     
     // Varyasyonları getir
-    const variations = await prisma.productVariation.findMany({
+    const variations = await prisma.variation.findMany({
       where,
       include: {
-        options: {
+        VariationOption: {
           include: {
-            option: {
-              include: {
-                optionType: true
-              }
-            }
+            optionType: true
           }
         }
       },
@@ -129,7 +125,7 @@ async function createProductVariation(
     }
     
     // Aynı SKU'ya sahip başka bir varyasyon var mı kontrol et
-    const existingVariation = await prisma.productVariation.findFirst({
+    const existingVariation = await prisma.variation.findFirst({
       where: {
         sku: {
           equals: data.sku,
@@ -144,7 +140,7 @@ async function createProductVariation(
     
     // Seçeneklerin var olduğunu kontrol et
     for (const optionData of data.options) {
-      const option = await prisma.option.findUnique({
+      const option = await prisma.variationOption.findUnique({
         where: { id: optionData.optionId },
         include: { optionType: true }
       });
@@ -155,34 +151,23 @@ async function createProductVariation(
       
       if (option.optionType.id !== optionData.optionTypeId) {
         return createValidationErrorResponse([
-          `Seçenek (${option.name}) ve seçenek tipi (${optionData.optionTypeId}) uyuşmuyor`
+          `Seçenek (${option.value}) ve seçenek tipi (${optionData.optionTypeId}) uyuşmuyor`
         ]);
       }
     }
     
     // Varyasyonu oluştur
-    const variation = await prisma.productVariation.create({
+    const variation = await prisma.variation.create({
       data: {
         productId: data.productId,
         sku: data.sku,
         price: data.price,
         stock: data.stock,
-        isActive: data.isActive,
-        images: data.images || [],
-        options: {
-          create: data.options.map(option => ({
-            optionId: option.optionId
-          }))
-        }
       },
       include: {
-        options: {
+        VariationOption: {
           include: {
-            option: {
-              include: {
-                optionType: true
-              }
-            }
+            optionType: true
           }
         }
       }

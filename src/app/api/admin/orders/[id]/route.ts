@@ -11,6 +11,11 @@ import { parseJsonData } from '@/services/api-service';
 import { updateOrderStatusSchema, UpdateOrderStatusData } from '../schemas';
 import { OrderStatus } from '@prisma/client';
 
+// Tip tanımlaması
+interface OrderUpdateData extends Omit<UpdateOrderStatusData, 'estimatedDeliveryDate'> {
+  estimatedDeliveryDate?: Date;
+}
+
 /**
  * GET: Belirli bir siparişin detaylarını getir
  */
@@ -41,7 +46,13 @@ async function updateOrder(req: NextRequest, { params }: { params: { id: string 
     return validationResult.response;
   }
 
-  const data = validationResult.data as UpdateOrderStatusData;
+  const rawData = validationResult.data as UpdateOrderStatusData;
+  
+  // Veriyi uygun tipe dönüştür
+  const data: OrderUpdateData = {
+    ...rawData,
+    estimatedDeliveryDate: rawData.estimatedDeliveryDate ? new Date(rawData.estimatedDeliveryDate) : undefined
+  };
   
   try {
     // Siparişin var olup olmadığını kontrol et
@@ -53,7 +64,7 @@ async function updateOrder(req: NextRequest, { params }: { params: { id: string 
     // Sipariş durumunu güncelle
     const updatedOrder = await orderService.updateOrderStatus(
       id, 
-      data.status as OrderStatus, 
+      data.status, 
       {
         trackingNumber: data.trackingNumber,
         estimatedDeliveryDate: data.estimatedDeliveryDate,
@@ -67,7 +78,7 @@ async function updateOrder(req: NextRequest, { params }: { params: { id: string 
 }
 
 /**
- * Sipariş detay API endpoint'leri
+ * Sipariş API endpoint'leri
  */
 export const GET = withMiddleware(getOrderById, { requiredRole: 'ADMIN' });
 export const PATCH = withMiddleware(updateOrder, { requiredRole: 'ADMIN' }); 

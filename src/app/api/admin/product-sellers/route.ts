@@ -201,7 +201,6 @@ async function createProductSeller(req: NextRequest, _: any, session: any) {
             sellerId: data.sellerId,
             price: data.price,
             stock: data.stock,
-            isActive: data.isActive ?? true
           }
         }
       },
@@ -210,7 +209,7 @@ async function createProductSeller(req: NextRequest, _: any, session: any) {
       }
     });
     
-    const newProductSeller = updatedProduct.seller.find((s: ProductSeller) => s.sellerId === data.sellerId);
+    const newProductSeller = updatedProduct.seller.find((s: { sellerId: string }) => s.sellerId === data.sellerId);
     
     return createSuccessResponse(newProductSeller, 'Ürün-satıcı ilişkisi başarıyla oluşturuldu');
   } catch (error: any) {

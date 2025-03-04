@@ -22,7 +22,7 @@ export const orderQuerySchema = z.object({
 export const updateOrderStatusSchema = z.object({
   status: z.nativeEnum(OrderStatus),
   trackingNumber: z.string().optional(),
-  estimatedDeliveryDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  estimatedDeliveryDate: z.string().optional(),
   notes: z.string().optional(),
 });
 

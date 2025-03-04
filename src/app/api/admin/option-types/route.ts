@@ -46,10 +46,9 @@ async function getOptionTypes(req: NextRequest, _: any, session: any) {
         name: 'asc'
       },
       include: {
-        options: {
+        VariationOption: {
           select: {
             id: true,
-            name: true,
             value: true
           }
         }
@@ -95,8 +94,6 @@ async function createOptionType(req: NextRequest, _: any, session: any) {
     const optionType = await prisma.optionType.create({
       data: {
         name: data.name,
-        description: data.description,
-        isActive: data.isActive
       }
     });
     

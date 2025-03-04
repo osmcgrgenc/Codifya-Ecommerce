@@ -35,13 +35,9 @@ async function getProductVariationById(
         productId
       },
       include: {
-        options: {
+        VariationOption: {
           include: {
-            option: {
-              include: {
-                optionType: true
-              }
-            }
+            optionType: true
           }
         }
       }
@@ -118,7 +114,7 @@ async function updateProductVariation(
     // Seçenekler değiştiriliyorsa, seçeneklerin var olduğunu kontrol et
     if (data.options && data.options.length > 0) {
       for (const optionData of data.options) {
-        const option = await prisma.option.findUnique({
+        const option = await prisma.variationOption.findUnique({
           where: { id: optionData.optionId },
           include: { optionType: true }
         });
@@ -129,7 +125,7 @@ async function updateProductVariation(
         
         if (option.optionType.id !== optionData.optionTypeId) {
           return createValidationErrorResponse([
-            `Seçenek (${option.name}) ve seçenek tipi (${optionData.optionTypeId}) uyuşmuyor`
+            `Seçenek (${option.optionType.name}) ve seçenek tipi (${optionData.optionTypeId}) uyuşmuyor`
           ]);
         }
       }
@@ -161,20 +157,16 @@ async function updateProductVariation(
         where: { id: variationId },
         data: {
           ...updateData,
-          options: {
+          VariationOption: {
             create: data.options.map(option => ({
               optionId: option.optionId
             }))
           }
         },
         include: {
-          options: {
+          VariationOption: {
             include: {
-              option: {
-                include: {
-                  optionType: true
-                }
-              }
+              optionType: true
             }
           }
         }
@@ -185,13 +177,9 @@ async function updateProductVariation(
         where: { id: variationId },
         data: updateData,
         include: {
-          options: {
+          VariationOption: {
             include: {
-              option: {
-                include: {
-                  optionType: true
-                }
-              }
+              optionType: true
             }
           }
         }

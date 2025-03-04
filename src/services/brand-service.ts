@@ -6,7 +6,7 @@ export interface BrandFilter {
   search?: string;
 }
 
-export interface PaginatedResult<T> {
+interface PaginatedResult<T> {
   data: T[];
   total: number;
   page: number;
