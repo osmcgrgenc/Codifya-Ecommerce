@@ -1,62 +1,71 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { NextRequest } from 'next/server';
+import { categoryService } from '@/services/category-service';
+import { withMiddleware } from '@/lib/api-middleware';
+import { 
+  createSuccessResponse, 
+  createPaginatedResponse,
+  createValidationErrorResponse,
+  handleValidationResult
+} from '@/lib/api-response';
+import { parseJsonData, parseQueryParams } from '@/services/api-service';
+import { categoryQuerySchema, createCategorySchema } from './schemas';
 
-// GET: Tüm kategorileri listele
-export async function GET(request: NextRequest) {
+/**
+ * GET: Tüm kategorileri listele (sayfalama ve filtreleme ile)
+ */
+async function getCategories(req: NextRequest, context: any, session: any) {
+  // Sorgu parametrelerini doğrula
+  const queryResult = parseQueryParams(req, categoryQuerySchema);
+  const validationResult = handleValidationResult(queryResult);
+  
+  if (!validationResult.success) {
+    return validationResult.response;
+  }
+
+  const { page, limit, search, sortBy, sortOrder, parentId } = validationResult.data;
+  
   try {
-    // Oturum kontrolü
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 403 });
-    }
+    // Filtreleri oluştur
+    const filters = {
+      search,
+      parentId
+    };
 
     // Kategorileri getir
-    const categories = await db.category.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    });
-
-    return NextResponse.json(categories);
+    const result = await categoryService.getAllCategories();
+    
+    return createSuccessResponse(result, 'Kategoriler başarıyla getirildi');
   } catch (error) {
-    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
+    return createValidationErrorResponse(['Kategoriler getirilirken bir hata oluştu']);
   }
 }
 
-// POST: Yeni kategori ekle
-export async function POST(request: NextRequest) {
+/**
+ * POST: Yeni kategori ekle
+ */
+async function createCategory(req: NextRequest, context: any, session: any) {
+  // İstek gövdesini doğrula
+  const bodyResult = await parseJsonData(req, createCategorySchema);
+  const validationResult = handleValidationResult(bodyResult);
+  
+  if (!validationResult.success) {
+    return validationResult.response;
+  }
+
+  const data = validationResult.data;
+  
   try {
-    // Oturum kontrolü
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 403 });
-    }
-
-    // İstek gövdesini al
-    const body = await request.json();
-
-    // Zorunlu alanları kontrol et
-    if (!body.name) {
-      return NextResponse.json({ error: 'Kategori adı zorunludur' }, { status: 400 });
-    }
-
-    // Slug oluştur
-    const slug = body.slug || body.name.toLowerCase().replace(/\s+/g, '-');
-
     // Kategoriyi oluştur
-    const category = await db.category.create({
-      data: {
-        name: body.name,
-        slug,
-        description: body.description || null,
-        parentId: body.parentId || null,
-      },
-    });
-
-    return NextResponse.json(category, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ message: 'Sunucu hatası', error: error }, { status: 500 });
+    const category = await categoryService.createCategory(data);
+    return createSuccessResponse(category, 'Kategori başarıyla oluşturuldu', 201);
+  } catch (error: any) {
+    return createValidationErrorResponse([error.message]);
   }
 }
+
+/**
+ * Kategori API endpoint'leri
+ */
+export const GET = withMiddleware(getCategories, { requiredRole: 'ADMIN' });
+export const POST = withMiddleware(createCategory, { requiredRole: 'ADMIN' });
+
