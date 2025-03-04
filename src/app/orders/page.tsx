@@ -22,7 +22,9 @@ interface OrderItem {
   product: {
     name: string;
     slug: string;
+    description: string;
     images: {
+      id: string;
       url: string;
       isMain: boolean;
     }[];
@@ -34,14 +36,25 @@ interface Order {
   userId: string | null;
   status: OrderStatus;
   totalAmount: number;
+  shippingAddress: string | null;
+  billingAddress: string | null;
   createdAt: Date;
+  updatedAt: Date;
   items: OrderItem[];
   payment: {
     id: string;
     method: string;
     status: string;
+    provider?: string;
+    transactionId?: string;
+    amount: number;
+    currency: string;
+    createdAt: Date;
+    updatedAt: Date;
   } | null;
   trackingNumber?: string | null;
+  estimatedDeliveryDate?: Date | null;
+  notes?: string | null;
   referenceCode?: string | null;
 }
 
