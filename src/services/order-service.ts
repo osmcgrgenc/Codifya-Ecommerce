@@ -25,7 +25,11 @@ export const orderService = {
       include: {
         items: {
           include: {
-            product: true,
+            product: {
+              include: {
+                images: true,
+              },
+            },
           },
         },
         payment: true,
@@ -45,7 +49,11 @@ export const orderService = {
       include: {
         items: {
           include: {
-            product: true,
+            product: {
+              include: {
+                images: true,
+              },
+            },
           },
         },
         payment: true,

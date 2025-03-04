@@ -175,7 +175,7 @@ export const productService = {
    */
   async getProductById(id: string): Promise<ProductWithRelations | null> {
     return db.product.findUnique({
-      where: { id },
+      where: { slug: id },
       include: {
         category: true,
         brand: true,

@@ -2,11 +2,12 @@
 
 import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
-import { Product, Category } from '@prisma/client';
+import { Product, Category, ProductImage } from '@prisma/client';
 import Image from 'next/image';
 interface ProductCardProps {
   product: Product & {
     category?: Category | null;
+    images: ProductImage[];
   };
 }
 
@@ -18,14 +19,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image || '/images/placeholder.jpg',
+      image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
       quantity: 1,
       category: product.category?.name || 'Kategori Yok',
     });
   };
 
   // Placeholder görüntüsü
-  const imageSrc = product.image || '/images/placeholder.jpg';
+  const imageSrc = product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg';
 
   return (
     <div className=" rounded-lg shadow overflow-hidden">

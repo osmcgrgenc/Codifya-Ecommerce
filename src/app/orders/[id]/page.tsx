@@ -6,23 +6,46 @@ import Image from 'next/image';
 
 import { authOptions } from '@/lib/auth';
 import { orderService } from '@/services';
-import { OrderStatus, OrderItem, Product } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 
-// Order tipini genişletiyoruz
-type OrderWithItems = {
+interface OrderItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+  product: {
+    name: string;
+    slug: string;
+    images: {
+      url: string;
+      isMain: boolean;
+    }[];
+  };
+}
+
+interface Order {
   id: string;
   userId: string | null;
   status: OrderStatus;
   totalAmount: number;
   shippingAddress: string | null;
   billingAddress: string | null;
-  paymentMethod: string | null;
   createdAt: Date;
   updatedAt: Date;
-  items: (OrderItem & {
-    product: Product;
-  })[];
-};
+  items: OrderItem[];
+  payment: {
+    id: string;
+    method: string;
+    status: string;
+    provider?: string;
+    transactionId?: string;
+  } | null;
+  trackingNumber?: string | null;
+  estimatedDeliveryDate?: string | null;
+  notes?: string | null;
+  referenceCode?: string | null;
+}
 
 interface OrderPageProps {
   params: {
@@ -44,15 +67,12 @@ export default async function OrderPage({ params }: OrderPageProps) {
     redirect('/auth/login');
   }
 
-  // Veritabanından sipariş detaylarını getir
-  const order = (await orderService.getOrderById(params.id)) as OrderWithItems;
+  const order = await orderService.getOrderById(params.id) as Order | null;
 
-  // Sipariş bulunamadıysa 404 sayfasına yönlendir
   if (!order) {
     return notFound();
   }
 
-  // Kullanıcı kendi siparişini görüntüleyebilir veya admin tüm siparişleri görüntüleyebilir
   if (order.userId !== session.user.id && session.user.role !== 'ADMIN') {
     redirect('/profile');
   }
@@ -63,10 +83,12 @@ export default async function OrderPage({ params }: OrderPageProps) {
         <Link href="/profile" className="text-indigo-600 hover:text-indigo-900 mr-4">
           ← Siparişlerime Dön
         </Link>
-        <h1 className="text-3xl font-bold">Sipariş #{order.id}</h1>
+        <h1 className="text-3xl font-bold">
+          Sipariş #{order.referenceCode || order.id}
+        </h1>
       </div>
 
-      <div className=" rounded-lg shadow-md overflow-hidden mb-8">
+      <div className="rounded-lg shadow-md overflow-hidden mb-8">
         <div className="p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
             <div>
@@ -80,29 +102,38 @@ export default async function OrderPage({ params }: OrderPageProps) {
                   currency: 'TRY',
                 })}
               </p>
+              {order.payment && (
+                <p className="text-sm text-gray-500">
+                  Ödeme: {order.payment.method} - {order.payment.status}
+                </p>
+              )}
             </div>
             <div className="mt-4 md:mt-0">
               <span
                 className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${
-                  order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
+                  order.status === OrderStatus.PAID
                     ? 'bg-green-100 text-green-800'
                     : order.status === OrderStatus.SHIPPED
                       ? 'bg-blue-100 text-blue-800'
                       : order.status === OrderStatus.PENDING ||
-                          order.status === OrderStatus.PROCESSING
+                        order.status === OrderStatus.PROCESSING
                         ? 'bg-yellow-100 text-yellow-800'
+                      : order.status === OrderStatus.CANCELLED
+                        ? 'bg-red-100 text-red-800'
                         : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                {order.status === OrderStatus.PAID || order.status === OrderStatus.DELIVERED
-                  ? 'Tamamlandı'
+                {order.status === OrderStatus.PAID
+                  ? 'Ödendi'
                   : order.status === OrderStatus.SHIPPED
                     ? 'Kargoda'
                     : order.status === OrderStatus.PENDING
-                      ? 'İşleniyor'
-                      : order.status === OrderStatus.CANCELLED
-                        ? 'İptal Edildi'
-                        : order.status}
+                      ? 'Beklemede'
+                      : order.status === OrderStatus.PROCESSING
+                        ? 'İşleniyor'
+                        : order.status === OrderStatus.CANCELLED
+                          ? 'İptal Edildi'
+                          : order.status}
               </span>
             </div>
           </div>
@@ -115,7 +146,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                   <li key={item.id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <Image
-                        src={item.product.image || '/images/placeholder.jpg'}
+                        src={item.product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg'}
                         alt={item.product.name}
                         className="w-full h-full object-center object-cover"
                         width={96}
@@ -126,7 +157,11 @@ export default async function OrderPage({ params }: OrderPageProps) {
                     <div className="ml-4 flex-1 flex flex-col">
                       <div>
                         <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>{item.product.name}</h3>
+                          <h3>
+                            <Link href={`/products/${item.product.slug}`} className="hover:text-indigo-600">
+                              {item.product.name}
+                            </Link>
+                          </h3>
                           <p className="ml-4">
                             {item.price.toLocaleString('tr-TR', {
                               style: 'currency',
@@ -139,7 +174,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                         <p className="text-gray-500">Adet: {item.quantity}</p>
                         <p className="text-gray-500">
                           Toplam:{' '}
-                          {(item.price * item.quantity).toLocaleString('tr-TR', {
+                          {item.subtotal.toLocaleString('tr-TR', {
                             style: 'currency',
                             currency: 'TRY',
                           })}
@@ -159,17 +194,49 @@ export default async function OrderPage({ params }: OrderPageProps) {
                 <span className="font-medium">Adres:</span>{' '}
                 {order.shippingAddress || 'Belirtilmemiş'}
               </p>
-              <p className="text-gray-600">
-                <span className="font-medium">Kargo Ücreti:</span> Ücretsiz
-              </p>
+              {order.trackingNumber && (
+                <p className="text-gray-600 mb-2">
+                  <span className="font-medium">Kargo Takip:</span>{' '}
+                  <Link
+                    href={`/kargo-takip/${order.trackingNumber}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    {order.trackingNumber}
+                  </Link>
+                </p>
+              )}
+              {order.estimatedDeliveryDate && (
+                <p className="text-gray-600">
+                  <span className="font-medium">Tahmini Teslimat:</span>{' '}
+                  {new Date(order.estimatedDeliveryDate).toLocaleDateString('tr-TR')}
+                </p>
+              )}
             </div>
 
             <div>
               <h2 className="text-lg font-medium mb-4">Ödeme Bilgileri</h2>
-              <p className="text-gray-600 mb-2">
-                <span className="font-medium">Ödeme Yöntemi:</span>{' '}
-                {order.paymentMethod || 'Belirtilmemiş'}
-              </p>
+              {order.payment ? (
+                <>
+                  <p className="text-gray-600 mb-2">
+                    <span className="font-medium">Ödeme Yöntemi:</span> {order.payment.method}
+                  </p>
+                  <p className="text-gray-600 mb-2">
+                    <span className="font-medium">Durum:</span> {order.payment.status}
+                  </p>
+                  {order.payment.provider && (
+                    <p className="text-gray-600 mb-2">
+                      <span className="font-medium">Sağlayıcı:</span> {order.payment.provider}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-gray-600">Ödeme bilgisi bulunamadı</p>
+              )}
+              {order.billingAddress && (
+                <p className="text-gray-600 mt-4">
+                  <span className="font-medium">Fatura Adresi:</span> {order.billingAddress}
+                </p>
+              )}
             </div>
           </div>
 
@@ -197,6 +264,13 @@ export default async function OrderPage({ params }: OrderPageProps) {
               </p>
             </div>
           </div>
+
+          {order.notes && (
+            <div className="mt-8 border-t border-gray-200 pt-6">
+              <h2 className="text-lg font-medium mb-4">Sipariş Notları</h2>
+              <p className="text-gray-600">{order.notes}</p>
+            </div>
+          )}
 
           <div className="mt-8 flex justify-center">
             <button className="bg-indigo-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-indigo-700">
