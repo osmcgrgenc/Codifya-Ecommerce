@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { Product, ProductImage, ProductSeller, Variation, Brand } from '@prisma/client';
 import { variationService } from './variation-service';
-import { slugify } from '@/lib/utils';
+import { slugify, convertDecimalToNumber } from '@/lib/utils';
 
 export interface ProductFilter {
   name?: string;
@@ -18,6 +18,7 @@ export interface ProductWithRelations extends Product {
   images: ProductImage[];
   seller: ProductSeller[];
   variations: Variation[];
+  totalStock?: number;
 }
 
 export interface PaginatedResult<T> {
@@ -47,10 +48,10 @@ export const productService = {
     });
 
     // Her ürün için toplam stok değerini hesapla
-    return products.map(product => ({
+    return convertDecimalToNumber(products.map(product => ({
       ...product,
-      stock: this.calculateTotalStock(product),
-    }));
+      totalStock: this.calculateTotalStock(product),
+    })));
   },
 
   /**
@@ -130,19 +131,19 @@ export const productService = {
     // Her ürün için toplam stok değerini hesapla
     const productsWithStock = products.map(product => ({
       ...product,
-      stock: this.calculateTotalStock(product),
+      totalStock: this.calculateTotalStock(product),
     }));
 
     // Toplam sayfa sayısını hesapla
     const totalPages = Math.ceil(total / limit);
 
-    return {
+    return convertDecimalToNumber({
       data: productsWithStock,
       total,
       page,
       limit,
       totalPages,
-    };
+    });
   },
 
   /**
@@ -160,14 +161,16 @@ export const productService = {
         seller: true,
         variations: true,
       },
-      take: 6,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 8,
     });
 
-    // Her ürün için toplam stok değerini hesapla
-    return products.map(product => ({
+    return convertDecimalToNumber(products.map(product => ({
       ...product,
-      stock: this.calculateTotalStock(product),
-    }));
+      totalStock: this.calculateTotalStock(product),
+    })));
   },
 
   /**
@@ -187,13 +190,15 @@ export const productService = {
         seller: true,
         variations: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
-    // Her ürün için toplam stok değerini hesapla
-    return products.map(product => ({
+    return convertDecimalToNumber(products.map(product => ({
       ...product,
-      stock: this.calculateTotalStock(product),
-    }));
+      totalStock: this.calculateTotalStock(product),
+    })));
   },
 
   /**
@@ -213,11 +218,10 @@ export const productService = {
 
     if (!product) return null;
 
-    // Toplam stok değerini hesapla
-    return {
+    return convertDecimalToNumber({
       ...product,
-      stock: this.calculateTotalStock(product),
-    };
+      totalStock: this.calculateTotalStock(product),
+    });
   },
 
   /**
@@ -237,11 +241,10 @@ export const productService = {
 
     if (!product) return null;
 
-    // Toplam stok değerini hesapla
-    return {
+    return convertDecimalToNumber({
       ...product,
-      stock: this.calculateTotalStock(product),
-    };
+      totalStock: this.calculateTotalStock(product),
+    });
   },
 
   /**
@@ -272,13 +275,15 @@ export const productService = {
         seller: true,
         variations: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
-    // Her ürün için toplam stok değerini hesapla
-    return products.map(product => ({
+    return convertDecimalToNumber(products.map(product => ({
       ...product,
-      stock: this.calculateTotalStock(product),
-    }));
+      totalStock: this.calculateTotalStock(product),
+    })));
   },
 
   /**

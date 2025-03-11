@@ -729,51 +729,58 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const itemsPerPage = 10;
+  
+  // Başarı mesajı gösterme fonksiyonu
+  const showSuccess = useCallback((message: string) => {
+    toast({
+      title: 'Başarılı',
+      description: message,
+    });
+  }, [toast]);
 
-  // Kategorileri getir
+  // Hata mesajı gösterme fonksiyonu
+  const showError = useCallback((message: string) => {
+    toast({
+      title: 'Hata',
+      description: message,
+      variant: 'destructive',
+    });
+  }, [toast]);
+
+  // Kategorileri ve markaları getir
   useEffect(() => {
-    const fetchCategories = async () => {
+    // Verilerin zaten yüklenip yüklenmediğini kontrol et
+    if (categories.length > 0 && brands.length > 0) {
+      return; // Veriler zaten yüklenmişse, tekrar yükleme
+    }
+
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/admin/categories');
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data);
+        // Kategorileri ve markaları paralel olarak getir
+        const [categoriesResponse, brandsResponse] = await Promise.all([
+          fetch('/api/admin/categories'),
+          fetch('/api/admin/brands')
+        ]);
+
+        if (categoriesResponse.ok && brandsResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          const brandsData = await brandsResponse.json();
+          
+          setCategories(categoriesData);
+          setBrands(brandsData);
         }
       } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Kategoriler yüklenirken bir hata oluştu.',
-          variant: 'destructive',
-        });
+        showError('Veriler yüklenirken bir hata oluştu.');
       }
     };
 
-    fetchCategories();
-  }, [toast]);
-
-  // Markaları getir
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await fetch('/api/admin/brands');
-        if (response.ok) {
-          const data = await response.json();
-          setBrands(data);
-        }
-      } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Markalar yüklenirken bir hata oluştu.',
-          variant: 'destructive',
-        });
-      }
-    };
-
-    fetchBrands();
-  }, [toast]);
+    fetchData();
+  }, [categories.length, brands.length, showError]);
 
   // Ürünleri getir
   const fetchProducts = useCallback(async () => {
+    if (loading) return; // Zaten yükleme yapılıyorsa, tekrar yükleme yapma
+    
     setLoading(true);
     try {
       const filter: ProductFilter = {};
@@ -796,34 +803,37 @@ export default function ProductsPage() {
 
       setProducts(result);
     } catch (error) {
-      toast({
-        title: 'Hata',
-        description: 'Ürünler yüklenirken bir hata oluştu.',
-        variant: 'destructive',
-      });
+      showError('Ürünler yüklenirken bir hata oluştu.');
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, categoryFilter, sortBy, sortOrder, toast]);
+  }, [currentPage, searchTerm, categoryFilter, sortBy, sortOrder, showError, loading]);
 
   // Sayfa yüklendiğinde verileri getir
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    // Kategoriler ve markalar yüklendikten sonra ürünleri getir
+    if (categories.length > 0 && brands.length > 0 && !loading) {
+      fetchProducts();
+    }
+  }, [fetchProducts, categories.length, brands.length, loading]);
 
   // Arama işlemi
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (loading) return; // Yükleme sırasında arama yapma
     setSearchTerm(e.target.value);
     setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön
   };
 
   // Sayfa değiştirme
   const handlePageChange = (page: number) => {
+    if (loading || page === currentPage) return; // Yükleme sırasında veya aynı sayfa seçildiğinde işlem yapma
     setCurrentPage(page);
   };
 
   // Sıralama değiştirme
   const handleSortChange = (field: string) => {
+    if (loading) return; // Yükleme sırasında sıralama değiştirme
+    
     if (sortBy === field) {
       // Aynı alan seçildiğinde sıralama yönünü değiştir
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -837,26 +847,26 @@ export default function ProductsPage() {
 
   // Ürün silme
   const handleDeleteProduct = async (id: string) => {
+    if (loading) return; // Yükleme sırasında silme işlemi yapma
+    
     if (window.confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
       try {
+        setLoading(true);
         await productService.deleteProduct(id);
-        toast({
-          title: 'Başarılı',
-          description: 'Ürün başarıyla silindi.',
-        });
+        showSuccess('Ürün başarıyla silindi.');
         fetchProducts();
       } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Ürün silinirken bir hata oluştu.',
-          variant: 'destructive',
-        });
+        showError('Ürün silinirken bir hata oluştu.');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   // Ürün düzenleme
   const handleEditProduct = (id: string) => {
+    if (loading) return; // Yükleme sırasında düzenleme işlemi yapma
+    
     const product = products.data.find(p => p.id === id);
     if (product) {
       setEditingProduct(product);
@@ -871,20 +881,24 @@ export default function ProductsPage() {
 
   // Ürün ekleme/güncelleme
   const handleSubmitProduct = async (data: ProductFormData) => {
+    if (loading) return; // Yükleme sırasında kaydetme işlemi yapma
+    
     try {
+      setLoading(true);
+      
       if (editingProduct) {
-        // Ürün güncelleme
+        // Mevcut ürünü güncelle
         await productService.updateProduct(editingProduct.id, {
           name: data.name,
           description: data.description,
           price: data.price,
-          stock: data.stock,
-          featured: data.featured,
           categoryId: data.categoryId,
           brandId: data.brandId || '',
+          stock: data.stock,
+          featured: data.featured,
+          slug: data.slug,
           metaTitle: data.metaTitle,
           metaDescription: data.metaDescription,
-          slug: data.slug,
         });
 
         // Eğer yeni bir görsel yüklendiyse
@@ -910,42 +924,33 @@ export default function ProductsPage() {
           }
         }
 
-        toast({
-          title: 'Başarılı',
-          description: 'Ürün başarıyla güncellendi.',
-        });
+        showSuccess('Ürün başarıyla güncellendi.');
       } else {
-        // Yeni ürün ekleme
-        const newProduct = await productService.createProduct({
+        // Yeni ürün oluştur
+        await productService.createProduct({
           name: data.name,
           description: data.description,
           price: data.price,
-          stock: data.stock,
-          featured: data.featured,
           categoryId: data.categoryId,
           brandId: data.brandId || '',
-          metaTitle: data.metaTitle,
-          metaDescription: data.metaDescription,
+          stock: data.stock,
+          featured: data.featured,
           slug: data.slug,
           images: data.image ? [{ url: data.image, isMain: true }] : [],
+          metaTitle: data.metaTitle,
+          metaDescription: data.metaDescription,
         });
 
-        toast({
-          title: 'Başarılı',
-          description: 'Ürün başarıyla eklendi.',
-        });
+        showSuccess('Ürün başarıyla oluşturuldu.');
       }
 
-      // Formu kapat ve ürünleri yeniden yükle
       setShowForm(false);
       setEditingProduct(null);
       fetchProducts();
     } catch (error) {
-      toast({
-        title: 'Hata',
-        description: 'Ürün kaydedilirken bir hata oluştu.',
-        variant: 'destructive',
-      });
+      showError('Ürün kaydedilirken bir hata oluştu.');
+    } finally {
+      setLoading(false);
     }
   };
 
