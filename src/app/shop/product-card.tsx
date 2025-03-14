@@ -1,17 +1,16 @@
 'use client';
 
 import { useCart } from '@/lib/hooks/use-cart';
-import Link from 'next/link';
-import { Product, Category, ProductImage } from '@prisma/client';
+import { Product } from '@/types';
 import Image from 'next/image';
+import Link from 'next/link';
+import { memo } from 'react';
+
 interface ProductCardProps {
-  product: Product & {
-    category?: Category | null;
-    images: ProductImage[];
-  };
+  product: Product;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
 
   const handleAddToCart = () => {
@@ -19,37 +18,31 @@ export default function ProductCard({ product }: ProductCardProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
+      image: product.image,
       quantity: 1,
-      category: product.category?.name || 'Kategori Yok',
     });
   };
 
-  // Placeholder görüntüsü
-  const imageSrc = product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg';
-
   return (
-    <div className=" rounded-lg shadow overflow-hidden">
-      <Link href={`/shop/product/${product.id}`}>
-        <div className="w-full h-48 relative">
-          <Image
-            src={imageSrc}
-            alt={product.name}
-            className="w-full h-full object-cover"
-            width={500}
-            height={500}
-          />
-        </div>
+    <div className="group relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <Link href={`/shop/${product.id}`} className="block aspect-square overflow-hidden">
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={300}
+          height={300}
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          priority={false}
+        />
       </Link>
       <div className="p-4">
-        <Link href={`/shop/product/${product.id}`}>
-          <h3 className="text-lg font-medium text-gray-900 hover:text-indigo-600">
-            {product.name}
-          </h3>
+        <Link href={`/shop/${product.id}`} className="block">
+          <h3 className="text-lg font-medium text-gray-900 mb-2 line-clamp-1">{product.name}</h3>
         </Link>
-        <p className="text-sm text-gray-500 mb-2">{product.category?.name || 'Kategori Yok'}</p>
-        <div className="flex items-center justify-between">
-          <p className="text-lg font-bold">
+        <div className="flex justify-between items-center">
+          <p className="text-lg font-bold text-gray-900">
             {product.price.toLocaleString('tr-TR', {
               style: 'currency',
               currency: 'TRY',
@@ -57,7 +50,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           </p>
           <button
             onClick={handleAddToCart}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+            className="bg-indigo-600 text-white px-3 py-1 rounded-md text-sm hover:bg-indigo-700 transition-colors"
+            aria-label={`${product.name} ürününü sepete ekle`}
           >
             Sepete Ekle
           </button>
@@ -66,3 +60,5 @@ export default function ProductCard({ product }: ProductCardProps) {
     </div>
   );
 }
+
+export default memo(ProductCard);

@@ -110,7 +110,18 @@ async function Categories() {
 
 // Öne çıkan ürünler bileşeni - Suspense ile sarmalayarak bfcache performansını artıralım
 async function FeaturedProducts() {
-  const featuredProducts = await productService.getFeaturedProducts();
+  const featuredProductsData = await productService.getFeaturedProducts();
+
+  // Ürünleri Product tipine dönüştür
+  const featuredProducts = featuredProductsData.map(product => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
+    category: product.category?.name || 'Kategori Yok',
+    description: product.description || undefined,
+    stock: product.stock,
+  }));
 
   return (
     <section className="mb-12" aria-labelledby="featured-heading">

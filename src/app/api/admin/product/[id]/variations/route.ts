@@ -9,7 +9,7 @@ import {
 } from '@/lib/api-response';
 import { parseJsonData, parseQueryParams } from '@/services/api-service';
 import { variationSchema, variationQuerySchema } from './schemas';
-import { productService } from '@/services/product-service';
+import { productService } from '@/services/product';
 
 /**
  * GET: Ürün varyasyonlarını listele

@@ -13,6 +13,37 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 1 saat
 
+// Kategori bileşeni
+function Categories({ categories, activeSlug }: { categories: any[]; activeSlug?: string }) {
+  return (
+    <div className="p-4 rounded-lg shadow">
+      <h2 className="text-lg font-medium mb-4">Kategoriler</h2>
+      <ul className="space-y-2">
+        <li>
+          <Link
+            href="/shop"
+            className={`text-gray-600 hover:text-gray-900 ${!activeSlug ? 'font-bold' : ''}`}
+            prefetch={false}
+          >
+            Tüm Ürünler
+          </Link>
+        </li>
+        {categories.map(category => (
+          <li key={category.id}>
+            <Link
+              href={`/shop?category=${category.slug}`}
+              className={`text-gray-600 hover:text-gray-900 ${activeSlug === category.slug ? 'font-bold' : ''}`}
+              prefetch={false}
+            >
+              {category.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default async function ShopPage({
   searchParams,
 }: {
@@ -35,29 +66,7 @@ export default async function ShopPage({
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div className="md:col-span-1">
-          <div className="p-4 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-4">Kategoriler</h2>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/shop"
-                  className={`text-gray-600 hover:text-gray-900 ${!categorySlug ? 'font-bold' : ''}`}
-                >
-                  Tüm Ürünler
-                </Link>
-              </li>
-              {categories.map(category => (
-                <li key={category.id}>
-                  <Link
-                    href={`/shop?category=${category.slug}`}
-                    className={`text-gray-600 hover:text-gray-900 ${categorySlug === category.slug ? 'font-bold' : ''}`}
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Categories categories={categories} activeSlug={categorySlug} />
         </div>
 
         <div className="md:col-span-2 lg:col-span-3">

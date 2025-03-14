@@ -16,7 +16,18 @@ export const metadata: Metadata = {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const query = searchParams.q || '';
-  const products = query ? await productService.searchProducts(query) : [];
+  const productsData = query ? await productService.searchProducts(query) : [];
+
+  // Ürünleri Product tipine dönüştür
+  const products = productsData.map(product => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
+    category: product.category?.name || 'Kategori Yok',
+    description: product.description || undefined,
+    stock: product.stock,
+  }));
 
   return (
     <div className="container mx-auto px-4 py-8">

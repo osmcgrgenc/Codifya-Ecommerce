@@ -17,6 +17,8 @@ import {
   Sun,
   Moon,
   LogOut,
+  FileText,
+  MessageSquare,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -90,6 +92,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       title: 'Kullanıcılar',
       href: '/admin/users',
       icon: <Users className="h-5 w-5" />,
+    },
+    {
+      title: 'Bloglar',
+      href: '/admin/blogs',
+      icon: <FileText className="h-5 w-5" />,
+    },
+    {
+      title: 'İletişim Mesajları',
+      href: '/admin/contact',
+      icon: <MessageSquare className="h-5 w-5" />,
     },
     {
       title: 'Toplu İçe Aktarma',

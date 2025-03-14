@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { productService } from '@/services/product-service';
+import { productService } from '@/services/product';
 import { withMiddleware } from '@/lib/api-middleware';
 import {
   createPaginatedResponse,

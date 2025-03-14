@@ -1,7 +1,15 @@
 import Link from 'next/link';
 import { productService } from '@/services';
-import ProductCard from './product-card';
+import dynamic from 'next/dynamic';
 import PaginationControls from './pagination';
+import { ProductCardSkeleton } from './product-card-skeleton';
+import { Product } from '@/types';
+
+// ProductCard bileşenini dinamik olarak yüklüyoruz
+const ProductCard = dynamic(() => import('./product-card'), {
+  loading: () => <ProductCardSkeleton />,
+  ssr: true, // Sunucu tarafında render edilecek
+});
 
 interface ProductsGridProps {
   page: number;
@@ -15,10 +23,24 @@ export default async function ProductsGrid({ page, limit, categorySlug }: Produc
 
   // Sayfalanmış ürünleri getir
   const {
-    data: products,
+    data: productsData,
     total,
     totalPages,
   } = await productService.getPaginatedProducts(page, limit, filters);
+
+  // Ürünleri Product tipine dönüştür
+  const products = productsData.map(
+    product =>
+      ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
+        category: product.category?.name || 'Kategori Yok',
+        description: product.description,
+        stock: product.stock,
+      }) as Product
+  );
 
   // Eğer ürün yoksa
   if (products.length === 0) {

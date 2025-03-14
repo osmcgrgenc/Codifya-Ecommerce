@@ -21,6 +21,26 @@ export function slugify(text: string): string {
 }
 
 /**
+ * Tarihi formatlar
+ * @param date Tarih nesnesi veya tarih string'i
+ * @param options Intl.DateTimeFormat seçenekleri
+ * @returns Formatlanmış tarih string'i
+ */
+export function formatDate(
+  date: Date | string,
+  options: Intl.DateTimeFormatOptions = {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('tr-TR', options).format(dateObj);
+}
+
+/**
  * Decimal veri tiplerini number'a dönüştürür
  * Next.js Server Component'lerinden Client Component'lere veri aktarırken kullanılır
  */

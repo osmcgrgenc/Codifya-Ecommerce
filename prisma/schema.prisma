@@ -36,6 +36,7 @@ model User {
   orders        Order[]
   reviews       Review[]
   ProductSeller ProductSeller[]
+  blogPosts     BlogPost[]
 }
 
 model Account {
@@ -78,7 +79,7 @@ model Brand {
   name        String    @unique
   slug        String    @unique
   description String?
-  logo        String? // Marka logosu URL’si
+  logo        String? // Marka logosu URL'si
   country     String? // Marka menşei
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -279,4 +280,47 @@ enum OrderStatus {
   DELIVERED
   PAID
   CANCELLED
+}
+
+// Blog modeli
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?  @db.Text
+  coverImage  String?
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categories  BlogCategory[]
+  
+  @@index([authorId])
+}
+
+model BlogCategory {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  blogPosts BlogPost[]
+}
+
+// İletişim mesajları tablosu
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

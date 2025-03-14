@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { productService } from '@/services/product-service';
+import { productService } from '@/services/product';
 import { userService } from '@/services/user-service';
 import { withMiddleware } from '@/lib/api-middleware';
 import {
