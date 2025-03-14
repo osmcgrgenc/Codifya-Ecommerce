@@ -5,8 +5,15 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-export const db = globalThis.prisma || new PrismaClient();
+// Tarayıcı ortamında çalışmayı engelle
+const isServer = typeof window === 'undefined';
 
-if (process.env.NODE_ENV !== 'production') {
+// PrismaClient'ı sadece sunucu tarafında başlat
+export const db = isServer 
+  ? globalThis.prisma || new PrismaClient()
+  : {} as PrismaClient; // Tarayıcı tarafında boş bir nesne döndür
+
+// Geliştirme ortamında global nesneye kaydet (hot reloading için)
+if (process.env.NODE_ENV !== 'production' && isServer) {
   globalThis.prisma = db;
 }

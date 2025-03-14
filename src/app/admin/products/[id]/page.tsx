@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
-import { productService } from '@/services/product-service';
+import { productService } from '@/services/product';
 import { variationService } from '@/services/variation-service';
 import Image from 'next/image';
 import { Product, ProductImage, Variation, VariationOption, OptionType } from '@prisma/client';
@@ -59,41 +59,86 @@ export default function ProductDetailPage() {
 
   // Ürün bilgilerini getir
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchProduct = async () => {
       if (!params.id) return;
 
       try {
         setLoading(true);
-        const productData = await productService.getProductById(params.id as string);
-
-        if (!productData) {
-          toast({
-            title: 'Hata',
-            description: 'Ürün bulunamadı.',
-            variant: 'destructive',
-          });
-          router.push('/admin/products');
+        
+        // API endpoint'i kullanarak ürün detayını getir
+        const response = await fetch(`/api/products/${params.id}`, {
+          // Önbelleğe almayı devre dışı bırak
+          cache: 'no-store'
+        });
+        
+        if (!response.ok) {
+          if (isMounted) {
+            toast({
+              title: 'Hata',
+              description: 'Ürün bulunamadı.',
+              variant: 'destructive',
+            });
+            router.push('/admin/products');
+          }
           return;
         }
-
-        setProduct(productData as unknown as ProductWithRelations);
-
-        // Opsiyon tiplerini getir
-        const optionTypesData = await variationService.getAllOptionTypes();
-        setOptionTypes(optionTypesData);
-      } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Ürün bilgileri yüklenirken bir hata oluştu.',
-          variant: 'destructive',
+        
+        const productData = await response.json();
+        
+        // Opsiyon tiplerini API endpoint'i kullanarak getir
+        const optionTypesResponse = await fetch('/api/option-types', {
+          cache: 'no-store'
         });
-      } finally {
-        setLoading(false);
+        
+        if (!optionTypesResponse.ok) {
+          throw new Error('Opsiyon tipleri getirilirken bir hata oluştu');
+        }
+        
+        const optionTypesData = await optionTypesResponse.json();
+        
+        if (isMounted) {
+          setProduct(productData as unknown as ProductWithRelations);
+          setOptionTypes(optionTypesData);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Ürün detayı getirilirken hata:', error);
+        if (isMounted) {
+          toast({
+            title: 'Hata',
+            description: 'Ürün bilgileri yüklenirken bir hata oluştu.',
+            variant: 'destructive',
+          });
+          setLoading(false);
+        }
       }
     };
 
     fetchProduct();
+    
+    // Cleanup fonksiyonu
+    return () => {
+      isMounted = false;
+    };
   }, [params.id, router, toast]);
+
+  // Ürünü yeniden yükle fonksiyonu
+  const reloadProduct = async (productId: string) => {
+    try {
+      const response = await fetch(`/api/products/${productId}`, {
+        cache: 'no-store'
+      });
+      
+      if (response.ok) {
+        const updatedProduct = await response.json();
+        setProduct(updatedProduct as unknown as ProductWithRelations);
+      }
+    } catch (error) {
+      console.error('Ürün yeniden yüklenirken hata:', error);
+    }
+  };
 
   // Varyasyon ekleme
   const handleAddVariation = async () => {
@@ -109,20 +154,31 @@ export default function ProductDetailPage() {
         return;
       }
 
-      const variation = await variationService.createVariation({
-        productId: product.id,
-        sku: newVariation.sku,
-        price: newVariation.price,
-        stock: newVariation.stock,
-        options: newVariation.options.map(opt => ({
-          optionType: opt.optionTypeId,
-          value: opt.value,
-        })),
+      setLoading(true);
+
+      // API endpoint'i kullanarak varyasyon ekle
+      const response = await fetch(`/api/products/${product.id}/variations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sku: newVariation.sku,
+          price: newVariation.price,
+          stock: newVariation.stock,
+          options: newVariation.options.map(opt => ({
+            optionType: opt.optionTypeId,
+            value: opt.value,
+          })),
+        }),
       });
 
+      if (!response.ok) {
+        throw new Error('Varyasyon eklenirken bir hata oluştu');
+      }
+
       // Ürünü yeniden yükle
-      const updatedProduct = await productService.getProductById(product.id);
-      setProduct(updatedProduct as unknown as ProductWithRelations);
+      await reloadProduct(product.id);
 
       // Formu sıfırla
       setNewVariation({
@@ -137,11 +193,14 @@ export default function ProductDetailPage() {
         description: 'Varyasyon başarıyla eklendi.',
       });
     } catch (error) {
+      console.error('Varyasyon eklenirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Varyasyon eklenirken bir hata oluştu.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,22 +209,33 @@ export default function ProductDetailPage() {
     if (!product) return;
 
     try {
-      await variationService.deleteVariation(variationId);
+      setLoading(true);
+      
+      // API endpoint'i kullanarak varyasyon sil
+      const response = await fetch(`/api/products/${product.id}/variations/${variationId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Varyasyon silinirken bir hata oluştu');
+      }
 
       // Ürünü yeniden yükle
-      const updatedProduct = await productService.getProductById(product.id);
-      setProduct(updatedProduct as unknown as ProductWithRelations);
+      await reloadProduct(product.id);
 
       toast({
         title: 'Başarılı',
         description: 'Varyasyon başarıyla silindi.',
       });
     } catch (error) {
+      console.error('Varyasyon silinirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Varyasyon silinirken bir hata oluştu.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -183,14 +253,26 @@ export default function ProductDetailPage() {
         return;
       }
 
-      await productService.addProductImage(product.id, {
-        url: newImage.url,
-        isMain: newImage.isMain,
+      setLoading(true);
+      
+      // API endpoint'i kullanarak görsel ekle
+      const response = await fetch(`/api/products/${product.id}/images`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: newImage.url,
+          isMain: newImage.isMain,
+        }),
       });
 
+      if (!response.ok) {
+        throw new Error('Görsel eklenirken bir hata oluştu');
+      }
+
       // Ürünü yeniden yükle
-      const updatedProduct = await productService.getProductById(product.id);
-      setProduct(updatedProduct as unknown as ProductWithRelations);
+      await reloadProduct(product.id);
 
       // Formu sıfırla
       setNewImage({
@@ -204,11 +286,14 @@ export default function ProductDetailPage() {
         description: 'Görsel başarıyla eklendi.',
       });
     } catch (error) {
+      console.error('Görsel eklenirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Görsel eklenirken bir hata oluştu.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,22 +302,33 @@ export default function ProductDetailPage() {
     if (!product) return;
 
     try {
-      await productService.deleteProductImage(imageId);
+      setLoading(true);
+      
+      // API endpoint'i kullanarak görsel sil
+      const response = await fetch(`/api/products/${product.id}/images/${imageId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Görsel silinirken bir hata oluştu');
+      }
 
       // Ürünü yeniden yükle
-      const updatedProduct = await productService.getProductById(product.id);
-      setProduct(updatedProduct as unknown as ProductWithRelations);
+      await reloadProduct(product.id);
 
       toast({
         title: 'Başarılı',
         description: 'Görsel başarıyla silindi.',
       });
     } catch (error) {
+      console.error('Görsel silinirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Görsel silinirken bir hata oluştu.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -241,43 +337,57 @@ export default function ProductDetailPage() {
     if (!product) return;
 
     try {
-      // Önce mevcut ana görseli bul
-      const mainImage = product.images.find(img => img.isMain);
-
       // Eğer zaten ana görsel ise işlem yapma
+      const mainImage = product.images.find(img => img.isMain);
       if (mainImage?.id === imageId) return;
 
-      // Mevcut ana görseli güncelle
+      setLoading(true);
+      
+      // API endpoint'i kullanarak ana görseli güncelle
       if (mainImage) {
-        await productService.updateProductImage(mainImage.id, {
-          url: mainImage.url,
-          isMain: false,
+        await fetch(`/api/products/${product.id}/images/${mainImage.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: mainImage.url,
+            isMain: false,
+          }),
         });
       }
 
       // Yeni ana görseli ayarla
       const newMainImage = product.images.find(img => img.id === imageId);
       if (newMainImage) {
-        await productService.updateProductImage(imageId, {
-          url: newMainImage.url,
-          isMain: true,
+        await fetch(`/api/products/${product.id}/images/${imageId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: newMainImage.url,
+            isMain: true,
+          }),
         });
       }
 
       // Ürünü yeniden yükle
-      const updatedProduct = await productService.getProductById(product.id);
-      setProduct(updatedProduct as unknown as ProductWithRelations);
+      await reloadProduct(product.id);
 
       toast({
         title: 'Başarılı',
         description: 'Ana görsel başarıyla güncellendi.',
       });
     } catch (error) {
+      console.error('Ana görsel ayarlanırken hata:', error);
       toast({
         title: 'Hata',
         description: 'Ana görsel ayarlanırken bir hata oluştu.',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
