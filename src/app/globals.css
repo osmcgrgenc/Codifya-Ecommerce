@@ -29,33 +29,31 @@
   --indigo-900: #312e81;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 
-    --gray-50: #18181b;
-    --gray-100: #1f2937;
-    --gray-200: #27272a;
-    --gray-300: #323238;
-    --gray-400: #3f3f46;
-    --gray-500: #52525b;
-    --gray-600: #71717a;
-    --gray-700: #a1a1aa;
-    --gray-800: #d4d4d8;
-    --gray-900: #e4e4e7;
+  --gray-50: #18181b;
+  --gray-100: #1f2937;
+  --gray-200: #27272a;
+  --gray-300: #323238;
+  --gray-400: #3f3f46;
+  --gray-500: #52525b;
+  --gray-600: #71717a;
+  --gray-700: #a1a1aa;
+  --gray-800: #d4d4d8;
+  --gray-900: #e4e4e7;
 
-    --indigo-50: #312e81;
-    --indigo-100: #3730a3;
-    --indigo-200: #4338ca;
-    --indigo-300: #4f46e5;
-    --indigo-400: #6366f1;
-    --indigo-500: #818cf8;
-    --indigo-600: #a5b4fc;
-    --indigo-700: #c7d2fe;
-    --indigo-800: #e0e7ff;
-    --indigo-900: #eef2ff;
-  }
+  --indigo-50: #312e81;
+  --indigo-100: #3730a3;
+  --indigo-200: #4338ca;
+  --indigo-300: #4f46e5;
+  --indigo-400: #6366f1;
+  --indigo-500: #818cf8;
+  --indigo-600: #a5b4fc;
+  --indigo-700: #c7d2fe;
+  --indigo-800: #e0e7ff;
+  --indigo-900: #eef2ff;
 }
 
 body {

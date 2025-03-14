@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Product, ProductImage } from '@prisma/client';
 import Image from 'next/image';
 
+// Decimal tipi için arayüz
+interface DecimalType {
+  toNumber: () => number;
+}
+
 // Ürün listesi bileşeni (Single Responsibility Principle)
 const ProductList = ({
   products,
@@ -20,6 +25,9 @@ const ProductList = ({
   onEdit: (id: string) => void;
   onViewDetails: (id: string) => void;
 }) => {
+  // Ürünlerin bir dizi olduğundan emin ol
+  const productArray = Array.isArray(products) ? products : [];
+
   return (
     <div className="rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
@@ -59,71 +67,90 @@ const ProductList = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {products.map(product => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <Image
-                        className="h-10 w-10 rounded-md object-cover"
-                        src={
-                          product.images?.find(img => img.isMain)?.url ||
-                          'https://via.placeholder.com/300'
-                        }
-                        alt={product.name}
-                        width={50}
-                        height={50}
-                      />
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                      <div className="text-xs text-gray-500">
-                        {product.price.toLocaleString('tr-TR', {
-                          style: 'currency',
-                          currency: 'TRY',
-                        })}
+            {productArray.length > 0 ? (
+              productArray.map(product => (
+                <tr key={product.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <Image
+                          className="h-10 w-10 rounded-md object-cover"
+                          src={
+                            product.images?.find(img => img.isMain)?.url ||
+                            'https://via.placeholder.com/300'
+                          }
+                          alt={product.name}
+                          width={50}
+                          height={50}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                        <div className="text-xs text-gray-500">
+                          {typeof product.price === 'number'
+                            ? product.price.toLocaleString('tr-TR', {
+                                style: 'currency',
+                                currency: 'TRY',
+                              })
+                            : typeof product.price === 'object' && 'toNumber' in product.price
+                              ? (product.price as unknown as DecimalType)
+                                  .toNumber()
+                                  .toLocaleString('tr-TR', {
+                                    style: 'currency',
+                                    currency: 'TRY',
+                                  })
+                              : 'Fiyat bilgisi yok'}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
-                    {product.category?.name || 'Kategori Yok'}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{product.brand?.name || 'Marka Yok'}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div
-                    className={`text-sm ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}
-                  >
-                    {product.stock !== undefined ? product.stock : 'N/A'}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mr-2"
-                    onClick={() => onEdit(product.id)}
-                  >
-                    Düzenle
-                  </Button>
-                  <Button variant="destructive" size="sm" onClick={() => onDelete(product.id)}>
-                    Sil
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="ml-2"
-                    onClick={() => onViewDetails(product.id)}
-                  >
-                    Detaylar
-                  </Button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {product.category?.name || 'Kategori Yok'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {product.brand?.name || 'Marka Yok'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div
+                      className={`text-sm ${product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}
+                    >
+                      {product.stock !== undefined ? product.stock : 'N/A'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mr-2"
+                      onClick={() => onEdit(product.id)}
+                    >
+                      Düzenle
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => onDelete(product.id)}>
+                      Sil
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-2"
+                      onClick={() => onViewDetails(product.id)}
+                    >
+                      Detaylar
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  Ürün bulunamadı.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

@@ -25,7 +25,7 @@ export default async function ShopPage({
 
   // Veritabanından kategorileri çek
   const categoriesPromise = categoryService.getAllCategories();
-  
+
   // Kategorileri bekle
   const categories = await categoriesPromise;
 
@@ -62,11 +62,7 @@ export default async function ShopPage({
 
         <div className="md:col-span-2 lg:col-span-3">
           <Suspense fallback={<ProductsLoading />}>
-            <ProductsGrid 
-              page={page} 
-              limit={limit} 
-              categorySlug={categorySlug} 
-            />
+            <ProductsGrid page={page} limit={limit} categorySlug={categorySlug} />
           </Suspense>
         </div>
       </div>

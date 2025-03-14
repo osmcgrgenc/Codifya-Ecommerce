@@ -14,11 +14,11 @@ export default async function ProductsGrid({ page, limit, categorySlug }: Produc
   const filters = categorySlug ? { category: categorySlug } : undefined;
 
   // Sayfalanmış ürünleri getir
-  const { data: products, total, totalPages } = await productService.getPaginatedProducts(
-    page,
-    limit,
-    filters
-  );
+  const {
+    data: products,
+    total,
+    totalPages,
+  } = await productService.getPaginatedProducts(page, limit, filters);
 
   // Eğer ürün yoksa
   if (products.length === 0) {
@@ -55,4 +55,4 @@ export default async function ProductsGrid({ page, limit, categorySlug }: Produc
       )}
     </div>
   );
-} 
+}

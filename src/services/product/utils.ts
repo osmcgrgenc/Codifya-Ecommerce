@@ -57,22 +57,24 @@ export const calculateTotalStock = (product: Product & { variations?: Variation[
  * @param product - Ürün nesnesi
  * @returns Toplam stok bilgisi eklenmiş ürün nesnesi
  */
-export const transformProductData = <T extends Product>(product: T & { 
-  variations?: Variation[]; 
-  category?: any; 
-  brand?: any; 
-  images?: any[]; 
-  seller?: any[];
-}): T & { totalStock: number } => {
+export const transformProductData = <T extends Product>(
+  product: T & {
+    variations?: Variation[];
+    category?: any;
+    brand?: any;
+    images?: any[];
+    seller?: any[];
+  }
+): T & { totalStock: number } => {
   // Decimal değerleri number'a dönüştür
   if (product.price && typeof product.price === 'object' && 'toNumber' in product.price) {
     product.price = (product.price as unknown as DecimalType).toNumber() as any;
   }
-  
+
   if (product.discount && typeof product.discount === 'object' && 'toNumber' in product.discount) {
     product.discount = (product.discount as unknown as DecimalType).toNumber() as any;
   }
-  
+
   // Varyasyonlardaki Decimal değerleri dönüştür
   if (product.variations && product.variations.length > 0) {
     product.variations = product.variations.map(variation => {
@@ -82,7 +84,7 @@ export const transformProductData = <T extends Product>(product: T & {
       return variation;
     });
   }
-  
+
   return {
     ...product,
     totalStock: calculateTotalStock(product),
