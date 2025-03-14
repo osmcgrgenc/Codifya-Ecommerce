@@ -240,4 +240,4 @@ export const brandService = {
       where: { id },
     });
   },
-}; 
+};

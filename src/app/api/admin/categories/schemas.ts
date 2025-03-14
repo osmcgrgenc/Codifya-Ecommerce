@@ -16,9 +16,9 @@ export const categoryQuerySchema = z.object({
  * Kategori oluşturma şeması
  */
 export const createCategorySchema = z.object({
-  name: z.string().min(2, { message: "Kategori adı en az 2 karakter olmalıdır" }),
+  name: z.string().min(2, { message: 'Kategori adı en az 2 karakter olmalıdır' }),
   description: z.string().optional(),
-  image: z.string().url({ message: "Geçerli bir URL girilmelidir" }).optional(),
+  image: z.string().url({ message: 'Geçerli bir URL girilmelidir' }).optional(),
   parentId: z.string().optional(),
   slug: z.string().optional(),
 });
@@ -33,4 +33,4 @@ export const updateCategorySchema = createCategorySchema.partial();
  */
 export type CategoryQueryParams = z.infer<typeof categoryQuerySchema>;
 export type CreateCategoryData = z.infer<typeof createCategorySchema>;
-export type UpdateCategoryData = z.infer<typeof updateCategorySchema>; 
+export type UpdateCategoryData = z.infer<typeof updateCategorySchema>;

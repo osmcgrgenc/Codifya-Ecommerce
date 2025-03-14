@@ -6,7 +6,7 @@ services:
     container_name: codifya_postgres
     restart: always
     ports:
-      - "5433:5432"
+      - '5433:5432'
     environment:
       POSTGRES_USER: codifya_user
       POSTGRES_PASSWORD: codifya_password
@@ -15,4 +15,4 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data: 
+  postgres_data:

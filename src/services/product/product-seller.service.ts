@@ -15,7 +15,7 @@ export const productSellerService = {
    */
   async addProductSeller(data: ProductSellerData): Promise<ProductSeller> {
     ensureServer();
-    
+
     try {
       return await db.productSeller.create({
         data,
@@ -38,7 +38,7 @@ export const productSellerService = {
     data: UpdateProductSellerData
   ): Promise<ProductSeller> {
     ensureServer();
-    
+
     try {
       return await db.productSeller.update({
         where: {
@@ -62,7 +62,7 @@ export const productSellerService = {
    */
   async deleteProductSeller(productId: string, sellerId: string): Promise<ProductSeller> {
     ensureServer();
-    
+
     try {
       return await db.productSeller.delete({
         where: {
@@ -76,7 +76,7 @@ export const productSellerService = {
       return handleServiceError(error, 'Ürün satıcısı silinirken hata oluştu');
     }
   },
-  
+
   /**
    * Ürüne ait tüm satıcıları getirir
    * @param productId - Ürün ID'si
@@ -93,7 +93,7 @@ export const productSellerService = {
       return [];
     }
   },
-  
+
   /**
    * Satıcıya ait tüm ürünleri getirir
    * @param sellerId - Satıcı ID'si
@@ -121,7 +121,7 @@ export const productSellerService = {
       return [];
     }
   },
-  
+
   /**
    * En iyi fiyatlı satıcıyı getirir
    * @param productId - Ürün ID'si
@@ -130,9 +130,9 @@ export const productSellerService = {
   async getBestPriceSeller(productId: string): Promise<ProductSeller | null> {
     try {
       return await db.productSeller.findFirst({
-        where: { 
+        where: {
           productId,
-          stock: { gt: 0 } // Stokta olan satıcılar
+          stock: { gt: 0 }, // Stokta olan satıcılar
         },
         orderBy: { price: 'asc' },
       });
@@ -140,5 +140,5 @@ export const productSellerService = {
       console.error('En iyi fiyatlı satıcı getirilirken hata oluştu:', error);
       return null;
     }
-  }
-}; 
+  },
+};

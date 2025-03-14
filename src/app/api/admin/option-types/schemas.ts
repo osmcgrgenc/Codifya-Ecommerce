@@ -28,4 +28,4 @@ export const optionTypeQuerySchema = z.object({
 
 export type OptionTypeInput = z.infer<typeof optionTypeSchema>;
 export type UpdateOptionTypeInput = z.infer<typeof updateOptionTypeSchema>;
-export type OptionTypeQuery = z.infer<typeof optionTypeQuerySchema>; 
+export type OptionTypeQuery = z.infer<typeof optionTypeQuerySchema>;

@@ -220,7 +220,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+          <div className=" rounded-lg shadow-md overflow-hidden mb-8">
             <div className="p-6">
               <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
                 <div>
@@ -340,7 +340,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className=" rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-lg font-medium mb-4">Müşteri Bilgileri</h2>
               {order.user ? (
@@ -364,7 +364,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className=" rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-lg font-medium mb-4">Teslimat Bilgileri</h2>
               <p className="text-gray-600 mb-4">
@@ -408,7 +408,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className=" rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-lg font-medium mb-4">Ödeme Bilgileri</h2>
               {order.payment ? (
@@ -441,7 +441,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className=" rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-lg font-medium mb-4">Sipariş Notları</h2>
               <Textarea

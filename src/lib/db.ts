@@ -9,9 +9,7 @@ declare global {
 const isServer = typeof window === 'undefined';
 
 // PrismaClient'ı sadece sunucu tarafında başlat
-export const db = isServer 
-  ? globalThis.prisma || new PrismaClient()
-  : {} as PrismaClient; // Tarayıcı tarafında boş bir nesne döndür
+export const db = isServer ? globalThis.prisma || new PrismaClient() : ({} as PrismaClient); // Tarayıcı tarafında boş bir nesne döndür
 
 // Geliştirme ortamında global nesneye kaydet (hot reloading için)
 if (process.env.NODE_ENV !== 'production' && isServer) {

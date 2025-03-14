@@ -3,7 +3,15 @@
 import { useState } from 'react';
 import { useCart } from '@/lib/hooks/use-cart';
 import { Button } from '@/components/ui/button';
-import { Product, Category, Brand, ProductImage, Variation, VariationOption, OptionType } from '@prisma/client';
+import {
+  Product,
+  Category,
+  Brand,
+  ProductImage,
+  Variation,
+  VariationOption,
+  OptionType,
+} from '@prisma/client';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -44,11 +52,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [selectedTab, setSelectedTab] = useState('description');
 
   // Ana görseli bul
-  const mainImage = product.images.find(img => img.isMain)?.url || product.images[0]?.url || '/images/placeholder.jpg';
-  
+  const mainImage =
+    product.images.find(img => img.isMain)?.url ||
+    product.images[0]?.url ||
+    '/images/placeholder.jpg';
+
   // Diğer görselleri bul
   const otherImages = product.images.filter(img => !img.isMain).map(img => img.url);
-  
+
   // Tüm görselleri birleştir (ana görsel ilk sırada)
   const allImages = [mainImage, ...otherImages];
 
@@ -60,7 +71,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   // Sepete ekle
   const handleAddToCart = () => {
     // Eğer varyasyon seçilmişse onu, seçilmemişse ana ürünü ekle
-    const itemToAdd = selectedVariation 
+    const itemToAdd = selectedVariation
       ? {
           id: selectedVariation.id,
           name: `${product.name} - ${selectedVariation.options.map(opt => `${opt.optionType.name}: ${opt.value}`).join(', ')}`,
@@ -77,13 +88,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           quantity: quantity,
           category: product.category?.name || 'Kategori Yok',
         };
-    
+
     addItem(itemToAdd);
   };
 
   // Fiyat hesaplama
   const price = selectedVariation ? selectedVariation.price : product.price;
-  
+
   // Stok durumu
   const stock = selectedVariation ? selectedVariation.stock : product.stock;
 
@@ -102,15 +113,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               priority
             />
           </div>
-          
+
           {/* Küçük Görseller */}
           {allImages.length > 1 && (
             <div className="grid grid-cols-5 gap-2">
               {allImages.map((image, index) => (
-                <div 
+                <div
                   key={index}
                   className={`relative aspect-square rounded-md overflow-hidden border cursor-pointer transition-all ${
-                    activeImageIndex === index ? 'ring-2 ring-indigo-500' : 'opacity-70 hover:opacity-100'
+                    activeImageIndex === index
+                      ? 'ring-2 ring-indigo-500'
+                      : 'opacity-70 hover:opacity-100'
                   }`}
                   onClick={() => setActiveImageIndex(index)}
                 >
@@ -140,122 +153,112 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   {product.brand.name}
                 </Badge>
               )}
-              {product.featured && (
-                <Badge className="bg-amber-500">Öne Çıkan</Badge>
-              )}
+              {product.featured && <Badge className="bg-amber-500">Öne Çıkan</Badge>}
             </div>
-            
+
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-            
+
             <div className="flex items-center space-x-2 mb-4">
               <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon 
-                    key={star} 
-                    className="w-4 h-4 fill-amber-400 text-amber-400" 
-                  />
+                {[1, 2, 3, 4, 5].map(star => (
+                  <StarIcon key={star} className="w-4 h-4 fill-amber-400 text-amber-400" />
                 ))}
               </div>
               <span className="text-sm text-gray-500">(120 Değerlendirme)</span>
             </div>
-            
+
             <div className="text-2xl font-bold mb-2 text-indigo-700">
               {price.toLocaleString('tr-TR', {
                 style: 'currency',
                 currency: 'TRY',
               })}
             </div>
-            
+
             <div className="mb-4">
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  stock > 10 
-                    ? 'bg-green-100 text-green-800' 
-                    : stock > 0 
-                      ? 'bg-orange-100 text-orange-800' 
+                  stock > 10
+                    ? 'bg-green-100 text-green-800'
+                    : stock > 0
+                      ? 'bg-orange-100 text-orange-800'
                       : 'bg-red-100 text-red-800'
                 }`}
               >
-                {stock > 10
-                  ? 'Stokta var'
-                  : stock > 0
-                    ? `Son ${stock} ürün`
-                    : 'Stokta yok'}
+                {stock > 10 ? 'Stokta var' : stock > 0 ? `Son ${stock} ürün` : 'Stokta yok'}
               </span>
             </div>
           </div>
-          
+
           <Separator />
-          
+
           {/* Varyasyonlar */}
           {product.variations.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-lg font-medium">Varyasyonlar</h2>
-              
+
               <div className="grid grid-cols-1 gap-4">
                 {/* Varyasyon gruplarını oluştur */}
-                {product.variations.length > 0 && (() => {
-                  // Tüm opsiyon tiplerini bul
-                  const optionTypes = Array.from(
-                    new Set(
-                      product.variations
-                        .flatMap(v => v.options)
-                        .map(o => o.optionType.name)
-                    )
-                  );
-                  
-                  return optionTypes.map(optionType => {
-                    // Bu opsiyon tipine ait benzersiz değerleri bul
-                    const optionValues = Array.from(
+                {product.variations.length > 0 &&
+                  (() => {
+                    // Tüm opsiyon tiplerini bul
+                    const optionTypes = Array.from(
                       new Set(
-                        product.variations
-                          .flatMap(v => v.options)
-                          .filter(o => o.optionType.name === optionType)
-                          .map(o => o.value)
+                        product.variations.flatMap(v => v.options).map(o => o.optionType.name)
                       )
                     );
-                    
-                    return (
-                      <div key={optionType} className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          {optionType}
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                          {optionValues.map(value => {
-                            // Bu değere sahip bir varyasyon bul
-                            const variation = product.variations.find(v => 
-                              v.options.some(o => 
-                                o.optionType.name === optionType && o.value === value
-                              )
-                            );
-                            
-                            const isSelected = selectedVariation?.options.some(
-                              o => o.optionType.name === optionType && o.value === value
-                            );
-                            
-                            return (
-                              <Button
-                                key={value}
-                                variant={isSelected ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => variation && handleVariationSelect(variation)}
-                                className="rounded-full"
-                              >
-                                {value}
-                              </Button>
-                            );
-                          })}
+
+                    return optionTypes.map(optionType => {
+                      // Bu opsiyon tipine ait benzersiz değerleri bul
+                      const optionValues = Array.from(
+                        new Set(
+                          product.variations
+                            .flatMap(v => v.options)
+                            .filter(o => o.optionType.name === optionType)
+                            .map(o => o.value)
+                        )
+                      );
+
+                      return (
+                        <div key={optionType} className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            {optionType}
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {optionValues.map(value => {
+                              // Bu değere sahip bir varyasyon bul
+                              const variation = product.variations.find(v =>
+                                v.options.some(
+                                  o => o.optionType.name === optionType && o.value === value
+                                )
+                              );
+
+                              const isSelected = selectedVariation?.options.some(
+                                o => o.optionType.name === optionType && o.value === value
+                              );
+
+                              return (
+                                <Button
+                                  key={value}
+                                  variant={isSelected ? 'default' : 'outline'}
+                                  size="sm"
+                                  onClick={() => variation && handleVariationSelect(variation)}
+                                  className="rounded-full"
+                                >
+                                  {value}
+                                </Button>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  });
-                })()}
+                      );
+                    });
+                  })()}
               </div>
-              
+
               <Separator />
             </div>
           )}
-          
+
           {/* Miktar ve Sepete Ekle */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
@@ -276,7 +279,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   +
                 </button>
               </div>
-              
+
               <Button
                 onClick={handleAddToCart}
                 className="flex-1 bg-indigo-600 hover:bg-indigo-700"
@@ -287,7 +290,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </Button>
             </div>
           </div>
-          
+
           {/* Satıcılar */}
           {product.sellers && product.sellers.length > 0 && (
             <div className="mt-6">
@@ -316,10 +319,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                             <h3 className="font-medium">{seller.name}</h3>
                             <div className="flex items-center text-sm text-gray-500">
                               <div className="flex">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <StarIcon 
-                                    key={star} 
-                                    className="w-3 h-3 fill-amber-400 text-amber-400" 
+                                {[1, 2, 3, 4, 5].map(star => (
+                                  <StarIcon
+                                    key={star}
+                                    className="w-3 h-3 fill-amber-400 text-amber-400"
                                   />
                                 ))}
                               </div>
@@ -339,7 +342,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           )}
         </div>
       </div>
-      
+
       {/* Detay Sekmeleri */}
       <div className="mt-12">
         <Tabs defaultValue={selectedTab} onValueChange={setSelectedTab} className="w-full">
@@ -348,7 +351,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <TabsTrigger value="specifications">Özellikler</TabsTrigger>
             <TabsTrigger value="reviews">Değerlendirmeler</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="description" className="mt-6">
             <Card>
               <CardContent className="p-6">
@@ -360,7 +363,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="specifications" className="mt-6">
             <Card>
               <CardContent className="p-6">
@@ -397,7 +400,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="reviews" className="mt-6">
             <Card>
               <CardContent className="p-6">

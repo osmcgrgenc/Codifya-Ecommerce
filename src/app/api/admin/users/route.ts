@@ -1,20 +1,15 @@
 import { NextRequest } from 'next/server';
 import { userService } from '@/services/user-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createPaginatedResponse, 
-  createSuccessResponse, 
+import {
+  createPaginatedResponse,
+  createSuccessResponse,
   createValidationErrorResponse,
   createNotFoundResponse,
-  handleValidationResult
+  handleValidationResult,
 } from '@/lib/api-response';
 import { parseQueryParams, parseJsonData } from '@/services/api-service';
-import { 
-  userQuerySchema, 
-  createUserSchema,
-  UserQueryParams,
-  CreateUserData
-} from './schemas';
+import { userQuerySchema, createUserSchema, UserQueryParams, CreateUserData } from './schemas';
 
 /**
  * GET: Kullanıcıları listele (sayfalama ve filtreleme ile)
@@ -30,23 +25,17 @@ async function getUsers(req: NextRequest, context: any, session: any) {
 
   // Filtreleri oluştur
   const filters: any = {};
-  
+
   if (search) {
     filters.search = search;
   }
-  
+
   if (role) {
     filters.role = role;
   }
 
   // Kullanıcıları getir
-  const result = await userService.getPaginatedUsers(
-    page,
-    limit,
-    filters,
-    sortBy,
-    sortOrder
-  );
+  const result = await userService.getPaginatedUsers(page, limit, filters, sortBy, sortOrder);
 
   return createPaginatedResponse(
     result.data,
@@ -64,13 +53,13 @@ async function createUser(req: NextRequest, context: any, session: any) {
   // İstek gövdesini doğrula
   const bodyResult = await parseJsonData(req, createUserSchema);
   const validationResult = handleValidationResult(bodyResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const data = validationResult.data;
-  
+
   try {
     // Kullanıcıyı oluştur
     const user = await userService.createUser(data);
@@ -84,4 +73,4 @@ async function createUser(req: NextRequest, context: any, session: any) {
  * Kullanıcı API endpoint'leri
  */
 export const GET = withMiddleware(getUsers, { requiredRole: 'ADMIN' });
-export const POST = withMiddleware(createUser, { requiredRole: 'ADMIN' }); 
+export const POST = withMiddleware(createUser, { requiredRole: 'ADMIN' });

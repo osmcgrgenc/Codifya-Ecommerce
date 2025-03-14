@@ -125,9 +125,7 @@ const OrdersTable = ({
           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2">
             <Select
               value={order.status}
-              onValueChange={(value: string) =>
-                onUpdateStatus(order.id, value as OrderStatus)
-              }
+              onValueChange={(value: string) => onUpdateStatus(order.id, value as OrderStatus)}
             >
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Durum Değiştir" />
@@ -140,11 +138,7 @@ const OrdersTable = ({
                 <SelectItem value="CANCELLED">İptal Edildi</SelectItem>
               </SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onViewDetails(order.id)}
-            >
+            <Button variant="outline" size="sm" onClick={() => onViewDetails(order.id)}>
               Detaylar
             </Button>
           </td>
@@ -217,13 +211,13 @@ export default function OrdersPage() {
       try {
         setLoading(true);
         const response = await fetch('/api/admin/orders');
-        
+
         if (!response.ok) {
           throw new Error('Siparişler getirilemedi');
         }
-        
+
         const data = await response.json();
-        
+
         // API'den gelen verileri Order tipine dönüştür
         const formattedOrders: Order[] = data.data.map((order: any) => ({
           id: order.id,
@@ -257,7 +251,7 @@ export default function OrdersPage() {
           paymentMethod: order.payment?.method || 'CREDIT_CARD',
           referenceCode: order.referenceCode,
         }));
-        
+
         setOrders(formattedOrders);
       } catch (error) {
         console.error('Siparişler yüklenirken hata oluştu:', error);
@@ -303,7 +297,7 @@ export default function OrdersPage() {
       setOrders(
         orders.map(order => (order.id === orderId ? { ...order, status: newStatus } : order))
       );
-      
+
       showSuccess('Sipariş durumu güncellendi');
     } catch (error) {
       console.error('Durum güncellenirken hata oluştu:', error);

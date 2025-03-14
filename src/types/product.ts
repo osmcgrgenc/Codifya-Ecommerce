@@ -23,4 +23,4 @@ export enum ProductFormStep {
   SEO = 'SEO Bilgileri',
   VARIANTS = 'Varyasyonlar',
   REVIEW = 'Önizleme',
-} 
+}

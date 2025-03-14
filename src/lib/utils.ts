@@ -38,17 +38,22 @@ export function convertDecimalToNumber<T>(obj: T): T {
   }
 
   const result = { ...obj };
-  
+
   for (const key in result) {
     const value = result[key];
-    
+
     // Decimal tipindeki değerleri kontrol et
-    if (value && typeof value === 'object' && 'toNumber' in value && typeof value.toNumber === 'function') {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'toNumber' in value &&
+      typeof value.toNumber === 'function'
+    ) {
       result[key] = value.toNumber();
     } else if (value && typeof value === 'object') {
       result[key] = convertDecimalToNumber(value);
     }
   }
-  
+
   return result;
 }

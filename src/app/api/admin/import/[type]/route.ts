@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImportService, ImportResult } from '@/services/import-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createSuccessResponse, 
+import {
+  createSuccessResponse,
   createErrorResponse,
-  createValidationErrorResponse
+  createValidationErrorResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ const importTypeSchema = z.enum(VALID_IMPORT_TYPES);
  * İçe aktarma işlemi için API endpoint'i
  */
 async function importData(
-  request: NextRequest, 
+  request: NextRequest,
   { params }: { params: { type: string } },
   session: any
 ): Promise<NextResponse> {
@@ -50,7 +50,10 @@ async function importData(
   const importService = new ImportService();
   const result = await processImport(importService, typeResult.data, file);
 
-  return createSuccessResponse(result, result.success ? 'İçe aktarma başarılı' : 'İçe aktarma başarısız');
+  return createSuccessResponse(
+    result,
+    result.success ? 'İçe aktarma başarılı' : 'İçe aktarma başarısız'
+  );
 }
 
 /**

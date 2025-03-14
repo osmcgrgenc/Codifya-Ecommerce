@@ -79,7 +79,9 @@ export function createErrorResponse(
 /**
  * Yetkilendirme hatası yanıtı oluşturur
  */
-export function createUnauthorizedResponse(message: string = 'Bu işlem için yetkiniz bulunmamaktadır'): NextResponse {
+export function createUnauthorizedResponse(
+  message: string = 'Bu işlem için yetkiniz bulunmamaktadır'
+): NextResponse {
   return createErrorResponse(message, 403);
 }
 
@@ -87,13 +89,10 @@ export function createUnauthorizedResponse(message: string = 'Bu işlem için ye
  * Sunucu hatası yanıtı oluşturur
  */
 export function createServerErrorResponse(error: unknown): NextResponse {
-  const errorMessage = error instanceof Error ? error.message : 'Beklenmeyen bir sunucu hatası oluştu';
-  
-  return createErrorResponse(
-    'Sunucu hatası',
-    500,
-    [errorMessage]
-  );
+  const errorMessage =
+    error instanceof Error ? error.message : 'Beklenmeyen bir sunucu hatası oluştu';
+
+  return createErrorResponse('Sunucu hatası', 500, [errorMessage]);
 }
 
 /**
@@ -122,6 +121,6 @@ export function handleValidationResult<T>(
       response: createValidationErrorResponse(result.errors),
     };
   }
-  
+
   return { success: true, data: result.data };
-} 
+}

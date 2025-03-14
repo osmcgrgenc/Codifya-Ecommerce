@@ -247,7 +247,7 @@ export default function ImportPage() {
       </Button>
 
       {showErrors && (
-        <div className="mt-2 max-h-40 overflow-y-auto text-xs bg-white p-2 rounded border border-red-200">
+        <div className="mt-2 max-h-40 overflow-y-auto text-xs  p-2 rounded border border-red-200">
           <ul className="list-disc pl-4">
             {result?.errors.map((error, index) => (
               <li key={index} className="text-red-600 mb-1">

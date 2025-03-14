@@ -19,4 +19,4 @@ async function getCategoryTree(req: NextRequest, context: any, session: any) {
 /**
  * Kategori ağacı API endpoint'i
  */
-export const GET = withMiddleware(getCategoryTree, { requiredRole: 'ADMIN' }); 
+export const GET = withMiddleware(getCategoryTree, { requiredRole: 'ADMIN' });

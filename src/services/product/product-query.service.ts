@@ -1,18 +1,13 @@
 import { db } from '@/lib/db';
 import { convertDecimalToNumber } from '@/lib/utils';
-import { 
-  ProductWithRelations, 
-  PaginatedResult, 
-  ProductFilter,
-  ProductListItem
-} from './types';
-import { 
-  isClient, 
-  calculateTotalStock, 
-  transformProductData, 
+import { ProductWithRelations, PaginatedResult, ProductFilter, ProductListItem } from './types';
+import {
+  isClient,
+  calculateTotalStock,
+  transformProductData,
   buildProductQuery,
   productIncludes,
-  handleServiceError
+  handleServiceError,
 } from './utils';
 
 /**
@@ -77,20 +72,23 @@ export const productQueryService = {
             page: page.toString(),
             limit: limit.toString(),
             sortBy,
-            sortOrder
+            sortOrder,
           });
-          
+
           // Filtreleri ekle
           if (filters?.name) queryParams.append('name', filters.name);
           if (filters?.category) queryParams.append('category', filters.category);
           if (filters?.brand) queryParams.append('brand', filters.brand);
-          if (filters?.featured !== undefined) queryParams.append('featured', filters.featured.toString());
-          if (filters?.minPrice !== undefined) queryParams.append('minPrice', filters.minPrice.toString());
-          if (filters?.maxPrice !== undefined) queryParams.append('maxPrice', filters.maxPrice.toString());
-          
+          if (filters?.featured !== undefined)
+            queryParams.append('featured', filters.featured.toString());
+          if (filters?.minPrice !== undefined)
+            queryParams.append('minPrice', filters.minPrice.toString());
+          if (filters?.maxPrice !== undefined)
+            queryParams.append('maxPrice', filters.maxPrice.toString());
+
           const response = await fetch(`/api/products?${queryParams.toString()}`);
           if (!response.ok) throw new Error('API isteği başarısız oldu');
-          
+
           return await response.json();
         } catch (error) {
           console.error('Client-side ürün getirme hatası:', error);
@@ -107,18 +105,18 @@ export const productQueryService = {
       // Server-side rendering için devam et
       // Toplam ürün sayısını al
       let total = 0;
-      
+
       if (Object.keys(where).length > 0) {
         total = await db.product.count({ where });
       } else {
-        try { 
+        try {
           total = await db.product.count();
         } catch (error) {
           console.error('Ürün sayısı alınırken hata oluştu:', error);
           total = 0;
         }
       }
-      
+
       // Ürünleri getir
       const products = await db.product.findMany({
         where,
@@ -282,7 +280,7 @@ export const productQueryService = {
       return [];
     }
   },
-  
+
   /**
    * Listeleme için optimize edilmiş ürün verilerini getirir
    * @param limit - Getirilecek ürün sayısı
@@ -312,7 +310,7 @@ export const productQueryService = {
         orderBy: { createdAt: 'desc' },
         take: limit,
       });
-      
+
       return products.map(product => ({
         id: product.id,
         name: product.name,
@@ -321,13 +319,14 @@ export const productQueryService = {
         mainImage: product.images[0]?.url || '',
         categoryName: product.category.name,
         categorySlug: product.category.slug,
-        totalStock: product.variations.length > 0
-          ? product.variations.reduce((total, v) => total + v.stock, 0)
-          : product.stock,
+        totalStock:
+          product.variations.length > 0
+            ? product.variations.reduce((total, v) => total + v.stock, 0)
+            : product.stock,
       }));
     } catch (error) {
       handleServiceError(error, 'Ürün listesi getirilirken hata oluştu');
       return [];
     }
-  }
-}; 
+  },
+};

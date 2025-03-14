@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
 import { brandService } from '@/services/brand-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createSuccessResponse, 
+import {
+  createSuccessResponse,
   createValidationErrorResponse,
   createNotFoundResponse,
-  handleValidationResult
+  handleValidationResult,
 } from '@/lib/api-response';
 import { parseJsonData } from '@/services/api-service';
 import { updateBrandSchema, UpdateBrandData } from '../schemas';
@@ -13,7 +13,11 @@ import { updateBrandSchema, UpdateBrandData } from '../schemas';
 /**
  * GET: Belirli bir markanın detaylarını getir
  */
-async function getBrandById(req: NextRequest, { params }: { params: { id: string } }, session: any) {
+async function getBrandById(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+  session: any
+) {
   const { id } = params;
 
   // Markayı getir
@@ -35,13 +39,13 @@ async function updateBrand(req: NextRequest, { params }: { params: { id: string 
   // İstek gövdesini doğrula
   const bodyResult = await parseJsonData(req, updateBrandSchema);
   const validationResult = handleValidationResult(bodyResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const data = validationResult.data;
-  
+
   try {
     // Markayı güncelle
     const brand = await brandService.updateBrand(id, data);
@@ -80,4 +84,4 @@ async function deleteBrand(req: NextRequest, { params }: { params: { id: string 
  */
 export const GET = withMiddleware(getBrandById, { requiredRole: 'ADMIN' });
 export const PUT = withMiddleware(updateBrand, { requiredRole: 'ADMIN' });
-export const DELETE = withMiddleware(deleteBrand, { requiredRole: 'ADMIN' }); 
+export const DELETE = withMiddleware(deleteBrand, { requiredRole: 'ADMIN' });

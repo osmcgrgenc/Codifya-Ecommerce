@@ -94,7 +94,7 @@ export default async function OrdersPage() {
       ) : (
         <div className="space-y-6">
           {orders.map(order => (
-            <div key={order.id} className="bg-white rounded-lg shadow overflow-hidden">
+            <div key={order.id} className=" rounded-lg shadow overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>

@@ -30,4 +30,4 @@ export const updateOrderStatusSchema = z.object({
  * Şemalardan türetilen tipler
  */
 export type OrderQueryParams = z.infer<typeof orderQuerySchema>;
-export type UpdateOrderStatusData = z.infer<typeof updateOrderStatusSchema>; 
+export type UpdateOrderStatusData = z.infer<typeof updateOrderStatusSchema>;

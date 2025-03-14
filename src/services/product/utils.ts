@@ -65,9 +65,9 @@ export const transformProductData = (product: Product & { variations?: Variation
  */
 export const buildProductQuery = (filters?: ProductFilter) => {
   const where: any = {};
-  
+
   if (!filters) return where;
-  
+
   // İsim filtresi
   if (filters.name) {
     where.name = {
@@ -75,35 +75,35 @@ export const buildProductQuery = (filters?: ProductFilter) => {
       mode: 'insensitive',
     };
   }
-  
+
   // Kategori filtresi
   if (filters.category) {
     where.categoryId = filters.category;
   }
-  
+
   // Marka filtresi
   if (filters.brand) {
     where.brandId = filters.brand;
   }
-  
+
   // Öne çıkan ürünler filtresi
   if (filters.featured !== undefined) {
     where.featured = filters.featured;
   }
-  
+
   // Fiyat aralığı filtresi
   if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
     where.price = {};
-    
+
     if (filters.minPrice !== undefined) {
       where.price.gte = filters.minPrice;
     }
-    
+
     if (filters.maxPrice !== undefined) {
       where.price.lte = filters.maxPrice;
     }
   }
-  
+
   return where;
 };
 
@@ -126,4 +126,4 @@ export const productIncludes = {
   images: true,
   seller: true,
   variations: true,
-}; 
+};

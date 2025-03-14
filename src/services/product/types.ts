@@ -106,4 +106,4 @@ export interface ProductListItem {
   categoryName?: string;
   categorySlug?: string;
   totalStock?: number;
-} 
+}

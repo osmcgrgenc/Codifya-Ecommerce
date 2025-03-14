@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productService } from '@/services/product-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createPaginatedResponse, 
-  createSuccessResponse, 
+import {
+  createPaginatedResponse,
+  createSuccessResponse,
   createValidationErrorResponse,
   createNotFoundResponse,
-  handleValidationResult
+  handleValidationResult,
 } from '@/lib/api-response';
 import { parseQueryParams, parseJsonData } from '@/services/api-service';
-import { 
-  productQuerySchema, 
-  createProductSchema, 
+import {
+  productQuerySchema,
+  createProductSchema,
   updateProductSchema,
   ProductQueryParams,
   CreateProductData,
-  UpdateProductData
+  UpdateProductData,
 } from './schemas';
 import { slugify } from '@/lib/utils';
 
@@ -33,27 +33,21 @@ async function getProducts(req: NextRequest, context: any, session: any): Promis
 
   // Filtreleri oluştur
   const filters: any = {};
-  
+
   if (search) {
     filters.name = search;
   }
-  
+
   if (categoryId && categoryId !== 'ALL') {
     filters.category = categoryId;
   }
-  
+
   if (featured) {
     filters.featured = featured === 'true';
   }
 
   // Ürünleri getir
-  const result = await productService.getPaginatedProducts(
-    page,
-    limit,
-    filters,
-    sortBy,
-    sortOrder
-  );
+  const result = await productService.getPaginatedProducts(page, limit, filters, sortBy, sortOrder);
 
   return createPaginatedResponse(
     result.data,
@@ -71,16 +65,16 @@ async function createProduct(req: NextRequest, context: any, session: any): Prom
   // İstek gövdesini doğrula
   const bodyResult = await parseJsonData(req, createProductSchema);
   const validationResult = handleValidationResult(bodyResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const data = validationResult.data;
-  
+
   // Slug oluştur
   const slug = data.slug || slugify(data.name);
-  
+
   // Ürünü oluştur
   const product = await productService.createProduct({
     ...data,

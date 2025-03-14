@@ -1,16 +1,12 @@
 import { db } from '@/lib/db';
 import { Product } from '@prisma/client';
-import { 
-  ProductWithRelations, 
-  CreateProductData, 
-  UpdateProductData 
-} from './types';
-import { 
-  ensureServer, 
-  handleServiceError, 
-  generateProductSlug, 
+import { ProductWithRelations, CreateProductData, UpdateProductData } from './types';
+import {
+  ensureServer,
+  handleServiceError,
+  generateProductSlug,
   productIncludes,
-  calculateTotalStock
+  calculateTotalStock,
 } from './utils';
 
 /**
@@ -49,7 +45,7 @@ export const productMutationService = {
       // Ürün görsellerini ekle (paralel olarak)
       if (data.images && data.images.length > 0) {
         await Promise.all(
-          data.images.map(image => 
+          data.images.map(image =>
             db.productImage.create({
               data: {
                 url: image.url,
@@ -86,10 +82,7 @@ export const productMutationService = {
    * @param data - Güncellenecek veriler
    * @returns Güncellenen ürün
    */
-  async updateProduct(
-    id: string,
-    data: UpdateProductData
-  ): Promise<ProductWithRelations> {
+  async updateProduct(id: string, data: UpdateProductData): Promise<ProductWithRelations> {
     ensureServer();
 
     try {
@@ -150,12 +143,12 @@ export const productMutationService = {
         db.productImage.deleteMany({
           where: { productId: id },
         }),
-        
+
         // Ürünle ilişkili tüm satıcıları sil
         db.productSeller.deleteMany({
           where: { productId: id },
         }),
-        
+
         // Ürünle ilişkili tüm varyasyonları sil
         db.variation.deleteMany({
           where: { productId: id },
@@ -169,5 +162,5 @@ export const productMutationService = {
     } catch (error) {
       return handleServiceError(error, 'Ürün silinirken hata oluştu');
     }
-  }
-}; 
+  },
+};

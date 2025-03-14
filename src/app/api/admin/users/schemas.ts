@@ -19,14 +19,14 @@ export type UserQueryParams = z.infer<typeof userQuerySchema>;
  * Kullanıcı oluşturma şeması
  */
 export const createUserSchema = z.object({
-  name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
-  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
+  email: z.string().email('Geçerli bir e-posta adresi giriniz'),
   password: z
     .string()
-    .min(8, "Şifre en az 8 karakter olmalıdır")
-    .regex(/[A-Z]/, "Şifre en az bir büyük harf içermelidir")
-    .regex(/[a-z]/, "Şifre en az bir küçük harf içermelidir")
-    .regex(/[0-9]/, "Şifre en az bir rakam içermelidir"),
+    .min(8, 'Şifre en az 8 karakter olmalıdır')
+    .regex(/[A-Z]/, 'Şifre en az bir büyük harf içermelidir')
+    .regex(/[a-z]/, 'Şifre en az bir küçük harf içermelidir')
+    .regex(/[0-9]/, 'Şifre en az bir rakam içermelidir'),
   role: z.nativeEnum(UserRole).optional().default(UserRole.CUSTOMER),
   phone: z.string().optional(),
   image: z.string().optional(),
@@ -38,14 +38,14 @@ export type CreateUserData = z.infer<typeof createUserSchema>;
  * Kullanıcı güncelleme şeması
  */
 export const updateUserSchema = z.object({
-  name: z.string().min(2, "İsim en az 2 karakter olmalıdır").optional(),
-  email: z.string().email("Geçerli bir e-posta adresi giriniz").optional(),
+  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır').optional(),
+  email: z.string().email('Geçerli bir e-posta adresi giriniz').optional(),
   password: z
     .string()
-    .min(8, "Şifre en az 8 karakter olmalıdır")
-    .regex(/[A-Z]/, "Şifre en az bir büyük harf içermelidir")
-    .regex(/[a-z]/, "Şifre en az bir küçük harf içermelidir")
-    .regex(/[0-9]/, "Şifre en az bir rakam içermelidir")
+    .min(8, 'Şifre en az 8 karakter olmalıdır')
+    .regex(/[A-Z]/, 'Şifre en az bir büyük harf içermelidir')
+    .regex(/[a-z]/, 'Şifre en az bir küçük harf içermelidir')
+    .regex(/[0-9]/, 'Şifre en az bir rakam içermelidir')
     .optional(),
   role: z.nativeEnum(UserRole).optional(),
   phone: z.string().optional(),
@@ -62,4 +62,4 @@ export const updateUserRoleSchema = z.object({
   role: z.nativeEnum(UserRole),
 });
 
-export type UpdateUserRoleData = z.infer<typeof updateUserRoleSchema>; 
+export type UpdateUserRoleData = z.infer<typeof updateUserRoleSchema>;

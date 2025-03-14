@@ -18,12 +18,12 @@ export const productService = {
   getProductBySlug: productQueryService.getProductBySlug,
   searchProducts: productQueryService.searchProducts,
   getProductsForListing: productQueryService.getProductsForListing,
-  
+
   // Ürün mutasyon işlemleri
   createProduct: productMutationService.createProduct,
   updateProduct: productMutationService.updateProduct,
   deleteProduct: productMutationService.deleteProduct,
-  
+
   // Ürün görselleri işlemleri
   addProductImage: productImageService.addProductImage,
   updateProductImage: productImageService.updateProductImage,
@@ -31,7 +31,7 @@ export const productService = {
   getProductImages: productImageService.getProductImages,
   getMainProductImage: productImageService.getMainProductImage,
   addMultipleProductImages: productImageService.addMultipleProductImages,
-  
+
   // Ürün satıcıları işlemleri
   addProductSeller: productSellerService.addProductSeller,
   updateProductSeller: productSellerService.updateProductSeller,
@@ -39,7 +39,7 @@ export const productService = {
   getProductSellers: productSellerService.getProductSellers,
   getSellerProducts: productSellerService.getSellerProducts,
   getBestPriceSeller: productSellerService.getBestPriceSeller,
-  
+
   // Yardımcı fonksiyonlar
   calculateTotalStock,
 };
@@ -48,4 +48,4 @@ export const productService = {
 export * from './types';
 
 // Varsayılan olarak productService'i dışa aktar
-export default productService; 
+export default productService;

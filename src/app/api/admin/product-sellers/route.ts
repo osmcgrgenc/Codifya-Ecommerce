@@ -2,11 +2,11 @@ import { NextRequest } from 'next/server';
 import { productService } from '@/services/product-service';
 import { userService } from '@/services/user-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createSuccessResponse, 
+import {
+  createSuccessResponse,
   createValidationErrorResponse,
   createNotFoundResponse,
-  handleValidationResult
+  handleValidationResult,
 } from '@/lib/api-response';
 import { parseJsonData, parseQueryParams } from '@/services/api-service';
 import { productSellerSchema, productSellerQuerySchema } from './schemas';
@@ -49,23 +49,23 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
   // Query parametrelerini doğrula
   const queryResult = parseQueryParams(req, productSellerQuerySchema);
   const validationResult = handleValidationResult(queryResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const { productId, sellerId } = validationResult.data;
-  
+
   try {
     let result;
-    
+
     // Belirli bir ürün için satıcıları getir
     if (productId && !sellerId) {
       const product = await productService.getProductById(productId);
       if (!product) {
         return createNotFoundResponse('Ürün');
       }
-      
+
       // Satıcı bilgilerini getir
       const sellerIds = product.seller.map(s => s.sellerId);
       // Tek tek satıcıları getir
@@ -74,7 +74,7 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
         const seller = await userService.getUserById(id);
         if (seller) sellers.push(seller);
       }
-      
+
       // Ürün-satıcı ilişkilerini ve satıcı bilgilerini birleştir
       result = product.seller.map(ps => ({
         ...ps,
@@ -83,23 +83,23 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
           id: product.id,
           name: product.name,
           slug: product.slug,
-          images: product.images
-        }
+          images: product.images,
+        },
       }));
-    } 
+    }
     // Belirli bir satıcı için ürünleri getir
     else if (sellerId && !productId) {
       const seller = await userService.getUserById(sellerId);
       if (!seller) {
         return createNotFoundResponse('Satıcı');
       }
-      
+
       // Satıcının ürünlerini getir
       const allProducts = await productService.getAllProducts();
-      const sellerProducts = allProducts.filter(product => 
+      const sellerProducts = allProducts.filter(product =>
         product.seller.some(s => s.sellerId === sellerId)
       );
-      
+
       // Ürün-satıcı ilişkilerini ve ürün bilgilerini birleştir
       result = sellerProducts.map(product => {
         const productSeller = product.seller.find(s => s.sellerId === sellerId);
@@ -110,17 +110,17 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
             name: seller.name,
             email: seller.email,
             image: seller.image,
-            phone: seller.phone
+            phone: seller.phone,
           },
           product: {
             id: product.id,
             name: product.name,
             slug: product.slug,
-            images: product.images
-          }
+            images: product.images,
+          },
         };
       });
-    } 
+    }
     // Tüm ürün-satıcı ilişkilerini getir
     else {
       // Bu kısım daha karmaşık olabilir, şimdilik basit bir şekilde tüm ürünleri getirip
@@ -129,15 +129,15 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
       const sellerIdsSet = new Set<string>();
       products.forEach(p => p.seller.forEach(s => sellerIdsSet.add(s.sellerId)));
       const sellerIds = Array.from(sellerIdsSet);
-      
+
       // Tek tek satıcıları getir
       const sellers: UserWithRelations[] = [];
       for (const id of sellerIds) {
         const seller = await userService.getUserById(id);
         if (seller) sellers.push(seller);
       }
-      
-      result = products.flatMap(product => 
+
+      result = products.flatMap(product =>
         product.seller.map(ps => ({
           ...ps,
           seller: sellers.find(s => s.id === ps.sellerId) || null,
@@ -145,12 +145,12 @@ async function getProductSellers(req: NextRequest, _: any, session: any) {
             id: product.id,
             name: product.name,
             slug: product.slug,
-            images: product.images
-          }
+            images: product.images,
+          },
         }))
       );
     }
-    
+
     return createSuccessResponse(result, 'Ürün-satıcı ilişkileri başarıyla getirildi');
   } catch (error: any) {
     return createValidationErrorResponse([error.message]);
@@ -164,33 +164,33 @@ async function createProductSeller(req: NextRequest, _: any, session: any) {
   // İstek gövdesini doğrula
   const bodyResult = await parseJsonData(req, productSellerSchema);
   const validationResult = handleValidationResult(bodyResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const data = validationResult.data;
-  
+
   try {
     // Ürünün var olduğunu kontrol et
     const product = await productService.getProductById(data.productId);
     if (!product) {
       return createNotFoundResponse('Ürün');
     }
-    
+
     // Satıcının var olduğunu kontrol et
     const seller = await userService.getUserById(data.sellerId);
     if (!seller) {
       return createNotFoundResponse('Satıcı');
     }
-    
+
     // Ürün-satıcı ilişkisini oluştur
     // Önce ürünü güncelle
     const existingSeller = product.seller.find(s => s.sellerId === data.sellerId);
     if (existingSeller) {
       return createValidationErrorResponse(['Bu ürün-satıcı ilişkisi zaten mevcut']);
     }
-    
+
     // Prisma şemasına uygun olarak güncelleme yap
     // Not: Bu kısım product-service içinde uygun bir metot eklenerek daha temiz hale getirilebilir
     const updatedProduct = await prisma.product.update({
@@ -201,16 +201,18 @@ async function createProductSeller(req: NextRequest, _: any, session: any) {
             sellerId: data.sellerId,
             price: data.price,
             stock: data.stock,
-          }
-        }
+          },
+        },
       },
       include: {
-        seller: true
-      }
+        seller: true,
+      },
     });
-    
-    const newProductSeller = updatedProduct.seller.find((s: { sellerId: string }) => s.sellerId === data.sellerId);
-    
+
+    const newProductSeller = updatedProduct.seller.find(
+      (s: { sellerId: string }) => s.sellerId === data.sellerId
+    );
+
     return createSuccessResponse(newProductSeller, 'Ürün-satıcı ilişkisi başarıyla oluşturuldu');
   } catch (error: any) {
     if (error.message.includes('zaten var')) {
@@ -224,4 +226,4 @@ async function createProductSeller(req: NextRequest, _: any, session: any) {
  * Ürün-satıcı ilişkisi API endpoint'leri
  */
 export const GET = withMiddleware(getProductSellers, { requiredRole: 'ADMIN' });
-export const POST = withMiddleware(createProductSeller, { requiredRole: 'ADMIN' }); 
+export const POST = withMiddleware(createProductSeller, { requiredRole: 'ADMIN' });

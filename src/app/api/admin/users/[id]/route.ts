@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
 import { userService } from '@/services/user-service';
 import { withMiddleware } from '@/lib/api-middleware';
-import { 
-  createSuccessResponse, 
+import {
+  createSuccessResponse,
   createValidationErrorResponse,
   createNotFoundResponse,
-  handleValidationResult
+  handleValidationResult,
 } from '@/lib/api-response';
 import { parseJsonData } from '@/services/api-service';
 import { updateUserSchema, UpdateUserData } from '../schemas';
@@ -35,13 +35,13 @@ async function updateUser(req: NextRequest, { params }: { params: { id: string }
   // İstek gövdesini doğrula
   const bodyResult = await parseJsonData(req, updateUserSchema);
   const validationResult = handleValidationResult(bodyResult);
-  
+
   if (!validationResult.success) {
     return validationResult.response;
   }
 
   const data = validationResult.data;
-  
+
   try {
     // Kullanıcıyı güncelle
     const user = await userService.updateUser(id, data);
@@ -77,4 +77,4 @@ async function deleteUser(req: NextRequest, { params }: { params: { id: string }
  */
 export const GET = withMiddleware(getUserById, { requiredRole: 'ADMIN' });
 export const PUT = withMiddleware(updateUser, { requiredRole: 'ADMIN' });
-export const DELETE = withMiddleware(deleteUser, { requiredRole: 'ADMIN' }); 
+export const DELETE = withMiddleware(deleteUser, { requiredRole: 'ADMIN' });

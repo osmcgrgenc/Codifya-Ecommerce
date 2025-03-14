@@ -60,19 +60,19 @@ export default function ProductDetailPage() {
   // Ürün bilgilerini getir
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchProduct = async () => {
       if (!params.id) return;
 
       try {
         setLoading(true);
-        
+
         // API endpoint'i kullanarak ürün detayını getir
         const response = await fetch(`/api/products/${params.id}`, {
           // Önbelleğe almayı devre dışı bırak
-          cache: 'no-store'
+          cache: 'no-store',
         });
-        
+
         if (!response.ok) {
           if (isMounted) {
             toast({
@@ -84,20 +84,20 @@ export default function ProductDetailPage() {
           }
           return;
         }
-        
+
         const productData = await response.json();
-        
+
         // Opsiyon tiplerini API endpoint'i kullanarak getir
         const optionTypesResponse = await fetch('/api/option-types', {
-          cache: 'no-store'
+          cache: 'no-store',
         });
-        
+
         if (!optionTypesResponse.ok) {
           throw new Error('Opsiyon tipleri getirilirken bir hata oluştu');
         }
-        
+
         const optionTypesData = await optionTypesResponse.json();
-        
+
         if (isMounted) {
           setProduct(productData as unknown as ProductWithRelations);
           setOptionTypes(optionTypesData);
@@ -117,7 +117,7 @@ export default function ProductDetailPage() {
     };
 
     fetchProduct();
-    
+
     // Cleanup fonksiyonu
     return () => {
       isMounted = false;
@@ -128,9 +128,9 @@ export default function ProductDetailPage() {
   const reloadProduct = async (productId: string) => {
     try {
       const response = await fetch(`/api/products/${productId}`, {
-        cache: 'no-store'
+        cache: 'no-store',
       });
-      
+
       if (response.ok) {
         const updatedProduct = await response.json();
         setProduct(updatedProduct as unknown as ProductWithRelations);
@@ -210,7 +210,7 @@ export default function ProductDetailPage() {
 
     try {
       setLoading(true);
-      
+
       // API endpoint'i kullanarak varyasyon sil
       const response = await fetch(`/api/products/${product.id}/variations/${variationId}`, {
         method: 'DELETE',
@@ -254,7 +254,7 @@ export default function ProductDetailPage() {
       }
 
       setLoading(true);
-      
+
       // API endpoint'i kullanarak görsel ekle
       const response = await fetch(`/api/products/${product.id}/images`, {
         method: 'POST',
@@ -303,7 +303,7 @@ export default function ProductDetailPage() {
 
     try {
       setLoading(true);
-      
+
       // API endpoint'i kullanarak görsel sil
       const response = await fetch(`/api/products/${product.id}/images/${imageId}`, {
         method: 'DELETE',
@@ -342,7 +342,7 @@ export default function ProductDetailPage() {
       if (mainImage?.id === imageId) return;
 
       setLoading(true);
-      
+
       // API endpoint'i kullanarak ana görseli güncelle
       if (mainImage) {
         await fetch(`/api/products/${product.id}/images/${mainImage.id}`, {
@@ -630,7 +630,7 @@ export default function ProductDetailPage() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className=" divide-y divide-gray-200">
                       {product.variations.map(variation => (
                         <tr key={variation.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -758,7 +758,7 @@ export default function ProductDetailPage() {
                           className="object-cover"
                         />
                       </div>
-                      <div className="p-2 bg-white">
+                      <div className="p-2 ">
                         <div className="flex justify-between items-center">
                           {image.isMain ? (
                             <span className="text-xs font-medium text-indigo-600">Ana Görsel</span>

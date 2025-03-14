@@ -30,4 +30,4 @@ export const productSellerQuerySchema = z.object({
 
 export type ProductSellerInput = z.infer<typeof productSellerSchema>;
 export type UpdateProductSellerInput = z.infer<typeof updateProductSellerSchema>;
-export type ProductSellerQuery = z.infer<typeof productSellerQuerySchema>; 
+export type ProductSellerQuery = z.infer<typeof productSellerQuerySchema>;

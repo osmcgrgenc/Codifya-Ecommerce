@@ -9,27 +9,21 @@ export async function PUT(
   try {
     const imageId = params.imageId;
     const data = await request.json();
-    
+
     if (!imageId) {
-      return NextResponse.json(
-        { error: 'Görsel ID\'si belirtilmedi' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Görsel ID'si belirtilmedi" }, { status: 400 });
     }
-    
+
     // Görseli güncelle
     const image = await productService.updateProductImage(imageId, {
       url: data.url,
       isMain: data.isMain,
     });
-    
+
     return NextResponse.json(image);
   } catch (error) {
     console.error('Görsel güncellenirken hata oluştu:', error);
-    return NextResponse.json(
-      { error: 'Görsel güncellenirken bir hata oluştu' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Görsel güncellenirken bir hata oluştu' }, { status: 500 });
   }
 }
 
@@ -40,23 +34,17 @@ export async function DELETE(
 ) {
   try {
     const imageId = params.imageId;
-    
+
     if (!imageId) {
-      return NextResponse.json(
-        { error: 'Görsel ID\'si belirtilmedi' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Görsel ID'si belirtilmedi" }, { status: 400 });
     }
-    
+
     // Görseli sil
     const image = await productService.deleteProductImage(imageId);
-    
+
     return NextResponse.json(image);
   } catch (error) {
     console.error('Görsel silinirken hata oluştu:', error);
-    return NextResponse.json(
-      { error: 'Görsel silinirken bir hata oluştu' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Görsel silinirken bir hata oluştu' }, { status: 500 });
   }
-} 
+}

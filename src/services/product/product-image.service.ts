@@ -14,10 +14,7 @@ export const productImageService = {
    * @param data - Görsel verileri
    * @returns Eklenen görsel
    */
-  async addProductImage(
-    productId: string,
-    data: ProductImageData
-  ): Promise<ProductImage> {
+  async addProductImage(productId: string, data: ProductImageData): Promise<ProductImage> {
     ensureServer();
 
     try {
@@ -48,10 +45,7 @@ export const productImageService = {
    * @param data - Güncellenecek veriler
    * @returns Güncellenen görsel
    */
-  async updateProductImage(
-    id: string,
-    data: Partial<ProductImageData>
-  ): Promise<ProductImage> {
+  async updateProductImage(id: string, data: Partial<ProductImageData>): Promise<ProductImage> {
     ensureServer();
 
     try {
@@ -101,7 +95,7 @@ export const productImageService = {
       return handleServiceError(error, 'Ürün görseli silinirken hata oluştu');
     }
   },
-  
+
   /**
    * Ürüne ait tüm görselleri getirir
    * @param productId - Ürün ID'si
@@ -118,7 +112,7 @@ export const productImageService = {
       return [];
     }
   },
-  
+
   /**
    * Ürünün ana görselini getirir
    * @param productId - Ürün ID'si
@@ -127,14 +121,14 @@ export const productImageService = {
   async getMainProductImage(productId: string): Promise<ProductImage | null> {
     try {
       const mainImage = await db.productImage.findFirst({
-        where: { 
+        where: {
           productId,
-          isMain: true
+          isMain: true,
         },
       });
-      
+
       if (mainImage) return mainImage;
-      
+
       // Ana görsel yoksa ilk görseli getir
       return await db.productImage.findFirst({
         where: { productId },
@@ -144,7 +138,7 @@ export const productImageService = {
       return null;
     }
   },
-  
+
   /**
    * Toplu görsel ekleme
    * @param productId - Ürün ID'si
@@ -156,11 +150,11 @@ export const productImageService = {
     images: ProductImageData[]
   ): Promise<ProductImage[]> {
     ensureServer();
-    
+
     try {
       // Ana görsel var mı kontrol et
       const hasMainImage = images.some(img => img.isMain);
-      
+
       // Eğer yeni görsellerden biri ana görsel olarak işaretlendiyse, mevcut ana görselleri güncelle
       if (hasMainImage) {
         await db.productImage.updateMany({
@@ -168,10 +162,10 @@ export const productImageService = {
           data: { isMain: false },
         });
       }
-      
+
       // Görselleri paralel olarak ekle
       const createdImages = await Promise.all(
-        images.map(image => 
+        images.map(image =>
           db.productImage.create({
             data: {
               url: image.url,
@@ -181,11 +175,11 @@ export const productImageService = {
           })
         )
       );
-      
+
       return createdImages;
     } catch (error) {
       handleServiceError(error, 'Ürün görselleri eklenirken hata oluştu');
       return [];
     }
-  }
-}; 
+  },
+};

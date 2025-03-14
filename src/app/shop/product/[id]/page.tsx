@@ -2,7 +2,15 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import ProductDetail from './product-detail';
-import { Product, Category, Brand, ProductImage, Variation, VariationOption, OptionType } from '@prisma/client';
+import {
+  Product,
+  Category,
+  Brand,
+  ProductImage,
+  Variation,
+  VariationOption,
+  OptionType,
+} from '@prisma/client';
 
 // Varyasyon tipi
 type VariationWithOptions = Variation & {
@@ -75,9 +83,9 @@ async function getProductWithDetails(id: string) {
         ...variation,
         options: variation.VariationOption.map(option => ({
           ...option,
-          optionType: option.optionType
-        }))
-      }))
+          optionType: option.optionType,
+        })),
+      })),
     };
 
     return formattedProduct as unknown as ProductWithRelations;

@@ -8,7 +8,10 @@ export const productQuerySchema = z.object({
   limit: z.coerce.number().optional().default(10),
   search: z.string().optional(),
   categoryId: z.string().optional(),
-  sortBy: z.enum(['name', 'price', 'stock', 'createdAt', 'updatedAt']).optional().default('createdAt'),
+  sortBy: z
+    .enum(['name', 'price', 'stock', 'createdAt', 'updatedAt'])
+    .optional()
+    .default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
   featured: z.enum(['true', 'false']).optional(),
 });
@@ -19,10 +22,10 @@ export type ProductQueryParams = z.infer<typeof productQuerySchema>;
  * Ürün oluşturma şeması
  */
 export const createProductSchema = z.object({
-  name: z.string().min(3, "Ürün adı en az 3 karakter olmalıdır"),
+  name: z.string().min(3, 'Ürün adı en az 3 karakter olmalıdır'),
   description: z.string().optional(),
-  price: z.coerce.number().positive("Fiyat pozitif bir değer olmalıdır"),
-  stock: z.coerce.number().nonnegative("Stok negatif olamaz").optional(),
+  price: z.coerce.number().positive('Fiyat pozitif bir değer olmalıdır'),
+  stock: z.coerce.number().nonnegative('Stok negatif olamaz').optional(),
   categoryId: z.string().uuid("Geçerli bir kategori ID'si gereklidir"),
   brandId: z.string().uuid("Geçerli bir marka ID'si gereklidir"),
   featured: z.boolean().optional().default(false),
@@ -44,8 +47,8 @@ export type UpdateProductData = z.infer<typeof updateProductSchema>;
  * Ürün resmi ekleme şeması
  */
 export const productImageSchema = z.object({
-  url: z.string().url("Geçerli bir URL olmalıdır"),
+  url: z.string().url('Geçerli bir URL olmalıdır'),
   isMain: z.boolean().optional().default(false),
 });
 
-export type ProductImageData = z.infer<typeof productImageSchema>; 
+export type ProductImageData = z.infer<typeof productImageSchema>;

@@ -202,7 +202,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+          <div className=" rounded-lg shadow-md overflow-hidden mb-8">
             <div className="p-6">
               <div className="flex flex-col items-center mb-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
@@ -296,7 +296,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             </TabsList>
 
             <TabsContent value="orders" className="mt-6">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className=" rounded-lg shadow-md overflow-hidden">
                 <div className="p-6">
                   <h3 className="text-lg font-medium mb-4">Siparişler</h3>
 
@@ -339,7 +339,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className=" divide-y divide-gray-200">
                           {user.orders.map(order => (
                             <tr key={order.id}>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -390,7 +390,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             </TabsContent>
 
             <TabsContent value="reviews" className="mt-6">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className=" rounded-lg shadow-md overflow-hidden">
                 <div className="p-6">
                   <h3 className="text-lg font-medium mb-4">Değerlendirmeler</h3>
 
@@ -450,7 +450,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             </TabsContent>
 
             <TabsContent value="addresses" className="mt-6">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className=" rounded-lg shadow-md overflow-hidden">
                 <div className="p-6">
                   <h3 className="text-lg font-medium mb-4">Adresler</h3>
 

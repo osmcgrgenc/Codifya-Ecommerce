@@ -48,13 +48,16 @@ export function withErrorHandling(handler: ApiHandler): ApiHandler {
 /**
  * Tüm middleware'leri birleştiren fonksiyon
  */
-export function withMiddleware(handler: ApiHandler, options?: { requiredRole?: string }): ApiHandler {
+export function withMiddleware(
+  handler: ApiHandler,
+  options?: { requiredRole?: string }
+): ApiHandler {
   // İçten dışa doğru middleware'leri uygula
   let enhancedHandler = withErrorHandling(handler);
-  
+
   if (options?.requiredRole) {
     enhancedHandler = withAuth(enhancedHandler, options.requiredRole);
   }
-  
+
   return enhancedHandler;
-} 
+}

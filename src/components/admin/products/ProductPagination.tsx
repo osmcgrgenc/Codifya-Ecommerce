@@ -110,4 +110,4 @@ const ProductPagination = ({
   );
 };
 
-export default ProductPagination; 
+export default ProductPagination;

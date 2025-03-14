@@ -15,9 +15,9 @@ export const brandQuerySchema = z.object({
  * Marka oluşturma şeması
  */
 export const createBrandSchema = z.object({
-  name: z.string().min(2, { message: "Marka adı en az 2 karakter olmalıdır" }),
+  name: z.string().min(2, { message: 'Marka adı en az 2 karakter olmalıdır' }),
   description: z.string().optional(),
-  logo: z.string().url({ message: "Geçerli bir URL girilmelidir" }).optional(),
+  logo: z.string().url({ message: 'Geçerli bir URL girilmelidir' }).optional(),
   country: z.string().optional(),
   slug: z.string().optional(),
 });
@@ -32,4 +32,4 @@ export const updateBrandSchema = createBrandSchema.partial();
  */
 export type BrandQueryParams = z.infer<typeof brandQuerySchema>;
 export type CreateBrandData = z.infer<typeof createBrandSchema>;
-export type UpdateBrandData = z.infer<typeof updateBrandSchema>; 
+export type UpdateBrandData = z.infer<typeof updateBrandSchema>;
