@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productService } from '@/services/product';
+import { createErrorResponse } from '@/lib/api-response';
+import { createSuccessResponse } from '@/lib/api-response';
 
 // Görsel güncelleme
 export async function PUT(
@@ -11,7 +13,7 @@ export async function PUT(
     const data = await request.json();
 
     if (!imageId) {
-      return NextResponse.json({ error: "Görsel ID'si belirtilmedi" }, { status: 400 });
+      return createErrorResponse("Görsel ID'si belirtilmedi", 400);
     }
 
     // Görseli güncelle
@@ -20,10 +22,9 @@ export async function PUT(
       isMain: data.isMain,
     });
 
-    return NextResponse.json(image);
+    return createSuccessResponse(image, 'Görsel başarıyla güncellendi');
   } catch (error) {
-    console.error('Görsel güncellenirken hata oluştu:', error);
-    return NextResponse.json({ error: 'Görsel güncellenirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Görsel güncellenirken bir hata oluştu', 500);
   }
 }
 
@@ -36,15 +37,14 @@ export async function DELETE(
     const imageId = params.imageId;
 
     if (!imageId) {
-      return NextResponse.json({ error: "Görsel ID'si belirtilmedi" }, { status: 400 });
+      return createErrorResponse("Görsel ID'si belirtilmedi", 400);
     }
 
     // Görseli sil
     const image = await productService.deleteProductImage(imageId);
 
-    return NextResponse.json(image);
+    return createSuccessResponse(image, 'Görsel başarıyla silindi');
   } catch (error) {
-    console.error('Görsel silinirken hata oluştu:', error);
-    return NextResponse.json({ error: 'Görsel silinirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Görsel silinirken bir hata oluştu', 500);
   }
 }

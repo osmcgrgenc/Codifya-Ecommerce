@@ -90,7 +90,6 @@ async function getProductWithDetails(id: string) {
 
     return formattedProduct as unknown as ProductWithRelations;
   } catch (error) {
-    console.error('Ürün detayları getirilirken hata:', error);
     return null;
   }
 }

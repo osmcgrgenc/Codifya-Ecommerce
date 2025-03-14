@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import ProductCard from './product-card';
-import { categoryService, productService } from '@/services';
+import { categoryService } from '@/services';
 import ProductsGrid from './products-grid';
 import ProductsLoading from './products-loading';
 

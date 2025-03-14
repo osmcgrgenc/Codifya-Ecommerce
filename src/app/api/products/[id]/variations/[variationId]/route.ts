@@ -53,7 +53,6 @@ export async function DELETE(
 
     return createSuccessResponse(null, 'Varyasyon başarıyla silindi');
   } catch (error: any) {
-    console.error('Varyasyon silinirken hata:', error);
     return createErrorResponse('Varyasyon silinirken bir hata oluştu', 500);
   }
 }

@@ -254,7 +254,6 @@ export default function OrdersPage() {
 
         setOrders(formattedOrders);
       } catch (error) {
-        console.error('Siparişler yüklenirken hata oluştu:', error);
         showError('Siparişler yüklenirken bir hata oluştu');
       } finally {
         setLoading(false);
@@ -300,7 +299,6 @@ export default function OrdersPage() {
 
       showSuccess('Sipariş durumu güncellendi');
     } catch (error) {
-      console.error('Durum güncellenirken hata oluştu:', error);
       showError('Durum güncellenirken bir hata oluştu');
     }
   };

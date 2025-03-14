@@ -89,7 +89,6 @@ export const productSellerService = {
         orderBy: { price: 'asc' },
       });
     } catch (error) {
-      console.error('Ürün satıcıları getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -117,7 +116,6 @@ export const productSellerService = {
         orderBy: { price: 'asc' },
       });
     } catch (error) {
-      console.error('Satıcı ürünleri getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -137,7 +135,6 @@ export const productSellerService = {
         orderBy: { price: 'asc' },
       });
     } catch (error) {
-      console.error('En iyi fiyatlı satıcı getirilirken hata oluştu:', error);
       return null;
     }
   },

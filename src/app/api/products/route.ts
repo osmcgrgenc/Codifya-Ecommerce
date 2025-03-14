@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productService } from '@/services/product';
 import { ProductFilter } from '@/services/product/types';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-response';
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,9 +45,8 @@ export async function GET(request: NextRequest) {
       sortOrder
     );
 
-    return NextResponse.json(products);
+    return createSuccessResponse(products, 'Ürünler başarıyla getirildi');
   } catch (error) {
-    console.error('Ürünler getirilirken hata oluştu:', error);
-    return NextResponse.json({ error: 'Ürünler getirilirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Ürünler getirilirken bir hata oluştu', 500);
   }
 }

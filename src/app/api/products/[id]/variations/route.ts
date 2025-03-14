@@ -62,7 +62,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     return createSuccessResponse(createdVariation, 'Varyasyon başarıyla eklendi', 201);
   } catch (error: any) {
-    console.error('Varyasyon eklenirken hata:', error);
     return createErrorResponse('Varyasyon eklenirken bir hata oluştu', 500);
   }
 }

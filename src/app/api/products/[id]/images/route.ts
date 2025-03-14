@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productService } from '@/services/product';
+import { createErrorResponse } from '@/lib/api-response';
+import { createSuccessResponse } from '@/lib/api-response';
 
 // Görsel ekleme
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
@@ -21,10 +23,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       isMain: data.isMain || false,
     });
 
-    return NextResponse.json(image);
+    return createSuccessResponse(image, 'Görsel başarıyla eklendi');
   } catch (error) {
-    console.error('Görsel eklenirken hata oluştu:', error);
-    return NextResponse.json({ error: 'Görsel eklenirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Görsel eklenirken bir hata oluştu', 500);
   }
 }
 
@@ -34,15 +35,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const productId = params.id;
 
     if (!productId) {
-      return NextResponse.json({ error: "Ürün ID'si belirtilmedi" }, { status: 400 });
+      return createErrorResponse("Ürün ID'si belirtilmedi", 400);
     }
 
     // Görselleri getir
     const images = await productService.getProductImages(productId);
 
-    return NextResponse.json(images);
+    return createSuccessResponse(images, 'Görseller başarıyla getirildi');
   } catch (error) {
-    console.error('Görseller getirilirken hata oluştu:', error);
-    return NextResponse.json({ error: 'Görseller getirilirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Görseller getirilirken bir hata oluştu', 500);
   }
 }

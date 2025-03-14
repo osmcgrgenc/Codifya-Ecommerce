@@ -197,8 +197,6 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Ödeme sonucu işlenirken hata oluştu:', error);
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/orders/failed?error=payment-process-error`
     );

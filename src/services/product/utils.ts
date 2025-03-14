@@ -2,6 +2,11 @@ import { Product, Variation } from '@prisma/client';
 import { ProductFilter } from './types';
 import { slugify } from '@/lib/utils';
 
+// Decimal tipi için bir arayüz tanımla
+interface DecimalType {
+  toNumber: () => number;
+}
+
 /**
  * İstemci tarafında çalışıp çalışmadığını kontrol eder
  * @returns İstemci tarafında çalışıyorsa true, sunucu tarafında çalışıyorsa false döner
@@ -25,6 +30,7 @@ export const ensureServer = (): void => {
  * @throws Orijinal hatayı yeniden fırlatır
  */
 export const handleServiceError = (error: unknown, message: string): never => {
+  // eslint-disable-next-line no-console
   console.error(`${message}:`, error);
   throw error;
 };
@@ -51,7 +57,32 @@ export const calculateTotalStock = (product: Product & { variations?: Variation[
  * @param product - Ürün nesnesi
  * @returns Toplam stok bilgisi eklenmiş ürün nesnesi
  */
-export const transformProductData = (product: Product & { variations?: Variation[] }) => {
+export const transformProductData = <T extends Product>(product: T & { 
+  variations?: Variation[]; 
+  category?: any; 
+  brand?: any; 
+  images?: any[]; 
+  seller?: any[];
+}): T & { totalStock: number } => {
+  // Decimal değerleri number'a dönüştür
+  if (product.price && typeof product.price === 'object' && 'toNumber' in product.price) {
+    product.price = (product.price as unknown as DecimalType).toNumber() as any;
+  }
+  
+  if (product.discount && typeof product.discount === 'object' && 'toNumber' in product.discount) {
+    product.discount = (product.discount as unknown as DecimalType).toNumber() as any;
+  }
+  
+  // Varyasyonlardaki Decimal değerleri dönüştür
+  if (product.variations && product.variations.length > 0) {
+    product.variations = product.variations.map(variation => {
+      if (variation.price && typeof variation.price === 'object' && 'toNumber' in variation.price) {
+        variation.price = (variation.price as unknown as DecimalType).toNumber() as any;
+      }
+      return variation;
+    });
+  }
+  
   return {
     ...product,
     totalStock: calculateTotalStock(product),

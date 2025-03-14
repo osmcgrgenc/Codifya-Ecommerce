@@ -29,10 +29,9 @@ export const productQueryService = {
         include: productIncludes,
       });
 
-      // Her ürün için toplam stok değerini hesapla
-      return products.map(transformProductData);
+      // Her ürün için toplam stok değerini hesapla ve Decimal değerleri dönüştür
+      return convertDecimalToNumber(products.map(transformProductData)) as ProductWithRelations[];
     } catch (error) {
-      console.error('Tüm ürünler getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -91,7 +90,6 @@ export const productQueryService = {
 
           return await response.json();
         } catch (error) {
-          console.error('Client-side ürün getirme hatası:', error);
           return {
             data: [],
             total: 0,
@@ -112,7 +110,6 @@ export const productQueryService = {
         try {
           total = await db.product.count();
         } catch (error) {
-          console.error('Ürün sayısı alınırken hata oluştu:', error);
           total = 0;
         }
       }
@@ -133,14 +130,13 @@ export const productQueryService = {
       const totalPages = Math.ceil(total / limit);
 
       return {
-        data: productsWithTotalStock,
+        data: convertDecimalToNumber(productsWithTotalStock) as ProductWithRelations[],
         total,
         page,
         limit,
         totalPages,
       };
     } catch (error) {
-      console.error('Ürünler getirilirken hata oluştu:', error);
       // Hata durumunda boş sonuç döndür
       return {
         data: [],
@@ -169,7 +165,7 @@ export const productQueryService = {
         take: 8,
       });
 
-      return convertDecimalToNumber(products.map(transformProductData));
+      return convertDecimalToNumber(products.map(transformProductData)) as ProductWithRelations[];
     } catch (error) {
       handleServiceError(error, 'Öne çıkan ürünler getirilirken hata oluştu');
       return [];
@@ -195,7 +191,7 @@ export const productQueryService = {
         },
       });
 
-      return convertDecimalToNumber(products.map(transformProductData));
+      return convertDecimalToNumber(products.map(transformProductData)) as ProductWithRelations[];
     } catch (error) {
       handleServiceError(error, `${categorySlug} kategorisindeki ürünler getirilirken hata oluştu`);
       return [];
@@ -216,7 +212,7 @@ export const productQueryService = {
 
       if (!product) return null;
 
-      return convertDecimalToNumber(transformProductData(product));
+      return convertDecimalToNumber(transformProductData(product)) as ProductWithRelations;
     } catch (error) {
       handleServiceError(error, `${id} ID'li ürün getirilirken hata oluştu`);
       return null;
@@ -237,7 +233,7 @@ export const productQueryService = {
 
       if (!product) return null;
 
-      return convertDecimalToNumber(transformProductData(product));
+      return convertDecimalToNumber(transformProductData(product)) as ProductWithRelations;
     } catch (error) {
       handleServiceError(error, `${slug} slug'lı ürün getirilirken hata oluştu`);
       return null;
@@ -274,7 +270,7 @@ export const productQueryService = {
         },
       });
 
-      return convertDecimalToNumber(products.map(transformProductData));
+      return convertDecimalToNumber(products.map(transformProductData)) as ProductWithRelations[];
     } catch (error) {
       handleServiceError(error, `"${query}" sorgusu ile ürünler aranırken hata oluştu`);
       return [];

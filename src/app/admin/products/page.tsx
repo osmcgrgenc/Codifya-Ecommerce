@@ -71,17 +71,9 @@ export default function ProductsPage() {
 
   // Kategorileri ve markaları getir - useCallback ile optimize edildi
   const fetchCategoriesAndBrands = useCallback(async () => {
-    console.log('fetchCategoriesAndBrands başladı', {
-      categoriesLength: categories.length,
-      brandsLength: brands.length,
-    });
-
     if (categories.length > 0 && brands.length > 0) {
-      console.log('Kategoriler ve markalar zaten yüklü, işlem atlanıyor');
       return;
     }
-
-    console.log('Kategoriler ve markalar getiriliyor...');
 
     try {
       const [categoriesResponse, brandsResponse] = await Promise.all([
@@ -89,33 +81,18 @@ export default function ProductsPage() {
         fetch('/api/admin/brands'),
       ]);
 
-      console.log('API yanıtları alındı', {
-        categoriesStatus: categoriesResponse.status,
-        brandsStatus: brandsResponse.status,
-      });
-
       if (categoriesResponse.ok && brandsResponse.ok) {
         const categoriesData = await categoriesResponse.json();
         const brandsData = await brandsResponse.json();
-
-        console.log('Veriler başarıyla alındı', {
-          categoriesCount: categoriesData.data?.length || 0,
-          brandsCount: brandsData.data?.length || 0,
-        });
 
         setCategories(categoriesData.data || []);
         setBrands(brandsData.data || []);
         setLoading(false);
       } else {
-        console.error('API yanıtları başarısız', {
-          categoriesStatus: categoriesResponse.status,
-          brandsStatus: brandsResponse.status,
-        });
         showError('Veriler yüklenirken bir hata oluştu.');
         setLoading(false);
       }
     } catch (error) {
-      console.error('Kategoriler ve markalar getirilirken hata:', error);
       showError('Veriler yüklenirken bir hata oluştu.');
       setLoading(false);
     }
@@ -127,13 +104,6 @@ export default function ProductsPage() {
 
     setLoading(true);
     try {
-      console.log('Ürünler getiriliyor...', {
-        currentPage,
-        itemsPerPage,
-        searchTerm,
-        categoryFilter,
-      });
-
       const filter: ProductFilter = {};
 
       if (searchTerm) {
@@ -152,10 +122,8 @@ export default function ProductsPage() {
         sortOrder
       );
 
-      console.log('Ürünler getirildi:', result);
       setProducts(result);
     } catch (error) {
-      console.error('Ürünler yüklenirken bir hata oluştu:', error);
       showError('Ürünler yüklenirken bir hata oluştu.');
     } finally {
       setLoading(false);
@@ -174,20 +142,12 @@ export default function ProductsPage() {
 
   // İlk yükleme
   useEffect(() => {
-    console.log('İlk yükleme useEffect çalıştı');
     fetchCategoriesAndBrands();
   }, [fetchCategoriesAndBrands]);
 
   // Kategoriler ve markalar yüklendikten sonra ürünleri getir
   useEffect(() => {
-    console.log('Kategoriler ve markalar useEffect çalıştı', {
-      categoriesLength: categories.length,
-      brandsLength: brands.length,
-      loading,
-    });
-
     if (categories.length > 0 && brands.length > 0 && !loading) {
-      console.log('Ürünler getiriliyor...');
       fetchProducts();
     }
   }, [fetchProducts, categories.length, brands.length, loading]);

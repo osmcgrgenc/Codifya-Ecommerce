@@ -57,7 +57,6 @@ async function getCategoryBySlug(slug: string): Promise<CategoryWithRelations | 
     });
     return category as CategoryWithRelations;
   } catch (error) {
-    console.error('Kategori getirilirken hata:', error);
     return null;
   }
 }
@@ -72,7 +71,6 @@ async function getAllCategories(): Promise<Category[]> {
     });
     return categories;
   } catch (error) {
-    console.error('Kategoriler getirilirken hata:', error);
     return [];
   }
 }
@@ -169,7 +167,6 @@ async function getProductsByCategory(
 
     return { products, total, pageSize };
   } catch (error) {
-    console.error('Ürünler getirilirken hata:', error);
     return { products: [], total: 0, pageSize: 12 };
   }
 }
@@ -184,7 +181,6 @@ async function getBrands(): Promise<Brand[]> {
     });
     return brands;
   } catch (error) {
-    console.error('Markalar getirilirken hata:', error);
     return [];
   }
 }

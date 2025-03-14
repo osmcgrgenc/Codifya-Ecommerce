@@ -108,7 +108,6 @@ export const productImageService = {
         orderBy: { isMain: 'desc' },
       });
     } catch (error) {
-      console.error('Ürün görselleri getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -134,7 +133,6 @@ export const productImageService = {
         where: { productId },
       });
     } catch (error) {
-      console.error('Ürün ana görseli getirilirken hata oluştu:', error);
       return null;
     }
   },

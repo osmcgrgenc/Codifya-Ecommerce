@@ -104,7 +104,6 @@ export default function ProductDetailPage() {
           setLoading(false);
         }
       } catch (error) {
-        console.error('Ürün detayı getirilirken hata:', error);
         if (isMounted) {
           toast({
             title: 'Hata',
@@ -136,7 +135,11 @@ export default function ProductDetailPage() {
         setProduct(updatedProduct as unknown as ProductWithRelations);
       }
     } catch (error) {
-      console.error('Ürün yeniden yüklenirken hata:', error);
+      toast({
+        title: 'Hata',
+        description: 'Ürün yeniden yüklenirken bir hata oluştu.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -193,7 +196,6 @@ export default function ProductDetailPage() {
         description: 'Varyasyon başarıyla eklendi.',
       });
     } catch (error) {
-      console.error('Varyasyon eklenirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Varyasyon eklenirken bir hata oluştu.',
@@ -228,7 +230,6 @@ export default function ProductDetailPage() {
         description: 'Varyasyon başarıyla silindi.',
       });
     } catch (error) {
-      console.error('Varyasyon silinirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Varyasyon silinirken bir hata oluştu.',
@@ -286,7 +287,6 @@ export default function ProductDetailPage() {
         description: 'Görsel başarıyla eklendi.',
       });
     } catch (error) {
-      console.error('Görsel eklenirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Görsel eklenirken bir hata oluştu.',
@@ -321,7 +321,6 @@ export default function ProductDetailPage() {
         description: 'Görsel başarıyla silindi.',
       });
     } catch (error) {
-      console.error('Görsel silinirken hata:', error);
       toast({
         title: 'Hata',
         description: 'Görsel silinirken bir hata oluştu.',
@@ -380,7 +379,6 @@ export default function ProductDetailPage() {
         description: 'Ana görsel başarıyla güncellendi.',
       });
     } catch (error) {
-      console.error('Ana görsel ayarlanırken hata:', error);
       toast({
         title: 'Hata',
         description: 'Ana görsel ayarlanırken bir hata oluştu.',
