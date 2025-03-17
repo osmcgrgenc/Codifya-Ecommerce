@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
@@ -14,6 +14,13 @@ const inter = Inter({
   preload: true,
   fallback: ['system-ui', 'sans-serif'],
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#4f46e5',
+};
 
 export const metadata: Metadata = {
   title: 'Codifya E-Ticaret',
@@ -72,15 +79,6 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-  },
-  other: {
-    'Cache-Control': 'public, max-age=3600, must-revalidate',
-  },
-  // PWA için meta etiketleri
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -88,7 +86,6 @@ export const metadata: Metadata = {
     title: 'Codifya E-Ticaret',
   },
   applicationName: 'Codifya E-Ticaret',
-  themeColor: '#4f46e5',
   icons: {
     icon: [
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
