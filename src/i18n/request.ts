@@ -1,7 +1,8 @@
 import { getRequestConfig } from 'next-intl/server';
+import type { GetRequestConfigParams } from 'next-intl/server';
 
-export default getRequestConfig(async ({ locale }: { locale: string }) => ({
-  locale,
+export default getRequestConfig(async ({ locale }: GetRequestConfigParams) => ({
+  locale: locale!,
   messages: (await import(`../../messages/${locale}/index.json`)).default,
   timeZone: 'Europe/Istanbul',
 }));
