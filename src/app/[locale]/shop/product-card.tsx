@@ -25,7 +25,7 @@ function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="group relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <Link href={`/shop/${product.id}`} className="block aspect-square overflow-hidden">
+      <Link href={`/shop/product/${product.id}`} className="block aspect-square overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}
@@ -38,7 +38,7 @@ function ProductCard({ product }: ProductCardProps) {
         />
       </Link>
       <div className="p-4">
-        <Link href={`/shop/${product.id}`} className="block">
+        <Link href={`/shop/product/${product.id}`} className="block">
           <h3 className="text-lg font-medium text-gray-900 mb-2 line-clamp-1">{product.name}</h3>
         </Link>
         <div className="flex justify-between items-center">

@@ -11,5 +11,5 @@ export default createMiddleware({
 
 export const config = {
   // Tüm sayfalarda middleware'i çalıştır
-  matcher: ['/((?!api|_next|.*\\..*).*)']
-}; 
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
+};
