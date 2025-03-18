@@ -357,5 +357,8 @@
     "bad_request_message": "There was an error processing your request.",
     "offline": "You are Offline",
     "offline_message": "Your internet connection is lost. Please check your connection and try again."
+  },
+  "Common": {
+    "change_language": "Change language"
   }
 }

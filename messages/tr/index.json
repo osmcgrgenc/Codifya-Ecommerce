@@ -357,5 +357,8 @@
     "bad_request_message": "İsteğiniz işlenirken bir hata oluştu.",
     "offline": "Çevrimdışısınız",
     "offline_message": "İnternet bağlantınız kesildi. Lütfen bağlantınızı kontrol edin ve tekrar deneyin."
+  },
+  "Common": {
+    "change_language": "Dili değiştir"
   }
 }

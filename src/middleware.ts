@@ -6,7 +6,7 @@ export default createMiddleware({
   // Varsayılan dil
   defaultLocale: 'tr',
   // Dil bilgisini URL'de gösterme (örn: /tr/products, /en/products)
-  localePrefix: 'never',
+  localePrefix: 'as-needed',
 });
 
 export const config = {

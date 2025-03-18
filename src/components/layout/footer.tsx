@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LanguageSwitcher } from './language-switcher';
 
 export function Footer() {
   return (
@@ -160,9 +161,12 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-200 mt-12 pt-8">
-          <p className="text-gray-500 text-center">
-            &copy; {new Date().getFullYear()} Codifya E-Ticaret. Tüm hakları saklıdır.
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-500">
+              &copy; {new Date().getFullYear()} Codifya E-Ticaret. Tüm hakları saklıdır.
+            </p>
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </footer>
