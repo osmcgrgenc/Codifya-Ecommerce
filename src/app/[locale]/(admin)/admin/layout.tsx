@@ -19,6 +19,7 @@ import {
   LogOut,
   FileText,
   MessageSquare,
+  File,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
@@ -97,6 +98,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       title: 'Bloglar',
       href: '/admin/blogs',
       icon: <FileText className="h-5 w-5" />,
+    },
+    {
+      title: 'Sayfalar',
+      href: '/admin/pages',
+      icon: <File className="h-5 w-5" />,
     },
     {
       title: 'İletişim Mesajları',
