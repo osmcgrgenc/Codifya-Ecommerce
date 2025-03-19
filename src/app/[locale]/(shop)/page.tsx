@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { categoryService, productService } from '@/services';
-import ProductCard from '@/app/[locale]/shop/product-card';
+import ProductCard from '@/app/[locale]/(shop)/shop/product-card';
 import { Category, Product } from '@prisma/client';
 import { Suspense } from 'react';
 

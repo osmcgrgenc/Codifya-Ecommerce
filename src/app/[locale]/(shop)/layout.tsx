@@ -1,16 +1,16 @@
-import './globals.css';
+import '@/app/globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { Providers } from './providers';
+import { Providers } from '../../providers';
 import { ToastProvider } from '@/components/ui/use-toast';
+import { getTranslations } from 'next-intl/server';
 
-// Font optimizasyonu
 const inter = Inter({
   subsets: ['latin'],
-  display: 'swap', // Font yüklenene kadar sistem fontunu göster
+  display: 'swap',
   preload: true,
   fallback: ['system-ui', 'sans-serif'],
 });
@@ -98,9 +98,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function LocaleLayout({
+  children,
+  params: { locale },
+}: {
+  children: React.ReactNode;
+  params: { locale: string };
+}) {
+  const messages = (await import(`../../../../messages/${locale}/index.json`)).default;
+
   return (
-    <html lang="tr">
+    <html lang={locale}>
       <head>
         {/* Preload kritik kaynaklar */}
         <link rel="preload" href="/images/hero-image.jpg" as="image" />
@@ -127,7 +135,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className}>
         <ToastProvider>
-          <Providers>
+          <Providers messages={messages} locale={locale}>
             <Header />
             <main>{children}</main>
             <Footer />
@@ -137,4 +145,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
-}
+} 
