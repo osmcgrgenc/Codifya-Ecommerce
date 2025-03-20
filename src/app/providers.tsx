@@ -2,9 +2,8 @@
 
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from 'next-themes';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, useSession } from 'next-auth/react';
 import { CartProvider } from '@/lib/hooks/use-cart';
-import { useSession } from 'next-auth/react';
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -12,21 +11,29 @@ type ProvidersProps = {
   locale: string;
 };
 
-export function Providers({ children, messages, locale }: ProvidersProps) {
+function ProvidersContent({ children, messages, locale }: ProvidersProps) {
   const { data: session } = useSession();
 
   return (
-    <SessionProvider session={session}>
-      <NextIntlClientProvider 
-        messages={messages} 
-        locale={locale}
-        timeZone="Europe/Istanbul"
-        now={new Date()}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <CartProvider>{children}</CartProvider>
-        </ThemeProvider>
-      </NextIntlClientProvider>
+    <NextIntlClientProvider 
+      messages={messages} 
+      locale={locale}
+      timeZone="Europe/Istanbul"
+      now={new Date()}
+    >
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <CartProvider>{children}</CartProvider>
+      </ThemeProvider>
+    </NextIntlClientProvider>
+  );
+}
+
+export function Providers({ children, messages, locale }: ProvidersProps) {
+  return (
+    <SessionProvider>
+      <ProvidersContent messages={messages} locale={locale}>
+        {children}
+      </ProvidersContent>
     </SessionProvider>
   );
 }

@@ -1,5 +1,9 @@
+'use client';
+
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
-import { useForm, UseFormReturn, SubmitHandler, UseFormProps, FieldValues } from 'react-hook-form';
+import { useForm, UseFormReturn, SubmitHandler, UseFormProps, FieldValues, Control, Path } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -10,22 +14,16 @@ interface FormProps<T extends FieldValues> {
   className?: string;
 }
 
-export function Form<T extends FieldValues>({ form, onSubmit, children, className }: FormProps<T>) {
-  return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
-      {children}
-    </form>
-  );
-}
-
 interface FormFieldProps<T extends FieldValues> {
-  form: UseFormReturn<T>;
-  name: keyof T & string;
-  children: ReactNode;
+  control: Control<T>;
+  name: Path<T>;
+  render: (props: { field: any }) => ReactNode;
+  className?: string;
 }
 
-export function FormField<T extends FieldValues>({ form, name, children }: FormFieldProps<T>) {
-  return <div className="space-y-2">{children}</div>;
+interface FormItemProps {
+  children: ReactNode;
+  className?: string;
 }
 
 interface FormLabelProps {
@@ -33,17 +31,62 @@ interface FormLabelProps {
   className?: string;
 }
 
+interface FormControlProps {
+  children: ReactNode;
+  className?: string;
+}
+
+interface FormMessageProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function Form<T extends FieldValues>({ form, onSubmit, children, className }: FormProps<T>) {
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)} className={cn('space-y-4', className)}>
+      {children}
+    </form>
+  );
+}
+
+export function FormField<T extends FieldValues>({ control, name, render, className }: FormFieldProps<T>) {
+  return (
+    <div className={cn('space-y-2', className)}>
+      {render({ field: control.register(name) })}
+    </div>
+  );
+}
+
+export function FormItem({ children, className }: FormItemProps) {
+  return (
+    <div className={cn('space-y-1', className)}>
+      {children}
+    </div>
+  );
+}
+
 export function FormLabel({ children, className }: FormLabelProps) {
-  return <label className={`text-sm font-medium text-gray-700 ${className}`}>{children}</label>;
+  return (
+    <label className={cn('text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', className)}>
+      {children}
+    </label>
+  );
 }
 
-interface FormErrorProps {
-  error?: string;
+export function FormControl({ children, className }: FormControlProps) {
+  return (
+    <div className={cn('relative', className)}>
+      {children}
+    </div>
+  );
 }
 
-export function FormError({ error }: FormErrorProps) {
-  if (!error) return null;
-  return <p className="text-sm text-red-500 mt-1">{error}</p>;
+export function FormMessage({ children, className }: FormMessageProps) {
+  return (
+    <p className={cn('text-sm font-medium text-red-500', className)}>
+      {children}
+    </p>
+  );
 }
 
 export function useZodForm<T extends z.ZodType>(
