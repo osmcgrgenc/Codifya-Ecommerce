@@ -14,7 +14,7 @@ const inter = Inter({
   preload: true,
   fallback: ['system-ui', 'sans-serif'],
 });
-
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://codifya-ecommerce.com';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://codifya-ecommerce.com'),
+  metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
     languages: {
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Codifya E-Ticaret',
     description:
       'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
-    url: 'https://codifya-ecommerce.com',
+    url: siteUrl,
     siteName: 'Codifya E-Ticaret',
     images: [
       {
