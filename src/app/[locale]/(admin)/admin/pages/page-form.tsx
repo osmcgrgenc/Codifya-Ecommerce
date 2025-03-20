@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { createPage, updatePage, Page } from '@/lib/api/pages';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Başlık gereklidir'),
@@ -61,7 +62,7 @@ export function PageForm({ onSuccess, page }: PageFormProps) {
       }
       onSuccess();
     } catch (error) {
-      console.error('Sayfa kaydedilirken bir hata oluştu:', error);
+      toast.error('Sayfa kaydedilirken bir hata oluştu');
     } finally {
       setIsLoading(false);
     }

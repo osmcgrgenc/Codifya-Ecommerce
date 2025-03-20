@@ -76,7 +76,6 @@ export function ContactForm() {
       });
     } catch (error) {
       toast.error('Mesajınız gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
-      console.error('Form gönderimi hatası:', error);
     } finally {
       setIsSubmitting(false);
     }

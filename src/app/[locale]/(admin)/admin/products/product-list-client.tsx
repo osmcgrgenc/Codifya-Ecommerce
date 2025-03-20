@@ -151,7 +151,6 @@ export default function ProductListClient({
               totalPages: paginatedData.totalPages || 1,
             });
           } else {
-            console.error('API yanıtındaki data özelliği bir dizi değil:', apiResponse);
             setProducts({
               data: [],
               total: 0,
@@ -162,7 +161,6 @@ export default function ProductListClient({
             showError('Ürün verisi beklenen formatta değil.');
           }
         } else {
-          console.error('API yanıtındaki data özelliği bir nesne değil:', apiResponse);
           setProducts({
             data: [],
             total: 0,
@@ -173,7 +171,6 @@ export default function ProductListClient({
           showError('Ürün verisi beklenen formatta değil.');
         }
       } else {
-        console.error('Ürün verisi beklenen formatta değil:', result);
         // Varsayılan boş bir sonuç oluştur
         setProducts({
           data: [],
@@ -185,7 +182,6 @@ export default function ProductListClient({
         showError('Ürün verisi beklenen formatta değil.');
       }
     } catch (error) {
-      console.error('Ürünler yüklenirken hata:', error);
       showError('Ürünler yüklenirken bir hata oluştu.');
       // Hata durumunda boş bir sonuç oluştur
       setProducts({

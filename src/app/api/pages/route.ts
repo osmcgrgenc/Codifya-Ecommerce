@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-response';
 
 export async function GET() {
   try {
@@ -8,10 +8,11 @@ export async function GET() {
         createdAt: 'desc',
       },
     });
-    return NextResponse.json(pages);
+    return createSuccessResponse(pages);
   } catch (error) {
-    console.error('Sayfalar yüklenirken bir hata oluştu:', error);
-    return NextResponse.json({ error: 'Sayfalar yüklenirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Sayfalar yüklenirken bir hata oluştu', 500, [
+      (error as Error).message,
+    ]);
   }
 }
 
@@ -29,9 +30,10 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(page);
+    return createSuccessResponse(page);
   } catch (error) {
-    console.error('Sayfa oluşturulurken bir hata oluştu:', error);
-    return NextResponse.json({ error: 'Sayfa oluşturulurken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Sayfa oluşturulurken bir hata oluştu', 500, [
+      (error as Error).message,
+    ]);
   }
 }

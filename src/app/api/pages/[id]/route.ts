@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-response';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -10,13 +10,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
     });
 
     if (!page) {
-      return NextResponse.json({ error: 'Sayfa bulunamadı' }, { status: 404 });
+      return createErrorResponse('Sayfa bulunamadı', 404, []);
     }
 
-    return NextResponse.json(page);
+    return createSuccessResponse(page);
   } catch (error) {
-    console.error('Sayfa yüklenirken bir hata oluştu:', error);
-    return NextResponse.json({ error: 'Sayfa yüklenirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Sayfa yüklenirken bir hata oluştu', 500, [
+      (error as Error).message,
+    ]);
   }
 }
 
@@ -37,10 +38,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       },
     });
 
-    return NextResponse.json(page);
+    return createSuccessResponse(page);
   } catch (error) {
-    console.error('Sayfa güncellenirken bir hata oluştu:', error);
-    return NextResponse.json({ error: 'Sayfa güncellenirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Sayfa güncellenirken bir hata oluştu', 500, [
+      (error as Error).message,
+    ]);
   }
 }
 
@@ -52,9 +54,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       },
     });
 
-    return NextResponse.json({ message: 'Sayfa başarıyla silindi' });
+    return createSuccessResponse({ message: 'Sayfa başarıyla silindi' });
   } catch (error) {
-    console.error('Sayfa silinirken bir hata oluştu:', error);
-    return NextResponse.json({ error: 'Sayfa silinirken bir hata oluştu' }, { status: 500 });
+    return createErrorResponse('Sayfa silinirken bir hata oluştu', 500, [(error as Error).message]);
   }
 }

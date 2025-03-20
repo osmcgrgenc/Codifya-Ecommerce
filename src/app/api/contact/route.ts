@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contactService } from '@/services/contact-service';
 import { z } from 'zod';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-response';
 
 // İletişim formu doğrulama şeması
 const contactFormSchema = z.object({
@@ -21,12 +22,10 @@ export async function POST(request: NextRequest) {
 
     // Doğrulama hatası varsa
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          errors: validationResult.error.errors,
-        },
-        { status: 400 }
+      return createErrorResponse(
+        'Doğrulama hatası',
+        400,
+        validationResult.error.errors.map(error => error.message)
       );
     }
 
@@ -37,24 +36,14 @@ export async function POST(request: NextRequest) {
     const contactMessage = await contactService.createContactMessage(validatedData);
 
     // Başarılı yanıt döndür
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Mesajınız başarıyla gönderildi',
-        data: contactMessage,
-      },
-      { status: 201 }
-    );
+    return createSuccessResponse({
+      success: true,
+      message: 'Mesajınız başarıyla gönderildi',
+      data: contactMessage,
+    });
   } catch (error) {
-    console.error('İletişim mesajı kaydedilirken hata oluştu:', error);
-
-    // Hata yanıtı döndür
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Mesajınız gönderilirken bir hata oluştu',
-      },
-      { status: 500 }
-    );
+    return createErrorResponse('İletişim mesajı kaydedilirken hata oluştu', 500, [
+      (error as Error).message,
+    ]);
   }
 }

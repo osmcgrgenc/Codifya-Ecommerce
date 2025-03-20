@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import { PageDialog } from './page-dialog';
 import { deletePage } from '@/lib/api/pages';
+import { toast } from 'sonner';
 
 export const columns: ColumnDef<Page>[] = [
   {
@@ -45,43 +46,44 @@ export const columns: ColumnDef<Page>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const page = row.original;
-      const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-      async function handleDelete() {
-        try {
-          await deletePage(page.id);
-          window.location.reload();
-        } catch (error) {
-          console.error('Sayfa silinirken bir hata oluştu:', error);
-        }
-      }
-
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Menüyü aç</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Düzenle
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDelete}>
-                <Trash className="mr-2 h-4 w-4" />
-                Sil
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <PageDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} page={page} />
-        </>
-      );
-    },
+    cell: ({ row }) => <ActionCell page={row.original} />,
   },
 ];
+
+function ActionCell({ page }: { page: Page }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  async function handleDelete() {
+    try {
+      await deletePage(page.id);
+      window.location.reload();
+    } catch (error) {
+      toast.error('Sayfa silinirken bir hata oluştu');
+    }
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Menüyü aç</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Düzenle
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDelete}>
+            <Trash className="mr-2 h-4 w-4" />
+            Sil
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <PageDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} page={page} />
+    </>
+  );
+}
