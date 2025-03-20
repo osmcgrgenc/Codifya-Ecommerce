@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormField, FormLabel, FormError, useZodForm } from '@/components/forms/form';
+import { Form, FormField, FormLabel, FormMessage, useZodForm } from '@/components/forms/form';
 
 const registerSchema = z
   .object({
@@ -78,44 +78,68 @@ export default function RegisterForm() {
         </div>
       )}
 
-      <FormField form={form} name="name">
-        <FormLabel>İsim</FormLabel>
-        <Input {...form.register('name')} placeholder="Adınız Soyadınız" disabled={isLoading} />
-        <FormError error={form.formState.errors.name?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>İsim</FormLabel>
+            <Input {...field} placeholder="Adınız Soyadınız" disabled={isLoading} />
+            <FormMessage>{form.formState.errors.name?.message}</FormMessage>
+          </div>
+        )}
+      />
 
-      <FormField form={form} name="email">
-        <FormLabel>E-posta</FormLabel>
-        <Input
-          {...form.register('email')}
-          type="email"
-          placeholder="ornek@mail.com"
-          disabled={isLoading}
-        />
-        <FormError error={form.formState.errors.email?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="email"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>E-posta</FormLabel>
+            <Input
+              {...field}
+              type="email"
+              placeholder="ornek@mail.com"
+              disabled={isLoading}
+            />
+            <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+          </div>
+        )}
+      />
 
-      <FormField form={form} name="password">
-        <FormLabel>Şifre</FormLabel>
-        <Input
-          {...form.register('password')}
-          type="password"
-          placeholder="******"
-          disabled={isLoading}
-        />
-        <FormError error={form.formState.errors.password?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="password"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>Şifre</FormLabel>
+            <Input
+              {...field}
+              type="password"
+              placeholder="******"
+              disabled={isLoading}
+            />
+            <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+          </div>
+        )}
+      />
 
-      <FormField form={form} name="confirmPassword">
-        <FormLabel>Şifre Tekrar</FormLabel>
-        <Input
-          {...form.register('confirmPassword')}
-          type="password"
-          placeholder="******"
-          disabled={isLoading}
-        />
-        <FormError error={form.formState.errors.confirmPassword?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="confirmPassword"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>Şifre Tekrar</FormLabel>
+            <Input
+              {...field}
+              type="password"
+              placeholder="******"
+              disabled={isLoading}
+            />
+            <FormMessage>{form.formState.errors.confirmPassword?.message}</FormMessage>
+          </div>
+        )}
+      />
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? 'Kayıt yapılıyor...' : 'Kayıt Ol'}

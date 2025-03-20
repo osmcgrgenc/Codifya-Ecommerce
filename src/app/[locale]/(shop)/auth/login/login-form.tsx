@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormField, FormLabel, FormError, useZodForm } from '@/components/forms/form';
+import { Form, FormField, FormLabel, FormMessage, useZodForm } from '@/components/forms/form';
 
 const loginSchema = z.object({
   email: z.string().email('Geçerli bir e-posta adresi giriniz'),
@@ -56,27 +56,39 @@ export default function LoginForm() {
         </div>
       )}
 
-      <FormField form={form} name="email">
-        <FormLabel>E-posta</FormLabel>
-        <Input
-          {...form.register('email')}
-          type="email"
-          placeholder="ornek@mail.com"
-          disabled={isLoading}
-        />
-        <FormError error={form.formState.errors.email?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="email"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>E-posta</FormLabel>
+            <Input
+              {...field}
+              type="email"
+              placeholder="ornek@mail.com"
+              disabled={isLoading}
+            />
+            <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+          </div>
+        )}
+      />
 
-      <FormField form={form} name="password">
-        <FormLabel>Şifre</FormLabel>
-        <Input
-          {...form.register('password')}
-          type="password"
-          placeholder="******"
-          disabled={isLoading}
-        />
-        <FormError error={form.formState.errors.password?.message} />
-      </FormField>
+      <FormField
+        control={form.control}
+        name="password"
+        render={({ field }) => (
+          <div className="space-y-2">
+            <FormLabel>Şifre</FormLabel>
+            <Input
+              {...field}
+              type="password"
+              placeholder="******"
+              disabled={isLoading}
+            />
+            <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+          </div>
+        )}
+      />
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
