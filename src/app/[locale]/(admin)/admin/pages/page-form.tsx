@@ -114,10 +114,7 @@ export function PageForm({ onSuccess, page }: PageFormProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Durum</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Durum seçin" />
@@ -133,11 +130,7 @@ export function PageForm({ onSuccess, page }: PageFormProps) {
         )}
       />
       <div className="flex justify-end space-x-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => form.reset()}
-        >
+        <Button type="button" variant="outline" onClick={() => form.reset()}>
           İptal
         </Button>
         <Button type="submit" disabled={isLoading}>
@@ -146,4 +139,4 @@ export function PageForm({ onSuccess, page }: PageFormProps) {
       </div>
     </Form>
   );
-} 
+}

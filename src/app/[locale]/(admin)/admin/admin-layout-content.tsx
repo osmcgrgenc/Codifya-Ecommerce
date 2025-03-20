@@ -31,54 +31,57 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  
-  const menuItems = useMemo(() => [
-    {
-      title: 'Dashboard',
-      href: '/admin',
-      icon: <Home className="h-5 w-5" />,
-    },
-    {
-      title: 'Ürünler',
-      href: '/admin/products',
-      icon: <Package className="h-5 w-5" />,
-    },
-    {
-      title: 'Siparişler',
-      href: '/admin/orders',
-      icon: <ShoppingCart className="h-5 w-5" />,
-    },
-    {
-      title: 'Kullanıcılar',
-      href: '/admin/users',
-      icon: <Users className="h-5 w-5" />,
-    },
-    {
-      title: 'Bloglar',
-      href: '/admin/blogs',
-      icon: <FileText className="h-5 w-5" />,
-    },
-    {
-      title: 'Sayfalar',
-      href: '/admin/pages',
-      icon: <File className="h-5 w-5" />,
-    },
-    {
-      title: 'İletişim Mesajları',
-      href: '/admin/contact',
-      icon: <MessageSquare className="h-5 w-5" />,
-    },
-    {
-      title: 'Toplu İçe Aktarma',
-      href: '/admin/import',
-      icon: <FileSpreadsheet className="h-5 w-5" />,
-    },
-    {
-      title: 'Ayarlar',
-      href: '/admin/settings',
-      icon: <Settings className="h-5 w-5" />,
-    },
-  ], []);
+
+  const menuItems = useMemo(
+    () => [
+      {
+        title: 'Dashboard',
+        href: '/admin',
+        icon: <Home className="h-5 w-5" />,
+      },
+      {
+        title: 'Ürünler',
+        href: '/admin/products',
+        icon: <Package className="h-5 w-5" />,
+      },
+      {
+        title: 'Siparişler',
+        href: '/admin/orders',
+        icon: <ShoppingCart className="h-5 w-5" />,
+      },
+      {
+        title: 'Kullanıcılar',
+        href: '/admin/users',
+        icon: <Users className="h-5 w-5" />,
+      },
+      {
+        title: 'Bloglar',
+        href: '/admin/blogs',
+        icon: <FileText className="h-5 w-5" />,
+      },
+      {
+        title: 'Sayfalar',
+        href: '/admin/pages',
+        icon: <File className="h-5 w-5" />,
+      },
+      {
+        title: 'İletişim Mesajları',
+        href: '/admin/contact',
+        icon: <MessageSquare className="h-5 w-5" />,
+      },
+      {
+        title: 'Toplu İçe Aktarma',
+        href: '/admin/import',
+        icon: <FileSpreadsheet className="h-5 w-5" />,
+      },
+      {
+        title: 'Ayarlar',
+        href: '/admin/settings',
+        icon: <Settings className="h-5 w-5" />,
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -211,4 +214,4 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
       </div>
     </div>
   );
-} 
+}

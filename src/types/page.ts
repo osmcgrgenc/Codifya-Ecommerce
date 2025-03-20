@@ -6,4 +6,4 @@ export interface Page {
   status: 'draft' | 'published';
   createdAt: string;
   updatedAt: string;
-} 
+}

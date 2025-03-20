@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PageForm } from './page-form';
 import { Page } from '@/lib/api/pages';
 
@@ -18,7 +13,11 @@ interface PageDialogProps {
   page?: Page;
 }
 
-export function PageDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange, page }: PageDialogProps) {
+export function PageDialog({
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  page,
+}: PageDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined && controlledOnOpenChange !== undefined;
@@ -44,4 +43,4 @@ export function PageDialog({ open: controlledOpen, onOpenChange: controlledOnOpe
       </Dialog>
     </>
   );
-} 
+}

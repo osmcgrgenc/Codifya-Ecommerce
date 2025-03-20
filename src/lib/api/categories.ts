@@ -32,4 +32,4 @@ export async function updateCategory(category: Omit<Category, 'createdAt' | 'upd
 
 export async function deleteCategory(id: string) {
   return categoriesApi.delete(id);
-} 
+}

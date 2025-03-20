@@ -79,13 +79,9 @@ export const columns: ColumnDef<Page>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <PageDialog
-            open={isDialogOpen}
-            onOpenChange={setIsDialogOpen}
-            page={page}
-          />
+          <PageDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} page={page} />
         </>
       );
     },
   },
-]; 
+];

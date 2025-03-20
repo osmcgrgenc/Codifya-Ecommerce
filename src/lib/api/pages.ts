@@ -30,4 +30,4 @@ export async function updatePage(page: Omit<Page, 'createdAt' | 'updatedAt'>) {
 
 export async function deletePage(id: string) {
   return pagesApi.delete(id);
-} 
+}

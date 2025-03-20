@@ -36,7 +36,7 @@ export function usePages() {
         throw new Error('Sayfa oluşturulurken bir hata oluştu');
       }
       const newPage = await response.json();
-      setPages((prev) => [...prev, newPage]);
+      setPages(prev => [...prev, newPage]);
       return newPage;
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Bilinmeyen bir hata oluştu'));
@@ -60,9 +60,7 @@ export function usePages() {
         throw new Error('Sayfa güncellenirken bir hata oluştu');
       }
       const updatedPage = await response.json();
-      setPages((prev) =>
-        prev.map((page) => (page.id === updatedPage.id ? updatedPage : page))
-      );
+      setPages(prev => prev.map(page => (page.id === updatedPage.id ? updatedPage : page)));
       return updatedPage;
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Bilinmeyen bir hata oluştu'));
@@ -81,7 +79,7 @@ export function usePages() {
       if (!response.ok) {
         throw new Error('Sayfa silinirken bir hata oluştu');
       }
-      setPages((prev) => prev.filter((page) => page.id !== id));
+      setPages(prev => prev.filter(page => page.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Bilinmeyen bir hata oluştu'));
       throw err;
@@ -99,4 +97,4 @@ export function usePages() {
     updatePage,
     deletePage,
   };
-} 
+}

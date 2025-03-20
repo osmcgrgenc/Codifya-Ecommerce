@@ -15,8 +15,8 @@ function ProvidersContent({ children, messages, locale }: ProvidersProps) {
   const { data: session } = useSession();
 
   return (
-    <NextIntlClientProvider 
-      messages={messages} 
+    <NextIntlClientProvider
+      messages={messages}
       locale={locale}
       timeZone="Europe/Istanbul"
       now={new Date()}

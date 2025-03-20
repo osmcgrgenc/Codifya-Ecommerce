@@ -77,10 +77,7 @@ export function DialogContent({ children, className }: DialogContentProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="fixed inset-0 bg-black/50"
-        onClick={() => setOpen(false)}
-      />
+      <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
       <div
         className={cn(
           'relative z-50 w-full max-w-lg rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800',
@@ -107,4 +104,4 @@ export function DialogTitle({ children, className }: DialogTitleProps) {
       {children}
     </h2>
   );
-} 
+}

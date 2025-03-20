@@ -23,4 +23,4 @@ export default async function PagesPage() {
       </Suspense>
     </div>
   );
-} 
+}

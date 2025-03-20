@@ -41,9 +41,7 @@ export function DropdownMenu({ children, className }: DropdownMenuProps) {
 
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen }}>
-      <div className={cn('relative inline-block text-left', className)}>
-        {children}
-      </div>
+      <div className={cn('relative inline-block text-left', className)}>{children}</div>
     </DropdownMenuContext.Provider>
   );
 }
@@ -144,17 +142,15 @@ export function DropdownMenuItem({
 }
 
 export function DropdownMenuSeparator({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn('-mx-1 my-1 h-px bg-gray-100 dark:bg-gray-800', className)}
-    />
-  );
+  return <div className={cn('-mx-1 my-1 h-px bg-gray-100 dark:bg-gray-800', className)} />;
 }
 
-export function DropdownMenuLabel({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn('px-2 py-1.5 text-sm font-semibold', className)}>
-      {children}
-    </div>
-  );
-} 
+export function DropdownMenuLabel({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn('px-2 py-1.5 text-sm font-semibold', className)}>{children}</div>;
+}

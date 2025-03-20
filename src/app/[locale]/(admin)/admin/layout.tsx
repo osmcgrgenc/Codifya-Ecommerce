@@ -4,13 +4,15 @@ import { Providers } from '@/app/providers';
 import { ToastProvider } from '@/components/ui/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 
-export default async function AdminLayout({ children,
+export default async function AdminLayout({
+  children,
   params: { locale },
-}: { children: React.ReactNode;
+}: {
+  children: React.ReactNode;
   params: { locale: string };
 }) {
   const messages = (await import(`../../../../../messages/${locale}/index.json`)).default;
-  
+
   return (
     <html lang={locale}>
       <head>
@@ -22,7 +24,7 @@ export default async function AdminLayout({ children,
         <ToastProvider>
           <Providers messages={messages} locale={locale}>
             <AdminLayoutContent>{children}</AdminLayoutContent>
-          <Toaster />
+            <Toaster />
           </Providers>
         </ToastProvider>
       </body>

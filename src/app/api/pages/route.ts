@@ -11,10 +11,7 @@ export async function GET() {
     return NextResponse.json(pages);
   } catch (error) {
     console.error('Sayfalar yüklenirken bir hata oluştu:', error);
-    return NextResponse.json(
-      { error: 'Sayfalar yüklenirken bir hata oluştu' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Sayfalar yüklenirken bir hata oluştu' }, { status: 500 });
   }
 }
 
@@ -35,9 +32,6 @@ export async function POST(request: Request) {
     return NextResponse.json(page);
   } catch (error) {
     console.error('Sayfa oluşturulurken bir hata oluştu:', error);
-    return NextResponse.json(
-      { error: 'Sayfa oluşturulurken bir hata oluştu' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Sayfa oluşturulurken bir hata oluştu' }, { status: 500 });
   }
-} 
+}

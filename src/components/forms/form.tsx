@@ -3,7 +3,15 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
-import { useForm, UseFormReturn, SubmitHandler, UseFormProps, FieldValues, Control, Path } from 'react-hook-form';
+import {
+  useForm,
+  UseFormReturn,
+  SubmitHandler,
+  UseFormProps,
+  FieldValues,
+  Control,
+  Path,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -49,44 +57,40 @@ export function Form<T extends FieldValues>({ form, onSubmit, children, classNam
   );
 }
 
-export function FormField<T extends FieldValues>({ control, name, render, className }: FormFieldProps<T>) {
+export function FormField<T extends FieldValues>({
+  control,
+  name,
+  render,
+  className,
+}: FormFieldProps<T>) {
   return (
-    <div className={cn('space-y-2', className)}>
-      {render({ field: control.register(name) })}
-    </div>
+    <div className={cn('space-y-2', className)}>{render({ field: control.register(name) })}</div>
   );
 }
 
 export function FormItem({ children, className }: FormItemProps) {
-  return (
-    <div className={cn('space-y-1', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('space-y-1', className)}>{children}</div>;
 }
 
 export function FormLabel({ children, className }: FormLabelProps) {
   return (
-    <label className={cn('text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', className)}>
+    <label
+      className={cn(
+        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+        className
+      )}
+    >
       {children}
     </label>
   );
 }
 
 export function FormControl({ children, className }: FormControlProps) {
-  return (
-    <div className={cn('relative', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('relative', className)}>{children}</div>;
 }
 
 export function FormMessage({ children, className }: FormMessageProps) {
-  return (
-    <p className={cn('text-sm font-medium text-red-500', className)}>
-      {children}
-    </p>
-  );
+  return <p className={cn('text-sm font-medium text-red-500', className)}>{children}</p>;
 }
 
 export function useZodForm<T extends z.ZodType>(

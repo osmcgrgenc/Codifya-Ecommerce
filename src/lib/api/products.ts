@@ -33,4 +33,4 @@ export async function updateProduct(product: Omit<Product, 'createdAt' | 'update
 
 export async function deleteProduct(id: string) {
   return productsApi.delete(id);
-} 
+}

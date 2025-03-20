@@ -5,6 +5,7 @@ Modern ve kullanıcı dostu bir e-ticaret platformu.
 ## Özellikler
 
 ### Mevcut Özellikler
+
 - Ürün listeleme ve detay sayfaları
 - Gelişmiş ürün filtreleme ve arama
 - Sepet yönetimi
@@ -22,6 +23,7 @@ Modern ve kullanıcı dostu bir e-ticaret platformu.
 - Güvenlik önlemleri (XSS, CSRF koruması)
 
 ### Planlanan Özellikler
+
 - Mobil uygulama (React Native)
 - Gelişmiş analitik dashboard
 - Otomatik stok takibi

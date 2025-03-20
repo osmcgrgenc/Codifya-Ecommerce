@@ -38,11 +38,7 @@ export class ApiError extends Error {
 export async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new ApiError(
-      error.message || 'Bir hata oluştu',
-      response.status,
-      error.code
-    );
+    throw new ApiError(error.message || 'Bir hata oluştu', response.status, error.code);
   }
   return response.json();
 }
@@ -98,4 +94,4 @@ export function createApiClient<T extends BaseModel>(endpoint: string) {
       return handleResponse(response);
     },
   };
-} 
+}
