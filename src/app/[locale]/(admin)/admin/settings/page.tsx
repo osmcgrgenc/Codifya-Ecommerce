@@ -10,8 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SiteSettings } from '@/types';
 
 export default function SettingsPage() {
+  const siteName = process.env.APP_NAME || 'E-Ticaret';
   const [settings, setSettings] = useState<SiteSettings>({
-    siteName: 'Codifya E-Ticaret',
+    siteName: siteName,
     siteDescription: 'Modern ve kullanıcı dostu e-ticaret platformu',
     contactEmail: 'info@codifya.com',
     contactPhone: '+90 555 123 4567',

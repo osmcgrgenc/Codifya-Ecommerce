@@ -9,6 +9,7 @@ import { categoryService } from './category-service';
 import { orderService } from './order-service';
 import { userService } from './user-service';
 import { ImportService as importService } from './import-service';
+import { heroService } from './hero-service';
 // api-service'den doğrudan fonksiyonları import ediyorum
 import * as apiService from './api-service';
 
@@ -21,4 +22,5 @@ export {
   userService,
   importService,
   apiService,
+  heroService,
 };

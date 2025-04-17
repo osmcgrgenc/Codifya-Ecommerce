@@ -15,6 +15,8 @@ const inter = Inter({
   fallback: ['system-ui', 'sans-serif'],
 });
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://codifya-ecommerce.com';
+const siteName = process.env.APP_NAME || 'E-Ticaret';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -23,13 +25,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Codifya E-Ticaret',
+  title: siteName,
   description:
     'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
   keywords: 'e-ticaret, online alışveriş, moda, elektronik, indirim, kampanya',
-  authors: [{ name: 'Codifya E-Ticaret' }],
-  creator: 'Codifya E-Ticaret',
-  publisher: 'Codifya E-Ticaret',
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
   formatDetection: {
     email: false,
     address: false,
@@ -44,17 +46,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Codifya E-Ticaret',
+    title: siteName,
     description:
       'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
     url: siteUrl,
-    siteName: 'Codifya E-Ticaret',
+    siteName: siteName,
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Codifya E-Ticaret',
+        alt: siteName,
       },
     ],
     locale: 'tr_TR',
@@ -62,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Codifya E-Ticaret',
+    title: siteName,
     description:
       'Modern ve kullanıcı dostu bir e-ticaret platformu. En yeni ürünler ve kampanyalar için hemen alışverişe başlayın.',
     images: ['/images/twitter-image.jpg'],
@@ -83,9 +85,9 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Codifya E-Ticaret',
+    title: siteName,
   },
-  applicationName: 'Codifya E-Ticaret',
+  applicationName: siteName,
   icons: {
     icon: [
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -116,10 +118,10 @@ export default async function LocaleLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
         {/* PWA için ek meta etiketleri */}
-        <meta name="application-name" content="Codifya E-Ticaret" />
+        <meta name="application-name" content={siteName} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Codifya E-Ticaret" />
+        <meta name="apple-mobile-web-app-title" content={siteName} />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#4f46e5" />
         <meta name="msapplication-tap-highlight" content="no" />

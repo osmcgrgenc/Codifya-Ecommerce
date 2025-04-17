@@ -7,17 +7,24 @@ import { MobileNav } from './mobile-nav';
 import { MainNav } from './main-nav';
 import { CartButton } from './cart-button';
 import SearchBar from '@/components/search-bar';
+import Image from 'next/image';
 
 export async function Header() {
   const session = await getServerSession(authOptions);
-
+  const isDarkMode = true;
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
-              Codifya
+              <Image
+                src={isDarkMode ? "/images/logo-dark.png" : "/images/logo-light.png"}
+                alt="Logo"
+                height={50}
+                width={50}
+                priority
+              />
             </Link>
             <MainNav className="hidden md:ml-10 md:flex" />
           </div>

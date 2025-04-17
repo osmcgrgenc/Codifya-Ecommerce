@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { categoryService, productService } from '@/services';
+import { categoryService, productService, heroService } from '@/services';
 import ProductCard from '@/app/[locale]/(shop)/shop/product-card';
 import { Category, Product } from '@prisma/client';
 import { Suspense } from 'react';
@@ -141,34 +141,37 @@ async function FeaturedProducts() {
     </section>
   );
 }
-
-export default async function HomePage() {
+async function HeroSection() {
+  const defaultHero = {
+    title: 'Yeni Sezon Ürünleri',
+    description: 'En yeni ve trend ürünleri keşfedin. Sınırlı süre için tüm yeni sezon ürünlerinde %20 indirim!',
+    buttonText: 'Hemen Alışverişe Başla',
+    imageUrl: '/images/hero-image.jpg'
+  };
+  const hero = await heroService.getActiveHero() || defaultHero;
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Hero Section */}
-      <section
+    <section
         className="relative bg-indigo-600 rounded-lg overflow-hidden mb-12"
         aria-labelledby="hero-heading"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-indigo-800 opacity-90"></div>
         <div className="relative z-10 px-8 py-16 md:py-24 md:px-12 flex flex-col items-start max-w-2xl">
           <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Yeni Sezon Ürünleri
+            {hero.title}
           </h1>
           <p className="text-lg md:text-xl text-indigo-100 mb-8 max-w-lg">
-            En yeni ve trend ürünleri keşfedin. Sınırlı süre için tüm yeni sezon ürünlerinde %20
-            indirim!
+            {hero.description}
           </p>
           <Link href="/shop">
-            <Button size="lg" className=" text-indigo-600 hover:bg-indigo-50">
-              Hemen Alışverişe Başla
+            <Button size="lg" className="text-indigo-600 hover:bg-indigo-50">
+              {hero.buttonText}
             </Button>
           </Link>
         </div>
         <div className="hidden md:block absolute right-0 top-0 w-1/2 h-full">
           <Image
-            src="/images/hero-image.jpg"
-            alt="Yeni Sezon Ürünleri"
+            src={hero.imageUrl}
+            alt={hero.title}
             fill
             priority
             sizes="50vw"
@@ -176,6 +179,15 @@ export default async function HomePage() {
           />
         </div>
       </section>
+  );
+}
+export default async function HomePage() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {/* Hero Section */}
+      <Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>}>
+        <HeroSection />
+      </Suspense>
 
       {/* Suspense ile sarmalayarak bfcache performansını artıralım */}
       <Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>}>
