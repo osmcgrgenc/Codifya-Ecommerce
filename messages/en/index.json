@@ -101,6 +101,60 @@
     "submit_review": "Submit Review",
     "thank_you_review": "Thank you for your review. It will be published after review."
   },
+  "HomePage": {
+    "metadata": {
+      "title": "Codifya E-Commerce - Modern Shopping Experience",
+      "description": "Discover the latest products with Codifya E-Commerce. Shop for fashion, electronics, home goods, and more. Don't miss the 20% discount opportunity!"
+    },
+    "hero": {
+      "defaultTitle": "Discover the Magic of Epoxy Art",
+      "defaultDescription": "Add an artistic touch to your living spaces with our handmade, unique epoxy designs. Each piece is created with passion and care.",
+      "defaultButtonText": "Explore Collection"
+    },
+    "sections": {
+      "categories": "Categories",
+      "featuredProducts": "Featured Products",
+      "viewAll": "View All →",
+      "promotions": "Promotions",
+      "features": "Features",
+      "newsletter": "Subscribe to Our Newsletter"
+    },
+    "promotions": {
+      "summer": {
+        "title": "Summer Sale",
+        "description": "Up to 30% off on summer collection awaits you!",
+        "button": "Explore"
+      },
+      "tech": {
+        "title": "Technology Deals",
+        "description": "Special prices and gifts on the latest technology products!",
+        "button": "Explore"
+      }
+    },
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "description": "Subscribe to our newsletter to stay informed about new products, discounts, and special offers.",
+      "placeholder": "Your email address",
+      "button": "Subscribe"
+    },
+    "features": {
+      "freeShipping": {
+        "title": "Free Shipping",
+        "description": "Free shipping to anywhere in Turkey for purchases over 500 TL."
+      },
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "description": "Your orders are prepared the same day and delivered to you as quickly as possible."
+      },
+      "securePayment": {
+        "title": "Secure Payment",
+        "description": "All your payments are securely processed with 256-bit SSL certificate encryption."
+      }
+    },
+    "categories": {
+      "noCategory": "No Category"
+    }
+  },
   "cart": {
     "your_cart": "Your Cart",
     "empty_cart": "Your cart is empty",
