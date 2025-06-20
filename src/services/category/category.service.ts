@@ -17,7 +17,7 @@ export const categoryService = {
         },
       });
     } catch (error) {
-      console.error('Kategoriler getirilirken hata oluştu:', error);
+      // console.error('Kategoriler getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -29,7 +29,7 @@ export const categoryService = {
   async getMainCategories(): Promise<Category[]> {
     try {
       if (!db || !db.category) {
-        console.error('Veritabanı bağlantısı bulunamadı');
+        // console.error('Veritabanı bağlantısı bulunamadı');
         return [];
       }
       return await db.category.findMany({
@@ -42,7 +42,7 @@ export const categoryService = {
         },
       });
     } catch (error) {
-      console.error('Ana kategoriler getirilirken hata oluştu:', error);
+      // console.error('Ana kategoriler getirilirken hata oluştu:', error);
       return [];
     }
   },
@@ -64,7 +64,7 @@ export const categoryService = {
         },
       });
     } catch (error) {
-      console.error('Alt kategoriler getirilirken hata oluştu:', error);
+      // console.error('Alt kategoriler getirilirken hata oluştu:', error);
       return [];
     }
   },

@@ -5,30 +5,34 @@ import { categoryService, productService, heroService } from '@/services';
 import ProductCard from '@/app/[locale]/(shop)/shop/product-card';
 import { Category, Product } from '@prisma/client';
 import { Suspense } from 'react';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-// Yapılandırılmış metadata
-export const metadata = {
-  title: 'Codifya E-Ticaret - Modern Alışveriş Deneyimi',
-  description:
-    'Codifya E-Ticaret ile en yeni ürünleri keşfedin. Moda, elektronik, ev eşyaları ve daha fazlası için alışveriş yapın. %20 indirim fırsatını kaçırmayın!',
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'Codifya E-Ticaret - Modern Alışveriş Deneyimi',
-    description:
-      'Codifya E-Ticaret ile en yeni ürünleri keşfedin. Moda, elektronik, ev eşyaları ve daha fazlası için alışveriş yapın. %20 indirim fırsatını kaçırmayın!',
-    url: '/',
-    images: [
-      {
-        url: '/images/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Codifya E-Ticaret',
-      },
-    ],
-  },
-};
+// Dinamik metadata için generateMetadata fonksiyonu
+export async function generateMetadata({ params }: { params: { locale: string } }) {
+  const t = await getTranslations({ locale: params.locale, namespace: 'HomePage.metadata' });
+  
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: '/',
+      images: [
+        {
+          url: '/images/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Codifya E-Commerce',
+        },
+      ],
+    },
+  };
+}
 
 // Kategori kartı bileşeni - performans için ayrı bileşen
 interface CategoryCardProps {
@@ -91,13 +95,14 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 }
 
 // Kategoriler bileşeni - Suspense ile sarmalayarak bfcache performansını artıralım
-async function Categories() {
+async function Categories({ locale }: { locale: string }) {
   const categories = await categoryService.getAllCategories();
+  const t = await getTranslations({ locale, namespace: 'HomePage.sections' });
 
   return (
     <section className="mb-12" aria-labelledby="categories-heading">
       <h2 id="categories-heading" className="text-2xl font-bold mb-6">
-        Kategoriler
+        {t('categories')}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {categories.slice(0, 4).map(category => (
@@ -109,8 +114,10 @@ async function Categories() {
 }
 
 // Öne çıkan ürünler bileşeni - Suspense ile sarmalayarak bfcache performansını artıralım
-async function FeaturedProducts() {
+async function FeaturedProducts({ locale }: { locale: string }) {
   const featuredProductsData = await productService.getFeaturedProducts();
+  const t = await getTranslations({ locale, namespace: 'HomePage.sections' });
+  const tCategories = await getTranslations({ locale, namespace: 'HomePage.categories' });
 
   // Ürünleri Product tipine dönüştür
   const featuredProducts = featuredProductsData.map(product => ({
@@ -118,7 +125,7 @@ async function FeaturedProducts() {
     name: product.name,
     price: product.price,
     image: product.images.find(img => img.isMain)?.url || '/images/placeholder.jpg',
-    category: product.category?.name || 'Kategori Yok',
+    category: product.category?.name || tCategories('noCategory'),
     description: product.description || undefined,
     stock: product.stock,
   }));
@@ -127,10 +134,10 @@ async function FeaturedProducts() {
     <section className="mb-12" aria-labelledby="featured-heading">
       <div className="flex justify-between items-center mb-6">
         <h2 id="featured-heading" className="text-2xl font-bold">
-          Öne Çıkan Ürünler
+          {t('featuredProducts')}
         </h2>
         <Link href="/shop" className="text-indigo-600 hover:text-indigo-800">
-          Tümünü Gör →
+          {t('viewAll')}
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -141,11 +148,13 @@ async function FeaturedProducts() {
     </section>
   );
 }
-async function HeroSection() {
+async function HeroSection({ locale }: { locale: string }) {
+  const tHero = await getTranslations({ locale, namespace: 'HomePage.hero' });
+  
   const defaultHero = {
-    title: 'Epoksi Sanatının Büyüsünü Keşfedin',
-    description: 'El yapımı, benzersiz epoksi tasarımlarımızla yaşam alanlarınıza sanatsal bir dokunuş katın. Her bir parça, tutku ve özenle yaratıldı.',
-    buttonText: 'Koleksiyonu İncele',
+    title: tHero('defaultTitle'),
+    description: tHero('defaultDescription'),
+    buttonText: tHero('defaultButtonText'),
     imageUrl: '/images/epoxy-hero-art.jpg' // TODO: Bu görseli sanatsal ve yüksek kaliteli bir epoksi ürün görseli ile değiştirin.
   };
   const hero = await heroService.getActiveHero() || defaultHero;
@@ -181,52 +190,54 @@ async function HeroSection() {
       </section>
   );
 }
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: { locale: string } }) {
+  const t = await getTranslations({ locale: params.locale, namespace: 'HomePage' });
+  
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
       <Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>}>
-        <HeroSection />
+        <HeroSection locale={params.locale} />
       </Suspense>
 
       {/* Suspense ile sarmalayarak bfcache performansını artıralım */}
       <Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse"></div>}>
-        <Categories />
+        <Categories locale={params.locale} />
       </Suspense>
 
       <Suspense fallback={<div className="h-60 bg-gray-100 rounded-lg animate-pulse"></div>}>
-        <FeaturedProducts />
+        <FeaturedProducts locale={params.locale} />
       </Suspense>
 
       {/* Promotions */}
       <section className="mb-12" aria-labelledby="promotions-heading">
         <h2 id="promotions-heading" className="sr-only">
-          Promosyonlar
+          {t('sections.promotions')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gray-100 rounded-lg overflow-hidden">
             <div className="p-8 flex flex-col h-full justify-between">
               <div>
-                <h3 className="text-2xl font-bold mb-2">Yaz İndirimleri</h3>
+                <h3 className="text-2xl font-bold mb-2">{t('promotions.summer.title')}</h3>
                 <p className="text-gray-600 mb-4">
-                  Yaz koleksiyonunda %30 varan indirimler sizi bekliyor!
+                  {t('promotions.summer.description')}
                 </p>
               </div>
               <Link href="/shop/category/giyim">
-                <Button>Keşfet</Button>
+                <Button>{t('promotions.summer.button')}</Button>
               </Link>
             </div>
           </div>
           <div className="bg-gray-100 rounded-lg overflow-hidden">
             <div className="p-8 flex flex-col h-full justify-between">
               <div>
-                <h3 className="text-2xl font-bold mb-2">Teknoloji Fırsatları</h3>
+                <h3 className="text-2xl font-bold mb-2">{t('promotions.tech.title')}</h3>
                 <p className="text-gray-600 mb-4">
-                  En yeni teknoloji ürünlerinde özel fiyatlar ve hediyeler!
+                  {t('promotions.tech.description')}
                 </p>
               </div>
               <Link href="/shop/category/elektronik">
-                <Button>Keşfet</Button>
+                <Button>{t('promotions.tech.button')}</Button>
               </Link>
             </div>
           </div>
@@ -237,25 +248,24 @@ export default async function HomePage() {
       <section className="bg-indigo-50 rounded-lg p-8 mb-12" aria-labelledby="newsletter-heading">
         <div className="max-w-2xl mx-auto text-center">
           <h2 id="newsletter-heading" className="text-2xl font-bold mb-4">
-            Bültenimize Abone Olun
+            {t('newsletter.title')}
           </h2>
           <p className="text-gray-600 mb-6">
-            Yeni ürünler, indirimler ve özel tekliflerden haberdar olmak için bültenimize abone
-            olun.
+            {t('newsletter.description')}
           </p>
           <form className="flex flex-col sm:flex-row gap-2">
             <label htmlFor="email-input" className="sr-only">
-              E-posta adresiniz
+              {t('newsletter.placeholder')}
             </label>
             <input
               id="email-input"
               type="email"
-              placeholder="E-posta adresiniz"
+              placeholder={t('newsletter.placeholder')}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
             />
             <Button type="submit" className="sm:flex-shrink-0">
-              Abone Ol
+              {t('newsletter.button')}
             </Button>
           </form>
         </div>
@@ -264,7 +274,7 @@ export default async function HomePage() {
       {/* Features */}
       <section className="mb-12" aria-labelledby="features-heading">
         <h2 id="features-heading" className="sr-only">
-          Özelliklerimiz
+          {t('sections.features')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FeatureCard
@@ -285,8 +295,8 @@ export default async function HomePage() {
                 />
               </svg>
             }
-            title="Ücretsiz Kargo"
-            description="500 TL ve üzeri alışverişlerinizde Türkiye'nin her yerine ücretsiz kargo."
+            title={t('features.freeShipping.title')}
+            description={t('features.freeShipping.description')}
           />
 
           <FeatureCard
@@ -307,8 +317,8 @@ export default async function HomePage() {
                 />
               </svg>
             }
-            title="Hızlı Teslimat"
-            description="Siparişleriniz aynı gün içinde hazırlanır ve en hızlı şekilde size ulaştırılır."
+            title={t('features.fastDelivery.title')}
+            description={t('features.fastDelivery.description')}
           />
 
           <FeatureCard
@@ -329,8 +339,8 @@ export default async function HomePage() {
                 />
               </svg>
             }
-            title="Güvenli Ödeme"
-            description="Tüm ödemeleriniz 256-bit SSL sertifikası ile şifrelenerek güvenle gerçekleştirilir."
+            title={t('features.securePayment.title')}
+            description={t('features.securePayment.description')}
           />
         </div>
       </section>

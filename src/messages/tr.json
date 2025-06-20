@@ -6,5 +6,59 @@
   "Terms": {
     "title": "Kullanım Koşulları",
     "description": "Kullanım koşullarımız hakkında bilgi edinin"
+  },
+  "HomePage": {
+    "metadata": {
+      "title": "Codifya E-Ticaret - Modern Alışveriş Deneyimi",
+      "description": "Codifya E-Ticaret ile en yeni ürünleri keşfedin. Moda, elektronik, ev eşyaları ve daha fazlası için alışveriş yapın. %20 indirim fırsatını kaçırmayın!"
+    },
+    "hero": {
+      "defaultTitle": "Epoksi Sanatının Büyüsünü Keşfedin",
+      "defaultDescription": "El yapımı, benzersiz epoksi tasarımlarımızla yaşam alanlarınıza sanatsal bir dokunuş katın. Her bir parça, tutku ve özenle yaratıldı.",
+      "defaultButtonText": "Koleksiyonu İncele"
+    },
+    "sections": {
+      "categories": "Kategoriler",
+      "featuredProducts": "Öne Çıkan Ürünler",
+      "viewAll": "Tümünü Gör →",
+      "promotions": "Promosyonlar",
+      "features": "Özelliklerimiz",
+      "newsletter": "Bültenimize Abone Olun"
+    },
+    "promotions": {
+      "summer": {
+        "title": "Yaz İndirimleri",
+        "description": "Yaz koleksiyonunda %30 varan indirimler sizi bekliyor!",
+        "button": "Keşfet"
+      },
+      "tech": {
+        "title": "Teknoloji Fırsatları",
+        "description": "En yeni teknoloji ürünlerinde özel fiyatlar ve hediyeler!",
+        "button": "Keşfet"
+      }
+    },
+    "newsletter": {
+      "title": "Bültenimize Abone Olun",
+      "description": "Yeni ürünler, indirimler ve özel tekliflerden haberdar olmak için bültenimize abone olun.",
+      "placeholder": "E-posta adresiniz",
+      "button": "Abone Ol"
+    },
+    "features": {
+      "freeShipping": {
+        "title": "Ücretsiz Kargo",
+        "description": "500 TL ve üzeri alışverişlerinizde Türkiye'nin her yerine ücretsiz kargo."
+      },
+      "fastDelivery": {
+        "title": "Hızlı Teslimat",
+        "description": "Siparişleriniz aynı gün içinde hazırlanır ve en hızlı şekilde size ulaştırılır."
+      },
+      "securePayment": {
+        "title": "Güvenli Ödeme",
+        "description": "Tüm ödemeleriniz 256-bit SSL sertifikası ile şifrelenerek güvenle gerçekleştirilir."
+      }
+    },
+    "categories": {
+      "noCategory": "Kategori Yok"
+    }
   }
 } 

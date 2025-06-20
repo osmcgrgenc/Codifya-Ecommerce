@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { OrderStatus } from '@prisma/client';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/use-toast';
 
 interface OrderItem {
   id: string;
@@ -70,6 +70,7 @@ interface Order {
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [trackingNumber, setTrackingNumber] = useState('');
@@ -133,7 +134,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     return () => {
       isMounted = false; // Cleanup function to prevent setting state on unmounted component
     };
-  }, [params.id, router, toast]);
+  }, [params.id, router]);
 
   const handleUpdateOrder = async () => {
     if (!order) return;
