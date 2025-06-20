@@ -20,8 +20,7 @@ export const productMutationService = {
    * @returns Oluşturulan ürün
    */
   async createProduct(data: CreateProductData): Promise<ProductWithRelations> {
-    ensureServer();
-
+    // ensureServer();
     try {
       // Slug oluştur
       const slug = generateProductSlug(data.name, data.slug);

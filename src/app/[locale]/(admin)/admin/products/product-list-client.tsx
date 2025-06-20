@@ -340,6 +340,7 @@ export default function ProductListClient({
           showSuccess('Ürün başarıyla güncellendi.');
         } else {
           // Yeni ürün oluştur
+          console.log('data', data);
           await productService.createProduct({
             name: data.name,
             description: data.description,

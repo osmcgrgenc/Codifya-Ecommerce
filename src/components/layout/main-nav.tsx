@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { categoryService } from '@/services/category/category.service';
+import { Category } from '@prisma/client';
 
 interface MainNavProps {
   className?: string;
+  categories?: Category[];
 }
 
-export function MainNav({ className }: MainNavProps) {
+export function MainNav({ className, categories }: MainNavProps) {
   const pathname = usePathname();
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [subCategories, setSubCategories] = useState<Category[]>([]);
 
   const routes = [
     {
@@ -37,7 +41,7 @@ export function MainNav({ className }: MainNavProps) {
       active: pathname === '/contact',
     },
   ];
-
+  
   return (
     <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)}>
       {routes.map(route => (
@@ -57,88 +61,55 @@ export function MainNav({ className }: MainNavProps) {
             {route.label}
           </Link>
           {route.hasMegaMenu && isMegaMenuOpen && (
-            <div className="absolute left-0 mt-2 w-screen max-w-screen-md  shadow-lg rounded-md overflow-hidden z-50">
+            <div className="absolute left-0 w-max max-w-screen-md  shadow-lg rounded-md overflow-hidden z-50 bg-gray-50"
+              onMouseEnter={() => setIsMegaMenuOpen(true)}
+              onMouseLeave={() => setIsMegaMenuOpen(false)}
+            >
               <div className="grid grid-cols-3 gap-4 p-6">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900 mb-2">Kategoriler</h3>
                   <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/shop/category/electronics"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Elektronik
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/clothing"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Giyim
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/home"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Ev & Yaşam
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/books"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Kitaplar
-                      </Link>
-                    </li>
+                    {categories?.map((category) => (
+                      category.parentId === null && (
+                        <li key={category.id}>
+                          <Link
+                            href={`/shop/category/${category.slug}`}
+                            className="text-sm text-gray-600 hover:text-gray-900"
+                            onClick={() => {
+                              setIsMegaMenuOpen(false);
+                              setSubCategories([]);
+                            }}
+                            onMouseEnter={async () => {
+                              // Alt kategorileri getir
+                              try {
+                                const subCategories = await categoryService.getSubCategories(category.id);
+                                setSubCategories(subCategories);
+                              } catch (error) {
+                                setSubCategories([]);
+                              }
+                            }}
+                          >
+                            {category.name}
+                          </Link>
+                        </li>
+                      )
+                    ))}
                   </ul>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-900 mb-2">Alt Kategoriler</h3>
                   <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/shop/category/electronics/phones"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Telefonlar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/electronics/laptops"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Laptoplar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/clothing/men"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Erkek Giyim
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/shop/category/clothing/women"
-                        className="text-sm text-gray-600 hover:text-gray-900"
-                        onClick={() => setIsMegaMenuOpen(false)}
-                      >
-                        Kadın Giyim
-                      </Link>
-                    </li>
+                    {subCategories.map((subCategory) => (
+                      <li key={subCategory.id}>
+                        <Link
+                          href={`/shop/category/${subCategory.slug}`}
+                          className="text-sm text-primary hover:text-gray-900"
+                          onClick={() => setIsMegaMenuOpen(false)}
+                        >
+                          {subCategory.name}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div>

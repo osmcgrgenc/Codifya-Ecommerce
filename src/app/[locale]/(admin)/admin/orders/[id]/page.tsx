@@ -56,87 +56,17 @@ interface Order {
     updatedAt: Date;
   } | null;
   trackingNumber?: string | null;
-  estimatedDeliveryDate?: Date | null;
+  estimatedDeliveryDate?: Date | string | null; // Input type="date" için string de olabilir
   notes?: string | null;
   referenceCode?: string | null;
   user?: {
     id: string;
-    name: string;
-    email: string;
+    name: string | null; // User modeline göre null olabilir
+    email: string | null; // User modeline göre null olabilir
   } | null;
 }
 
-// Örnek sipariş verisi
-const mockOrder: Order = {
-  id: '1',
-  userId: 'user1',
-  status: OrderStatus.PROCESSING,
-  totalAmount: 7299.98,
-  shippingAddress: 'Atatürk Cad. No:123, İstanbul, Türkiye, 34000',
-  billingAddress: 'Atatürk Cad. No:123, İstanbul, Türkiye, 34000',
-  createdAt: new Date('2023-05-15'),
-  updatedAt: new Date('2023-05-15'),
-  items: [
-    {
-      id: '1',
-      productId: 'prod1',
-      quantity: 1,
-      price: 5999.99,
-      subtotal: 5999.99,
-      product: {
-        name: 'Akıllı Telefon',
-        slug: 'akilli-telefon',
-        description: 'Son model akıllı telefon',
-        images: [
-          {
-            id: 'img1',
-            url: 'https://via.placeholder.com/150',
-            isMain: true,
-          },
-        ],
-      },
-    },
-    {
-      id: '2',
-      productId: 'prod2',
-      quantity: 1,
-      price: 1299.99,
-      subtotal: 1299.99,
-      product: {
-        name: 'Kablosuz Kulaklık',
-        slug: 'kablosuz-kulaklik',
-        description: 'Yüksek ses kaliteli kablosuz kulaklık',
-        images: [
-          {
-            id: 'img2',
-            url: 'https://via.placeholder.com/150',
-            isMain: true,
-          },
-        ],
-      },
-    },
-  ],
-  payment: {
-    id: 'pay1',
-    method: 'Kredi Kartı',
-    status: 'Ödendi',
-    provider: 'Iyzico',
-    transactionId: 'txn123456',
-    amount: 7299.98,
-    currency: 'TRY',
-    createdAt: new Date('2023-05-15'),
-    updatedAt: new Date('2023-05-15'),
-  },
-  trackingNumber: 'TRK123456789',
-  estimatedDeliveryDate: new Date('2023-05-20'),
-  notes: 'Lütfen kapıda bırakmayın, zile basın.',
-  referenceCode: 'REF123456789',
-  user: {
-    id: 'user1',
-    name: 'Ahmet Yılmaz',
-    email: 'ahmet.yilmaz@example.com',
-  },
-};
+// Örnek sipariş verisi kaldırıldı
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -148,34 +78,114 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   const [status, setStatus] = useState<OrderStatus>(OrderStatus.PENDING);
 
   useEffect(() => {
-    // Gerçek uygulamada API'den veri çekilecek
-    // Şimdilik mock veri kullanıyoruz
-    setOrder(mockOrder);
-    setTrackingNumber(mockOrder.trackingNumber || '');
-    setEstimatedDeliveryDate(
-      mockOrder.estimatedDeliveryDate
-        ? new Date(mockOrder.estimatedDeliveryDate).toISOString().split('T')[0]
-        : ''
-    );
-    setNotes(mockOrder.notes || '');
-    setStatus(mockOrder.status);
-    setLoading(false);
-  }, [params.id]);
+    let isMounted = true;
+    const fetchOrder = async () => {
+      if (!params.id) return;
 
-  const handleUpdateOrder = () => {
-    if (!order) return;
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/admin/orders/${params.id}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            toast({
+              title: 'Hata',
+              description: 'Sipariş bulunamadı.',
+              variant: 'destructive',
+            });
+            router.push('/admin/orders');
+          } else {
+            throw new Error('Sipariş bilgileri alınamadı');
+          }
+          return;
+        }
 
-    // Gerçek uygulamada API'ye gönderilecek
-    const updatedOrder = {
-      ...order,
-      status,
-      trackingNumber,
-      estimatedDeliveryDate: estimatedDeliveryDate ? new Date(estimatedDeliveryDate) : null,
-      notes,
+        const dataResult = await response.json();
+        const data: Order = dataResult.data; // API response'dan 'data' kısmını al
+
+        if (isMounted) {
+          setOrder(data);
+          setTrackingNumber(data.trackingNumber || '');
+          setEstimatedDeliveryDate(
+            data.estimatedDeliveryDate
+              ? new Date(data.estimatedDeliveryDate).toISOString().split('T')[0]
+              : ''
+          );
+          setNotes(data.notes || '');
+          setStatus(data.status);
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast({
+            title: 'Hata',
+            description: 'Sipariş bilgileri yüklenirken bir hata oluştu.',
+            variant: 'destructive',
+          });
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     };
 
-    setOrder(updatedOrder);
-    toast.success('Sipariş başarıyla güncellendi');
+    fetchOrder();
+
+    return () => {
+      isMounted = false; // Cleanup function to prevent setting state on unmounted component
+    };
+  }, [params.id, router, toast]);
+
+  const handleUpdateOrder = async () => {
+    if (!order) return;
+    setLoading(true);
+
+    try {
+      const response = await fetch(`/api/admin/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status,
+          trackingNumber: trackingNumber || null, // Boş string yerine null gönder
+          estimatedDeliveryDate: estimatedDeliveryDate || null, // Boş string yerine null gönder
+          notes: notes || null, // Boş string yerine null gönder
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Sipariş güncellenemedi');
+      }
+
+      const updatedOrderResult = await response.json();
+      const updatedOrderData: Order = updatedOrderResult.data; // API response'dan 'data' kısmını al
+
+      // State'i güncelle
+      setOrder(updatedOrderData);
+      setStatus(updatedOrderData.status);
+      setTrackingNumber(updatedOrderData.trackingNumber || '');
+      setEstimatedDeliveryDate(
+          updatedOrderData.estimatedDeliveryDate
+              ? new Date(updatedOrderData.estimatedDeliveryDate).toISOString().split('T')[0]
+              : ''
+      );
+      setNotes(updatedOrderData.notes || '');
+
+
+      toast({
+        title: 'Başarılı',
+        description: 'Sipariş başarıyla güncellendi.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Hata',
+        description: error.message || 'Sipariş güncellenirken bir hata oluştu.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -230,9 +240,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   <p className="text-sm text-gray-500">
                     Son Güncelleme: {new Date(order.updatedAt).toLocaleDateString('tr-TR')}
                   </p>
-                  <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500">
                     Toplam:{' '}
-                    {order.totalAmount.toLocaleString('tr-TR', {
+                    {Number(order.totalAmount).toLocaleString('tr-TR', { // Ensure totalAmount is treated as number
                       style: 'currency',
                       currency: 'TRY',
                     })}
@@ -278,27 +288,33 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                           <div>
                             <div className="flex justify-between text-base font-medium text-gray-900">
                               <h3>
-                                <Link
-                                  href={`/admin/products/${item.productId}`}
-                                  className="hover:text-indigo-600"
-                                >
-                                  {item.product.name}
-                                </Link>
+                                {item.product ? (
+                                  <Link
+                                    href={`/admin/products/${item.productId}`}
+                                    className="hover:text-indigo-600"
+                                  >
+                                    {item.product.name}
+                                  </Link>
+                                ) : (
+                                  'Ürün Bilgisi Yok'
+                                )}
                               </h3>
                               <p className="ml-4">
-                                {item.price.toLocaleString('tr-TR', {
+                                {Number(item.price).toLocaleString('tr-TR', { // Ensure price is treated as number
                                   style: 'currency',
                                   currency: 'TRY',
                                 })}
                               </p>
                             </div>
-                            <p className="mt-1 text-sm text-gray-500">{item.product.description}</p>
+                            <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                              {item.product?.description || 'Açıklama yok'}
+                            </p>
                           </div>
                           <div className="flex-1 flex items-end justify-between text-sm">
                             <p className="text-gray-500">Adet: {item.quantity}</p>
                             <p className="text-gray-500">
                               Toplam:{' '}
-                              {item.subtotal.toLocaleString('tr-TR', {
+                              {Number(item.subtotal).toLocaleString('tr-TR', { // Ensure subtotal is treated as number
                                 style: 'currency',
                                 currency: 'TRY',
                               })}
@@ -315,20 +331,21 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <div className="flex justify-between text-base font-medium text-gray-900">
                   <p>Ara Toplam</p>
                   <p>
-                    {order.totalAmount.toLocaleString('tr-TR', {
+                    {Number(order.totalAmount).toLocaleString('tr-TR', { // Ensure totalAmount is treated as number
                       style: 'currency',
                       currency: 'TRY',
                     })}
                   </p>
                 </div>
-                <div className="flex justify-between text-base font-medium text-gray-900 mt-2">
+                {/* Kargo bilgisi dinamik olarak eklenebilir */}
+                {/* <div className="flex justify-between text-base font-medium text-gray-900 mt-2">
                   <p>Kargo</p>
                   <p>Ücretsiz</p>
-                </div>
+                </div> */}
                 <div className="flex justify-between text-lg font-bold text-gray-900 mt-4">
                   <p>Toplam</p>
                   <p>
-                    {order.totalAmount.toLocaleString('tr-TR', {
+                    {Number(order.totalAmount).toLocaleString('tr-TR', { // Ensure totalAmount is treated as number
                       style: 'currency',
                       currency: 'TRY',
                     })}
@@ -346,20 +363,22 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               {order.user ? (
                 <div>
                   <p className="text-gray-600 mb-2">
-                    <span className="font-medium">İsim:</span> {order.user.name}
+                    <span className="font-medium">İsim:</span> {order.user?.name || 'Misafir'}
                   </p>
                   <p className="text-gray-600 mb-2">
-                    <span className="font-medium">E-posta:</span> {order.user.email}
+                    <span className="font-medium">E-posta:</span> {order.user?.email || '-'}
                   </p>
-                  <Link
-                    href={`/admin/users/${order.userId}`}
-                    className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                  >
-                    Müşteri Profilini Görüntüle
-                  </Link>
+                  {order.userId && (
+                    <Link
+                      href={`/admin/users/${order.userId}`}
+                      className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                    >
+                      Müşteri Profilini Görüntüle
+                    </Link>
+                  )}
                 </div>
               ) : (
-                <p className="text-gray-600">Müşteri bilgisi bulunamadı</p>
+                <p className="text-gray-600">Müşteri bilgisi bulunamadı (Misafir Siparişi)</p>
               )}
             </div>
           </div>
@@ -367,7 +386,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
           <div className=" rounded-lg shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-lg font-medium mb-4">Teslimat Bilgileri</h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 break-words"> {/* break-words eklendi */}
                 <span className="font-medium">Adres:</span>{' '}
                 {order.shippingAddress || 'Belirtilmemiş'}
               </p>
@@ -414,17 +433,17 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               {order.payment ? (
                 <>
                   <p className="text-gray-600 mb-2">
-                    <span className="font-medium">Ödeme Yöntemi:</span> {order.payment.method}
+                    <span className="font-medium">Ödeme Yöntemi:</span> {order.payment?.method || 'Bilinmiyor'}
                   </p>
                   <p className="text-gray-600 mb-2">
-                    <span className="font-medium">Durum:</span> {order.payment.status}
+                    <span className="font-medium">Durum:</span> {order.payment?.status || 'Bilinmiyor'}
                   </p>
-                  {order.payment.provider && (
+                  {order.payment?.provider && (
                     <p className="text-gray-600 mb-2">
                       <span className="font-medium">Sağlayıcı:</span> {order.payment.provider}
                     </p>
                   )}
-                  {order.payment.transactionId && (
+                  {order.payment?.transactionId && (
                     <p className="text-gray-600 mb-2">
                       <span className="font-medium">İşlem ID:</span> {order.payment.transactionId}
                     </p>
@@ -434,7 +453,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <p className="text-gray-600">Ödeme bilgisi bulunamadı</p>
               )}
               {order.billingAddress && (
-                <p className="text-gray-600 mt-4">
+                <p className="text-gray-600 mt-4 break-words"> {/* break-words eklendi */}
                   <span className="font-medium">Fatura Adresi:</span> {order.billingAddress}
                 </p>
               )}

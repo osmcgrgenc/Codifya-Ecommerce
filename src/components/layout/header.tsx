@@ -8,10 +8,15 @@ import { MainNav } from './main-nav';
 import { CartButton } from './cart-button';
 import SearchBar from '@/components/search-bar';
 import Image from 'next/image';
+import { categoryService } from '@/services';
 
 export async function Header() {
   const session = await getServerSession(authOptions);
   const isDarkMode = true;
+  async function Categories() {
+    const categories = await categoryService.getAllCategories();
+    return categories;
+  }
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,14 +24,14 @@ export async function Header() {
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold">
               <Image
-                src={isDarkMode ? "/images/logo-dark.png" : "/images/logo-light.png"}
+                src={isDarkMode ? "/images/logo-light.png" : "/images/logo-dark.png"}
                 alt="Logo"
-                height={50}
-                width={50}
+                height={64}
+                width={112}
                 priority
               />
             </Link>
-            <MainNav className="hidden md:ml-10 md:flex" />
+            <MainNav className="hidden md:ml-10 md:flex" categories={await Categories()} />
           </div>
 
           <div className="hidden md:flex items-center mx-auto max-w-md w-full px-4">
@@ -34,12 +39,6 @@ export async function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link
-              href="/shop"
-              className="hidden md:block text-sm font-medium text-gray-700 hover:text-gray-900"
-            >
-              Mağaza
-            </Link>
             <CartButton />
             {session ? (
               <UserNav user={session.user} />

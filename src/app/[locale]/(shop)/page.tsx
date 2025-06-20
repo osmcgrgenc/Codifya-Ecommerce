@@ -143,10 +143,10 @@ async function FeaturedProducts() {
 }
 async function HeroSection() {
   const defaultHero = {
-    title: 'Yeni Sezon Ürünleri',
-    description: 'En yeni ve trend ürünleri keşfedin. Sınırlı süre için tüm yeni sezon ürünlerinde %20 indirim!',
-    buttonText: 'Hemen Alışverişe Başla',
-    imageUrl: '/images/hero-image.jpg'
+    title: 'Epoksi Sanatının Büyüsünü Keşfedin',
+    description: 'El yapımı, benzersiz epoksi tasarımlarımızla yaşam alanlarınıza sanatsal bir dokunuş katın. Her bir parça, tutku ve özenle yaratıldı.',
+    buttonText: 'Koleksiyonu İncele',
+    imageUrl: '/images/epoxy-hero-art.jpg' // TODO: Bu görseli sanatsal ve yüksek kaliteli bir epoksi ürün görseli ile değiştirin.
   };
   const hero = await heroService.getActiveHero() || defaultHero;
   return (
