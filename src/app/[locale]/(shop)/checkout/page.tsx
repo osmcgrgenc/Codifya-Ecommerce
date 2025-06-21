@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth';
 import CheckoutContent from './checkout-content';
 
 export const metadata: Metadata = {
-  title: 'Ödeme | Codifya E-Ticaret',
+  title: 'Ödeme | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Siparişinizi tamamlayın ve ödeme yapın.',
 };
 

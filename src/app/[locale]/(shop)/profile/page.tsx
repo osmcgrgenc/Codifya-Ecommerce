@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth';
 import ProfileContent from './profile-content';
 
 export const metadata: Metadata = {
-  title: 'Profilim | Codifya E-Ticaret',
+  title: 'Profilim | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Hesap bilgilerinizi ve siparişlerinizi yönetin',
 };
 

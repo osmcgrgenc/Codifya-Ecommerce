@@ -10,7 +10,7 @@ const CartContent = dynamic(() => import('./cart-content'), {
 });
 
 export const metadata: Metadata = {
-  title: 'Sepetim | Codifya E-Ticaret',
+  title: 'Sepetim | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Sepetinizdeki ürünleri görüntüleyin ve düzenleyin.',
 };
 

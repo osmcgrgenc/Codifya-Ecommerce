@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { XCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Ödeme Başarısız | Codifya E-Ticaret',
+  title: 'Ödeme Başarısız | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Ödeme işlemi sırasında bir hata oluştu.',
 };
 

@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   return {
-    title: `${product.name} | Codifya E-Ticaret`,
+    title: `${product.name} | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
     description: product.metaDescription || product.description || 'Ürün detayları',
     openGraph: {
       title: product.metaTitle || product.name,

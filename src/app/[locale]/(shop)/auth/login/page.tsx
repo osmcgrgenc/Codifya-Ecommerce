@@ -7,7 +7,7 @@ import { authOptions } from '@/lib/auth';
 import LoginForm from './login-form';
 
 export const metadata: Metadata = {
-  title: 'Giriş Yap | Codifya E-Ticaret',
+  title: 'Giriş Yap | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Hesabınıza giriş yapın',
 };
 

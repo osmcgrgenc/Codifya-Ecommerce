@@ -195,10 +195,10 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   return {
-    title: `${category.name} | Codifya E-Ticaret`,
+    title: `${category.name} | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
     description: category.description || `${category.name} kategorisindeki ürünleri keşfedin`,
     openGraph: {
-      title: `${category.name} | Codifya E-Ticaret`,
+      title: `${category.name} | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
       description: category.description || `${category.name} kategorisindeki ürünleri keşfedin`,
       images: category.image ? [{ url: category.image }] : [],
     },

@@ -3,7 +3,7 @@ import { ContactForm } from '@/components/contact/contact-form';
 import { Container } from '@/components/ui/container';
 
 export const metadata: Metadata = {
-  title: 'İletişim - Codifya E-Ticaret',
+  title: 'İletişim - ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Sorularınız, önerileriniz veya şikayetleriniz için bizimle iletişime geçin.',
 };
 

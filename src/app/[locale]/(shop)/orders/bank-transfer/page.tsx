@@ -8,7 +8,7 @@ import { CreditCard, Copy, CheckCircle } from 'lucide-react';
 import CopyButton from './copy-button';
 
 export const metadata: Metadata = {
-  title: 'Banka Transferi Bilgileri | Codifya E-Ticaret',
+  title: 'Banka Transferi Bilgileri | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Banka transferi ile ödeme bilgileri.',
 };
 

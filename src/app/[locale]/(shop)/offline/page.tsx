@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { WifiOff } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Çevrimdışı | Codifya E-Ticaret',
+  title: 'Çevrimdışı | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'İnternet bağlantınız kesildi.',
 };
 

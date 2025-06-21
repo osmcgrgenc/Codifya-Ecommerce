@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
           url: '/images/og-image.jpg',
           width: 1200,
           height: 630,
-          alt: 'Codifya E-Commerce',
+          alt: process.env.NEXT_PUBLIC_SITE_NAME || 'Epoksi Ürünleri',
         },
       ],
     },

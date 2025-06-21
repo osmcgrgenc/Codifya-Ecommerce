@@ -61,7 +61,7 @@ interface OrderPageProps {
 
 export async function generateMetadata({ params }: OrderPageProps): Promise<Metadata> {
   return {
-    title: `Sipariş #${params.id} | Codifya E-Ticaret`,
+    title: `Sipariş #${params.id} | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
     description: 'Sipariş detaylarınızı görüntüleyin',
   };
 }

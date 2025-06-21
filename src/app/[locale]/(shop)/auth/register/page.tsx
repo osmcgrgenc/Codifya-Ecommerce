@@ -7,7 +7,7 @@ import { authOptions } from '@/lib/auth';
 import RegisterForm from './register-form';
 
 export const metadata: Metadata = {
-  title: 'Kayıt Ol | Codifya E-Ticaret',
+  title: 'Kayıt Ol | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Yeni bir hesap oluşturun',
 };
 

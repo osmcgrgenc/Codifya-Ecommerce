@@ -10,7 +10,7 @@ interface SearchPageProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Arama Sonuçları | Codifya E-Ticaret',
+  title: 'Arama Sonuçları | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Arama sonuçlarınız',
 };
 

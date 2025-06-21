@@ -9,7 +9,7 @@ import { orderService } from '@/services';
 import { OrderStatus } from '@prisma/client';
 
 export const metadata: Metadata = {
-  title: 'Siparişlerim | Codifya E-Ticaret',
+  title: 'Siparişlerim | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Tüm siparişlerinizi görüntüleyin ve takip edin',
 };
 

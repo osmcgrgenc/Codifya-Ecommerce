@@ -6,7 +6,7 @@ import ProductsGrid from './products-grid';
 import ProductsLoading from './products-loading';
 
 export const metadata: Metadata = {
-  title: 'Mağaza | Codifya E-Ticaret',
+  title: 'Mağaza | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Ürünlerimizi keşfedin ve alışveriş yapın',
 };
 

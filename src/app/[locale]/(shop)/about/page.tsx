@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Container } from '@/components/ui/container';
 
 export const metadata: Metadata = {
-  title: 'Hakkımızda - Codifya E-Ticaret',
+  title: 'Hakkımızda - ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Codifya E-Ticaret hakkında bilgi edinin. Vizyonumuz, misyonumuz ve değerlerimiz.',
 };
 

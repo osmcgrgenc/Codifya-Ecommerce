@@ -60,7 +60,12 @@ export default function AdminDashboardPage() {
         const ordersResponse = await fetch('/api/admin/recent-orders');
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json();
-          setRecentOrders(ordersData);
+          setRecentOrders(
+            ordersData.map((order: any) => ({
+              ...order,
+              createdAt: new Date(order.createdAt),
+            }))
+          );
         }
 
         // Popüler ürünleri getir
@@ -80,7 +85,7 @@ export default function AdminDashboardPage() {
     };
 
     fetchDashboardData();
-  }, [toast]);
+  }, []);
 
   // Sipariş durumunu Türkçe'ye çeviren yardımcı fonksiyon
   const getStatusText = (status: OrderStatus) => {

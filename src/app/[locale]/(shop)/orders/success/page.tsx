@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Sipariş Başarılı | Codifya E-Ticaret',
+  title: 'Sipariş Başarılı | ' + process.env.NEXT_PUBLIC_SITE_NAME,
   description: 'Siparişiniz başarıyla oluşturuldu.',
 };
 

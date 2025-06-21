@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,13 +19,16 @@ import {
   FileText,
   MessageSquare,
   File,
+  User,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
+import { UserRole } from '@prisma/client';
 
 export function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -83,6 +86,21 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
     []
   );
 
+  // Tema butonunu yardımcı fonksiyon olarak ayır
+  const ThemeToggleButton = () => (
+    <button
+      aria-label="Tema değiştir"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+    >
+      {mounted && theme === 'dark' ? (
+        <Sun className="h-5 w-5 text-yellow-400" />
+      ) : (
+        <Moon className="h-5 w-5 text-gray-600" />
+      )}
+    </button>
+  );
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -91,9 +109,10 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
     if (status === 'unauthenticated') {
       router.push('/auth/login');
     } else if (status === 'authenticated') {
-      setIsAdmin(true);
+      // Admin kontrolü
+      setIsAdmin(session?.user?.role === UserRole.ADMIN);
     }
-  }, [status, router]);
+  }, [status, router, session]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -110,10 +129,21 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (status === 'loading' || !isAdmin) {
+  if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen dark:bg-gray-900">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4 text-red-500">Yetkisiz Erişim</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">Bu sayfayı görüntülemek için admin olmalısınız.</p>
+          <Button onClick={() => router.push('/')}>Anasayfaya Dön</Button>
+        </div>
       </div>
     );
   }
@@ -121,6 +151,7 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <button
+        aria-label={isSidebarOpen ? 'Menüyü Kapat' : 'Menüyü Aç'}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white dark:bg-gray-800 shadow-md"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
@@ -144,7 +175,10 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
                 <li key={index}>
                   <Link
                     href={item.href}
-                    className="flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
+                    className={cn(
+                      'flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150',
+                      pathname === item.href && 'bg-gray-200 dark:bg-gray-700 font-semibold'
+                    )}
                   >
                     <span className="mr-3 text-gray-500 dark:text-gray-400">{item.icon}</span>
                     {item.title}
@@ -157,16 +191,7 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
           <div className="p-4 border-t dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-gray-600 dark:text-gray-400">Tema</span>
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                {mounted && theme === 'dark' ? (
-                  <Sun className="h-5 w-5 text-yellow-400" />
-                ) : (
-                  <Moon className="h-5 w-5 text-gray-600" />
-                )}
-              </button>
+              <ThemeToggleButton />
             </div>
             <Button
               variant="outline"
@@ -195,16 +220,7 @@ export function AdminLayoutContent({ children }: { children: React.ReactNode }) 
                 Merhaba, {session?.user?.name || 'Admin'}
               </span>
               <div className="md:hidden">
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  {mounted && theme === 'dark' ? (
-                    <Sun className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <Moon className="h-5 w-5 text-gray-600" />
-                  )}
-                </button>
+                <ThemeToggleButton />
               </div>
             </div>
           </div>
